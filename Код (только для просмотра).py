@@ -744,7 +744,7 @@ def morskaya_ohota_game_update():
         for i in range(10):
             S += int(not(MO_ships[i].active))
 
-        if (S < 1):
+        if (S < 8):
             morskaya_ohota_game_bool = False
             gamemenu_bool = True
             blackscreen_timer = 120
@@ -860,7 +860,7 @@ def morskaya_ohota_prizegame_update():
         for i in range(10):
             S += int(not(MO_PG_ships[i].active))
 
-        if (S < 1):
+        if (S < 8):
             morskaya_ohota_prizegame_bool = False
             gamemenu_bool = True
             blackscreen_timer = 120
