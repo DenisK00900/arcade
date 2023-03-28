@@ -14,6 +14,8 @@ clock = pygame.time.Clock()
 
 fullscreen_bool = True
 
+goldencoins = 0
+
 def settings_input():
     global fullscreen_bool
     f = open(dir_path+'/data/save/settings.bin','rb')
@@ -32,8 +34,28 @@ def settings_output():
     f.write(("fullscreen_bool = "+str(int(fullscreen_bool))+"\n").encode('utf-8'))
     f.write(("end").encode('utf-8'))
     f.close()
+
+def progress_input():
+    global goldencoins
+    f = open(dir_path+'/data/save/progress.bin','rb')
+    while True:
+        S = (f.readline()).decode('utf-8')
+        if (S == "end"): break
+        else:
+            V,E,D = S.split()
+            if (V == "goldencoins"): goldencoins = int(D)
+
+    f.close()
+
+def progress_output():
+    global goldencoins
+    f = open(dir_path+'/data/save/progress.bin','wb')
+    f.write(("goldencoins = "+str(goldencoins)+"\n").encode('utf-8'))
+    f.write(("end").encode('utf-8'))
+    f.close()
     
 settings_input()
+progress_input()
 
 Window = pygame.display.set_mode((640, 480), vsync=True)
 pygame.display.set_caption("Arcade")
@@ -146,7 +168,18 @@ for i in range(60):
 
 goldcoin_get = pygame.image.load(dir_path+'/data/texture/goldcoin_get.png').convert(); goldcoin_get.set_colorkey((0,0,0))
 
+gonky_roadsegment = pygame.image.load(dir_path+'/data/texture/gonky_roadsegment.png').convert()
+gonky_green_car = [0]*2
+gonky_green_car[0] = pygame.image.load(dir_path+'/data/texture/gonky_green_car1.png').convert(); gonky_green_car[0].set_colorkey((255,255,255))
+gonky_green_car[1] = pygame.image.load(dir_path+'/data/texture/gonky_green_car2.png').convert(); gonky_green_car[1].set_colorkey((255,255,255))
 
+number_x2_white = [0]*10
+for i in range(10): number_x2_white[i] = pygame.image.load(dir_path+'/data/texture/number_x2_white_'+str(i)+'.png').convert(); number_x2_white[i].set_colorkey((0,0,0))
+goldcoin_have = pygame.image.load(dir_path+'/data/texture/goldcoin_have.png').convert(); goldcoin_have.set_colorkey((0,0,0))
+
+pamat_banner = pygame.image.load(dir_path+'/data/texture/pamat_banner.png').convert(); pamat_banner.set_colorkey((0,0,0))
+pamat_gamename_1 = pygame.image.load(dir_path+'/data/texture/pamat_gamename_1.png').convert()
+pamat_gamename_2 = pygame.image.load(dir_path+'/data/texture/pamat_gamename_2.png').convert()
 
 text=[]
 for i in range(46):
@@ -190,7 +223,58 @@ blackscreen_timer = 0
 prizegame_timer = 0
 goldcoin_get_timer = 0
 morskaya_ohota_prizegame_bool = False
+gonky_game_bool = False
+gonky_viev_pos = 0
+gonky_R_bool = False
+gonky_L_bool = False
+gonky_F_bool = False
+gonky_B_bool = False
 
+class CollisionBox():
+    def __init__(self):
+        self.pos_x = 0
+        self.pos_y = 0
+        self.size_x = 0
+        self.size_y = 0
+
+    def define(self,x,y,s_x,s_y):
+        self.pos_x = x
+        self.pos_y = y
+        self.size_x = s_x
+        self.size_y = s_y
+
+def cheak_point(point_x,point_y,Box):
+    return ((point_x >= Box.pos_x and point_x <= Box.pos_x+size_x) and (point_y >= Box.pos_y and point_y <= Box.pos_y+size_y))
+
+def cheak_BoxC(Box1,Box2):
+    return (((cheak_point(Box1.pos_x,Box1.pos_y,Box2)) or (cheak_point(Box2.pos_x,Box2.pos_y,Box1))) or
+       ((cheak_point(Box1.pos_x,Box1.pos_y+Box2.size_y,Box2)) or (cheak_point(Box2.pos_x,Box2.pos_y+Box2.size_y,Box1))) or
+       ((cheak_point(Box1.pos_x+Box1.size_x,Box1.pos_y,Box2)) or (cheak_point(Box2.pos_x+Box2.size_x,Box2.pos_y,Box1))) or
+       ((cheak_point(Box1.pos_x+Box1.size_x,Box1.pos_y+Box2.size_y,Box2)) or (cheak_point(Box2.pos_x+Box2.size_x,Box2.pos_y+Box2.size_y,Box1))))
+    
+class car():
+    def __init__(self):
+        self.pos_x = -1
+        self.pos_y = -1
+        self.speed = 0
+        self.hitbox = CollisionBox()
+        self.texture = None
+        self.control = False
+
+    def update():
+        self.pos_y += self.speed
+        
+cars_count = 1
+gonky_car = [0]*cars_count
+
+gonky_car[0] = car()
+gonky_car[0].control = True
+gonky_car[0].pos_x = 340
+gonky_car[0].pos_y = -1
+gonky_car[0].speed = 0
+gonky_car[0].texture = gonky_green_car
+gonky_car[0].hitbox.define(0,0,36,64)
+    
 class MO_TW():
     def __init__(self):
         self.pos_x = -999
@@ -615,6 +699,38 @@ def game_select_update(select):
         text_print("  в призовой игре, чтобы",1,32,318)
         text_print("  получить золотую монету.",1,32,344)
 
+    if (game_select == "gonky"):
+        text_print("Гонки",1,32,32)
+        text_print("- Доберитесь до финиша как",1,32,84)
+        text_print("  можно быстрее.",1,32,110)
+        text_print("- Столкновения с другими",1,32,136)
+        text_print("  машинами замедляют вас.",1,32,162)
+        text_print("- время игры - 2 минуты.",1,32,188)      
+        text_print("- Доберитесь до финиша,",1,32,214)
+        text_print("  чтобы получить призовую игру.",1,32,240)
+        text_print("- Доберитесь до финиша в",1,32,266)        
+        text_print("  призовой игре, чтоьы",1,32,292)
+        text_print("  получить золотую монету.",1,32,318)
+
+def gonky_game_update():
+    global gonky_viev_pos, gonky_R_bool, gonky_L_bool, gonky_F_bool, gonky_B_bool
+    
+    Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480) + int(gonky_viev_pos%2 == 1)))
+    Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480)-480 + int(gonky_viev_pos%2 == 1)))
+
+    for i in range(cars_count):
+        if (gonky_car[i].control):
+            gonky_viev_pos += gonky_car[i].speed
+
+            if (gonky_F_bool): gonky_car[i].speed += 0.25
+            if (gonky_B_bool): gonky_car[i].speed -= 0.25
+            if (gonky_R_bool): gonky_car[i].pos_x += 2
+            if (gonky_L_bool): gonky_car[i].pos_x -= 2
+            
+            Window.blit(gonky_car[i].texture[0],(gonky_car[i].pos_x,374))
+
+    
+
 def morskaya_ohota_game_update():
     global morskaya_ohota_var_pos, morskaya_ohota_borders_subtick, morskaya_ohota_borders_tick,morskaya_ohota_hit_bool, morskaya_ohota_hit_tick, morskaya_ohota_hit_ship, morskaya_ohota_hit_pos
     global morskaya_ohota_subtime, morskaya_ohota_time, morskaya_ohota_game_bool, gamemenu_bool, blackscreen_timer, prizegame_timer, morskaya_ohota_prizegame_bool, morskaya_ohota_torpedos_left
@@ -628,7 +744,7 @@ def morskaya_ohota_game_update():
         for i in range(10):
             S += int(not(MO_ships[i].active))
 
-        if (S < 8):
+        if (S < 1):
             morskaya_ohota_game_bool = False
             gamemenu_bool = True
             blackscreen_timer = 120
@@ -733,6 +849,7 @@ def morskaya_ohota_game_update():
 def morskaya_ohota_prizegame_update():
     global morskaya_ohota_var_pos, morskaya_ohota_borders_subtick, morskaya_ohota_borders_tick,morskaya_ohota_hit_bool, morskaya_ohota_hit_tick, morskaya_ohota_hit_ship, morskaya_ohota_hit_pos
     global morskaya_ohota_subtime, morskaya_ohota_time, morskaya_ohota_game_bool, gamemenu_bool, blackscreen_timer, goldcoin_get_timer, morskaya_ohota_prizegame_bool, morskaya_ohota_torpedos_left
+    global goldencoins
 
     F = False
     for i in range(10):
@@ -743,13 +860,15 @@ def morskaya_ohota_prizegame_update():
         for i in range(10):
             S += int(not(MO_PG_ships[i].active))
 
-        if (S < 8):
+        if (S < 1):
             morskaya_ohota_prizegame_bool = False
             gamemenu_bool = True
             blackscreen_timer = 120
         else:
             morskaya_ohota_prizegame_bool = False
             gamemenu_bool = True
+            goldencoins += 1
+            progress_output()
             goldcoin_get_timer = 240
         
     else:
@@ -901,6 +1020,12 @@ def update():
                         if (gamemenu_select == 0): Window.blit(back_button_1,(32,32))
                         else: Window.blit(back_button_2,(32,32))
 
+                        Window.blit(goldcoin_have,(558,24))
+                        GH = str(goldencoins)
+                        if (len(GH) == 1):  GH = "0"+GH
+                        Window.blit(number_x2_white[int(GH[0])],(502,32))
+                        Window.blit(number_x2_white[int(GH[1])],(526,32))
+
                         Window.blit(morskaya_ohota_banner,( 32,208))
                         if (gamemenu_select == 1): Window.blit(morskaya_ohota_gamename_1,(28,178))
                         else: Window.blit(morskaya_ohota_gamename_2,(28,178))
@@ -914,9 +1039,9 @@ def update():
                         Window.blit(safary_banner,( 32,368))
                         if (gamemenu_select == 4): Window.blit(safary_gamename_1,(28,338))
                         else: Window.blit(safary_gamename_2,(28,338))
-                        Window.blit(comingsoon_banner,(240,368))
-                        if (gamemenu_select == 5): Window.blit(comingsoon_gamename_1,(236,338))
-                        else: Window.blit(comingsoon_gamename_2,(236,338))
+                        Window.blit(pamat_banner,(240,368))
+                        if (gamemenu_select == 5): Window.blit(pamat_gamename_1,(236,338))
+                        else: Window.blit(pamat_gamename_2,(236,338))
                         Window.blit(comingsoon_banner,(448,368))
                         if (gamemenu_select == 6): Window.blit(comingsoon_gamename_1,(444,338))
                         else: Window.blit(comingsoon_gamename_2,(444,338))                
@@ -988,6 +1113,8 @@ def update():
                 else:
                     if (morskaya_ohota_game_bool): morskaya_ohota_game_update()
                     elif (morskaya_ohota_prizegame_bool): morskaya_ohota_prizegame_update()
+                    
+                    if (gonky_game_bool): gonky_game_update()
                         
 
                     
@@ -1087,6 +1214,11 @@ while Run:
                                     gamemenu_bool = False
                                     game_select = "morskaya_ohota"
                                     mainmenu_select = 0
+                                if (gamemenu_select == 2):
+                                    gamemenu_bool = False
+                                    game_select = "gonky"
+                                    mainmenu_select = 0
+
 
                     elif (game_select != "none"):
                         if (event.key == pygame.K_UP or event.key == pygame.K_w):
@@ -1098,18 +1230,31 @@ while Run:
                                 game_select = "none"
                                 gamemenu_bool = True
                             if (game_select_button == 1):
-                                if (game_select == "morskaya_ohota"): morskaya_ohota_game_bool = True                 
+                                
+                                if (game_select == "morskaya_ohota"):
+                                    morskaya_ohota_game_bool = True
+                                    morskaya_ohota_var_pos = 640
+                                    morskaya_ohota_torpedos_left = 10
+                                    morskaya_ohota_time = 120
+                                    for i in range(10):
+                                        MO_PG_ships[i].clear()
+                                        MO_ships[i].clear()
+                                        MO_TWs[i].clear()
+                                    morskaya_ohota_R_bool = False
+                                    morskaya_ohota_L_bool = False
+
+                                if (game_select == "gonky"):
+                                    gonky_game_bool = True
+                                    gonky_R_bool = False
+                                    gonky_L_bool = False
+                                    gonky_F_bool = False
+                                    gonky_B_bool = False
+                                    
                                 game_select = "none"
                                 gamemenu_bool = False
                                 coinfalls_tick = 120
-                                morskaya_ohota_var_pos = 640
-                                morskaya_ohota_torpedos_left = 10
-                                morskaya_ohota_time = 120
-                                for i in range(10):
-                                    MO_PG_ships[i].clear()
-                                    MO_ships[i].clear()
-                                    MO_TWs[i].clear()
                                 game_select_button = 0
+                                
 
                     elif (morskaya_ohota_game_bool or morskaya_ohota_prizegame_bool):
                         if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): morskaya_ohota_R_bool = True
@@ -1118,6 +1263,12 @@ while Run:
                             if (morskaya_ohota_torpedos_left > 0):
                                 morskaya_ohota_torpedos_left -= 1
                                 MO_TWs[morskaya_ohota_torpedos_left].spawn(morskaya_ohota_var_pos)
+                                
+                    elif (gonky_game_bool):
+                        if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): gonky_R_bool = True
+                        if (event.key == pygame.K_LEFT or event.key == pygame.K_a): gonky_L_bool = True
+                        if (event.key == pygame.K_UP or event.key == pygame.K_w): gonky_F_bool = True
+                        if (event.key == pygame.K_DOWN or event.key == pygame.K_s): gonky_B_bool = True
                     
                     
 
@@ -1125,6 +1276,11 @@ while Run:
                 if (morskaya_ohota_game_bool or morskaya_ohota_prizegame_bool):
                     if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): morskaya_ohota_R_bool = False
                     if (event.key == pygame.K_LEFT or event.key == pygame.K_a): morskaya_ohota_L_bool = False
+                elif (gonky_game_bool):
+                    if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): gonky_R_bool = False
+                    if (event.key == pygame.K_LEFT or event.key == pygame.K_a): gonky_L_bool = False
+                    if (event.key == pygame.K_UP or event.key == pygame.K_w): gonky_F_bool = False
+                    if (event.key == pygame.K_DOWN or event.key == pygame.K_s): gonky_B_bool = False
                     
     if (chascecount(0.0025) and effect_4_tick == 0):
         effect_4_tick = 20
