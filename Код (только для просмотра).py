@@ -169,9 +169,24 @@ for i in range(60):
 goldcoin_get = pygame.image.load(dir_path+'/data/texture/goldcoin_get.png').convert(); goldcoin_get.set_colorkey((0,0,0))
 
 gonky_roadsegment = pygame.image.load(dir_path+'/data/texture/gonky_roadsegment.png').convert()
+gonky_info_finish = pygame.image.load(dir_path+'/data/texture/gonky_info_finish.png').convert()
+gonky_info_player_1_go = pygame.image.load(dir_path+'/data/texture/gonky_info_player_1_go.png').convert()
+gonky_info_timer_go = pygame.image.load(dir_path+'/data/texture/gonky_info_timer_go.png').convert()
 gonky_green_car = [0]*2
+gonky_brown_car = [0]*2
+gonky_grey_car = [0]*2
+gonky_red_car = [0]*2
+gonky_vio_car = [0]*2
 gonky_green_car[0] = pygame.image.load(dir_path+'/data/texture/gonky_green_car1.png').convert(); gonky_green_car[0].set_colorkey((255,255,255))
 gonky_green_car[1] = pygame.image.load(dir_path+'/data/texture/gonky_green_car2.png').convert(); gonky_green_car[1].set_colorkey((255,255,255))
+gonky_brown_car[0] = pygame.image.load(dir_path+'/data/texture/gonky_brown_car1.png').convert(); gonky_brown_car[0].set_colorkey((255,255,255))
+gonky_brown_car[1] = pygame.image.load(dir_path+'/data/texture/gonky_brown_car2.png').convert(); gonky_brown_car[1].set_colorkey((255,255,255))
+gonky_grey_car[0] = pygame.image.load(dir_path+'/data/texture/gonky_grey_car1.png').convert(); gonky_grey_car[0].set_colorkey((255,255,255))
+gonky_grey_car[1] = pygame.image.load(dir_path+'/data/texture/gonky_grey_car2.png').convert(); gonky_grey_car[1].set_colorkey((255,255,255))
+gonky_red_car[0] = pygame.image.load(dir_path+'/data/texture/gonky_red_car1.png').convert(); gonky_red_car[0].set_colorkey((255,255,255))
+gonky_red_car[1] = pygame.image.load(dir_path+'/data/texture/gonky_red_car2.png').convert(); gonky_red_car[1].set_colorkey((255,255,255))
+gonky_vio_car[0] = pygame.image.load(dir_path+'/data/texture/gonky_vio_car1.png').convert(); gonky_vio_car[0].set_colorkey((255,255,255))
+gonky_vio_car[1] = pygame.image.load(dir_path+'/data/texture/gonky_vio_car2.png').convert(); gonky_vio_car[1].set_colorkey((255,255,255))
 
 number_x2_white = [0]*10
 for i in range(10): number_x2_white[i] = pygame.image.load(dir_path+'/data/texture/number_x2_white_'+str(i)+'.png').convert(); number_x2_white[i].set_colorkey((0,0,0))
@@ -224,11 +239,14 @@ prizegame_timer = 0
 goldcoin_get_timer = 0
 morskaya_ohota_prizegame_bool = False
 gonky_game_bool = False
+gonky_prizegame_bool = False
 gonky_viev_pos = 0
 gonky_R_bool = False
 gonky_L_bool = False
 gonky_F_bool = False
 gonky_B_bool = False
+gonky_time = 0
+gonky_subtime = 0
 
 class CollisionBox():
     def __init__(self):
@@ -242,38 +260,83 @@ class CollisionBox():
         self.pos_y = y
         self.size_x = s_x
         self.size_y = s_y
-
+        
 def cheak_point(point_x,point_y,Box):
-    return ((point_x >= Box.pos_x and point_x <= Box.pos_x+size_x) and (point_y >= Box.pos_y and point_y <= Box.pos_y+size_y))
+    return ((point_x >= Box.pos_x and point_x <= Box.pos_x+Box.size_x) and (point_y >= Box.pos_y and point_y <= Box.pos_y+Box.size_y))
 
 def cheak_BoxC(Box1,Box2):
     return (((cheak_point(Box1.pos_x,Box1.pos_y,Box2)) or (cheak_point(Box2.pos_x,Box2.pos_y,Box1))) or
        ((cheak_point(Box1.pos_x,Box1.pos_y+Box2.size_y,Box2)) or (cheak_point(Box2.pos_x,Box2.pos_y+Box2.size_y,Box1))) or
        ((cheak_point(Box1.pos_x+Box1.size_x,Box1.pos_y,Box2)) or (cheak_point(Box2.pos_x+Box2.size_x,Box2.pos_y,Box1))) or
        ((cheak_point(Box1.pos_x+Box1.size_x,Box1.pos_y+Box2.size_y,Box2)) or (cheak_point(Box2.pos_x+Box2.size_x,Box2.pos_y+Box2.size_y,Box1))))
-    
+
+cartypes = ["brown","grey","red","vio","green","blue"]  
 class car():
     def __init__(self):
+        self.type = "None"
         self.pos_x = -1
         self.pos_y = -1
         self.speed = 0
         self.hitbox = CollisionBox()
         self.texture = None
         self.control = False
+        self.way = True
+        self.distract = 0
 
-    def update():
-        self.pos_y += self.speed
+    def spawn(self,cartype,under,way):
+        if (under): self.pos_y = 642 + int(not(way))*600
+        else: self.pos_y = -200 - int(not(way))*600
         
-cars_count = 1
-gonky_car = [0]*cars_count
+        if (cartype == "brown"):
+            self.speed = randint(200,600)/100
+            self.texture = gonky_brown_car
+            self.hitbox.define(0,0,36,58)
+        if (cartype == "grey"):
+            self.speed = randint(250,800)/100
+            self.texture = gonky_grey_car
+            self.hitbox.define(0,0,36,60)
+        if (cartype == "red"):
+            self.speed = randint(300,900)/100
+            self.texture = gonky_red_car
+            self.hitbox.define(0,0,36,64)
+        if (cartype == "vio"):
+            self.speed = randint(100,500)/100
+            self.texture = gonky_vio_car
+            self.hitbox.define(0,0,36,130)
+
+        if (way): self.speed = - self.speed
+        
+    def update(self):
+        self.pos_y += self.speed
+        if (self.pos_y > 642 + int(not(self.way))*600): self.spawn(cartypes[randint(0,3)],False,self.way)
+        if (self.pos_y <-200 - int(not(self.way))*600): self.spawn(cartypes[randint(0,3)],True,self.way)
+        
+gonky_cars_count = 11
+gonky_car = [0]*gonky_cars_count
 
 gonky_car[0] = car()
+gonky_car[0].type = "green"
 gonky_car[0].control = True
 gonky_car[0].pos_x = 340
 gonky_car[0].pos_y = -1
-gonky_car[0].speed = 0
+gonky_car[0].speed = 5
 gonky_car[0].texture = gonky_green_car
 gonky_car[0].hitbox.define(0,0,36,64)
+gonky_car[0].way = True
+
+for i in range(5):
+    gonky_car[i+1] = car()
+    gonky_car[i+1].control = False
+    gonky_car[i+1].pos_y = -999
+    gonky_car[i+1].pos_x = 332+52*i
+
+for i in range(5):
+    gonky_car[i+6] = car()
+    gonky_car[i+6].control = False
+    gonky_car[i+6].way = False
+    gonky_car[i+6].pos_y = -999
+    gonky_car[i+6].pos_x = 64+52*i
+
     
 class MO_TW():
     def __init__(self):
@@ -713,23 +776,154 @@ def game_select_update(select):
         text_print("  получить золотую монету.",1,32,318)
 
 def gonky_game_update():
-    global gonky_viev_pos, gonky_R_bool, gonky_L_bool, gonky_F_bool, gonky_B_bool
+    global gonky_viev_pos, gonky_R_bool, gonky_L_bool, gonky_F_bool, gonky_B_bool, gonky_time, gonky_subtime, gonky_prizegame_bool, gonky_game_bool, prizegame_timer, blackscreen_timer,gamemenu_bool
     
     Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480) + int(gonky_viev_pos%2 == 1)))
     Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480)-480 + int(gonky_viev_pos%2 == 1)))
 
-    for i in range(cars_count):
-        if (gonky_car[i].control):
-            gonky_viev_pos += gonky_car[i].speed
+    Window.blit(gonky_info_finish,(612,30))
+    Window.blit(gonky_info_player_1_go,(614,442))
+    Window.blit(gonky_info_timer_go,(628,442))
 
-            if (gonky_F_bool): gonky_car[i].speed += 0.25
-            if (gonky_B_bool): gonky_car[i].speed -= 0.25
-            if (gonky_R_bool): gonky_car[i].pos_x += 2
-            if (gonky_L_bool): gonky_car[i].pos_x -= 2
+    if (round(gonky_viev_pos/1080) > 50):
+        gonky_game_bool = False
+        gonky_prizegame_bool = True
+        prizegame_timer = 240
+        gonky_viev_pos = 0
+        gonky_time = 120
+        gonky_car[0].type = "green"
+        gonky_car[0].control = True
+        gonky_car[0].pos_x = 340
+        gonky_car[0].pos_y = -1
+        gonky_car[0].speed = 5
+        gonky_car[0].texture = gonky_green_car
+        gonky_car[0].hitbox.define(0,0,36,64)
+        gonky_car[0].way = True
+
+    elif (round((120-gonky_time)/240*100) > 50):
+        gonky_game_bool = False
+        gamemenu_bool = True
+        blackscreen_timer = 120
+
+    for i in range(round(gonky_viev_pos/1080)):
+        Window.blit(gonky_info_player_1_go,(614,442-((i+1)*8)))
+
+    for i in range(round((120-gonky_time)/240*100)):
+        Window.blit(gonky_info_timer_go,(628,442-((i+1)*8)))       
+
+
+
+    gonky_viev_pos += gonky_car[0].speed
+
+    if (gonky_car[0].distract == 0 and gonky_F_bool): gonky_car[0].speed += 0.0625
+    if (gonky_B_bool): gonky_car[0].speed -= 0.0625
+
+    if (gonky_car[0].speed < 0): gonky_car[0].speed = 0
+    if (gonky_car[0].speed > 12): gonky_car[0].speed = 12
+
+    if (gonky_R_bool and gonky_car[0].speed != 0): gonky_car[0].pos_x += 2
+    if (gonky_L_bool and gonky_car[0].speed != 0): gonky_car[0].pos_x -= 2
+
+    if (gonky_car[0].pos_x < 38): gonky_car[0].pos_x = 38
+    if (gonky_car[0].pos_x > 566): gonky_car[0].pos_x = 566
+
+    if (gonky_car[0].distract > 0): gonky_car[0].distract -= 1
             
-            Window.blit(gonky_car[i].texture[0],(gonky_car[i].pos_x,374))
+    if ((gonky_car[0].distract/2)%2 == 0):Window.blit(gonky_car[0].texture[int(gonky_B_bool or gonky_car[0].speed == 0)],(gonky_car[0].pos_x,374))
 
+    Boxs = CollisionBox()
+    Boxt = CollisionBox()
+        
+    Boxs.define(gonky_car[0].pos_x,374,gonky_car[0].hitbox.size_x,gonky_car[0].hitbox.size_y)
+            
+    for i in range(1,gonky_cars_count,1):
+        if (gonky_car[i].hitbox.size_y > 64): S = gonky_car[i].hitbox.size_y-64
+        else: S = 0
+        Boxt.define(gonky_car[i].pos_x,gonky_car[i].pos_y+S,gonky_car[i].hitbox.size_x,gonky_car[i].hitbox.size_y)
+        if (gonky_car[0].distract == 0 and cheak_BoxC(Boxs,Boxt)):
+            gonky_car[0].distract = 60
+            gonky_car[0].speed = round((gonky_car[0].speed*0.25)*16)/16
+            
+        gonky_car[i].update()
+        gonky_car[i].pos_y += gonky_car[0].speed
+            
+        Window.blit(gonky_car[i].texture[not(gonky_car[i].way)],(gonky_car[i].pos_x,round(gonky_car[i].pos_y)+int(round(gonky_car[i].pos_y)%2 == 1)))       
+
+    gonky_subtime += 1
+    if (gonky_subtime >= 59):
+        gonky_subtime = 0
+        gonky_time -= 1
+
+def gonky_prizegame_update():
+    global gonky_viev_pos, gonky_R_bool, gonky_L_bool, gonky_F_bool, gonky_B_bool, gonky_time, gonky_subtime, gonky_prizegame_bool, gonky_game_bool, prizegame_timer, blackscreen_timer, goldcoin_get_timer,gamemenu_bool
     
+    Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480) + int(gonky_viev_pos%2 == 1)))
+    Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480)-480 + int(gonky_viev_pos%2 == 1)))
+
+    Window.blit(gonky_info_finish,(612,30))
+    Window.blit(gonky_info_player_1_go,(614,442))
+    Window.blit(gonky_info_timer_go,(628,442))
+
+    if (round(gonky_viev_pos/1080) > 50):
+        gamemenu_bool = True
+        gonky_prizegame_bool = False
+        goldencoins += 1
+        progress_output()
+        goldcoin_get_timer = 240
+        
+    elif (round((120-gonky_time)/240*100) > 50):
+        gamemenu_bool = True
+        gonky_prizegame_bool = False
+        blackscreen_timer = 120
+
+    for i in range(round(gonky_viev_pos/1080)):
+        Window.blit(gonky_info_player_1_go,(614,442-((i+1)*8)))
+
+    for i in range(round((120-gonky_time)/240*100)):
+        Window.blit(gonky_info_timer_go,(628,442-((i+1)*8)))       
+
+
+
+    gonky_viev_pos += gonky_car[0].speed
+
+    if (gonky_car[0].distract == 0 and gonky_F_bool): gonky_car[0].speed += 0.0625
+    if (gonky_B_bool): gonky_car[0].speed -= 0.0625
+
+    if (gonky_car[0].speed < 0): gonky_car[0].speed = 0
+    if (gonky_car[0].speed > 12): gonky_car[0].speed = 12
+
+    if (gonky_R_bool and gonky_car[0].speed != 0): gonky_car[0].pos_x += 2
+    if (gonky_L_bool and gonky_car[0].speed != 0): gonky_car[0].pos_x -= 2
+
+    if (gonky_car[0].pos_x < 38): gonky_car[0].pos_x = 38
+    if (gonky_car[0].pos_x > 566): gonky_car[0].pos_x = 566
+
+    if (gonky_car[0].distract > 0): gonky_car[0].distract -= 1
+            
+    if ((gonky_car[0].distract/2)%2 == 0):Window.blit(gonky_car[0].texture[int(gonky_B_bool or gonky_car[0].speed == 0)],(gonky_car[0].pos_x,374))
+
+    Boxs = CollisionBox()
+    Boxt = CollisionBox()
+        
+    Boxs.define(gonky_car[0].pos_x,374,gonky_car[0].hitbox.size_x,gonky_car[0].hitbox.size_y)
+            
+    for i in range(1,gonky_cars_count,1):
+        if (gonky_car[i].hitbox.size_y > 64): S = gonky_car[i].hitbox.size_y-64
+        else: S = 0
+        Boxt.define(gonky_car[i].pos_x,gonky_car[i].pos_y+S,gonky_car[i].hitbox.size_x,gonky_car[i].hitbox.size_y)
+        if (gonky_car[0].distract == 0 and cheak_BoxC(Boxs,Boxt)):
+            gonky_car[0].distract = 90
+            gonky_car[0].speed = round((gonky_car[0].speed*0.20)*16)/16
+            
+        gonky_car[i].update()
+        gonky_car[i].pos_y += gonky_car[0].speed
+            
+        Window.blit(gonky_car[i].texture[not(gonky_car[i].way)],(gonky_car[i].pos_x,round(gonky_car[i].pos_y)+int(round(gonky_car[i].pos_y)%2 == 1)))       
+
+    gonky_subtime += 1
+    if (gonky_subtime >= 59):
+        gonky_subtime = 0
+        gonky_time -= 1
 
 def morskaya_ohota_game_update():
     global morskaya_ohota_var_pos, morskaya_ohota_borders_subtick, morskaya_ohota_borders_tick,morskaya_ohota_hit_bool, morskaya_ohota_hit_tick, morskaya_ohota_hit_ship, morskaya_ohota_hit_pos
@@ -1115,6 +1309,7 @@ def update():
                     elif (morskaya_ohota_prizegame_bool): morskaya_ohota_prizegame_update()
                     
                     if (gonky_game_bool): gonky_game_update()
+                    elif (gonky_prizegame_bool): gonky_prizegame_update()
                         
 
                     
@@ -1249,6 +1444,28 @@ while Run:
                                     gonky_L_bool = False
                                     gonky_F_bool = False
                                     gonky_B_bool = False
+                                    gonky_time = 120
+
+                                    gonky_viev_pos = 0
+                                    gonky_car[0].type = "green"
+                                    gonky_car[0].control = True
+                                    gonky_car[0].pos_x = 340
+                                    gonky_car[0].pos_y = -1
+                                    gonky_car[0].speed = 5
+                                    gonky_car[0].texture = gonky_green_car
+                                    gonky_car[0].hitbox.define(0,0,36,64)
+                                    gonky_car[0].way = True
+
+                                    for i in range(5):
+                                        gonky_car[i+1].control = False
+                                        gonky_car[i+1].pos_y = -999
+                                        gonky_car[i+1].pos_x = 332+52*i
+
+                                    for i in range(5):
+                                        gonky_car[i+6].control = False
+                                        gonky_car[i+6].way = False
+                                        gonky_car[i+6].pos_y = -999
+                                        gonky_car[i+6].pos_x = 64+52*i
                                     
                                 game_select = "none"
                                 gamemenu_bool = False
@@ -1276,7 +1493,7 @@ while Run:
                 if (morskaya_ohota_game_bool or morskaya_ohota_prizegame_bool):
                     if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): morskaya_ohota_R_bool = False
                     if (event.key == pygame.K_LEFT or event.key == pygame.K_a): morskaya_ohota_L_bool = False
-                elif (gonky_game_bool):
+                elif (gonky_game_bool or gonky_prizegame_bool):
                     if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): gonky_R_bool = False
                     if (event.key == pygame.K_LEFT or event.key == pygame.K_a): gonky_L_bool = False
                     if (event.key == pygame.K_UP or event.key == pygame.K_w): gonky_F_bool = False
