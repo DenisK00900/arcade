@@ -785,7 +785,8 @@ def gonky_game_update():
     Window.blit(gonky_info_player_1_go,(614,442))
     Window.blit(gonky_info_timer_go,(628,442))
 
-    if (round(gonky_viev_pos/1080) > 50):
+    if (round(gonky_viev_pos/1000) > 50):
+        gonky_car[0].distract = 0
         gonky_game_bool = False
         gonky_prizegame_bool = True
         prizegame_timer = 240
@@ -795,7 +796,7 @@ def gonky_game_update():
         gonky_car[0].control = True
         gonky_car[0].pos_x = 340
         gonky_car[0].pos_y = -1
-        gonky_car[0].speed = 5
+        gonky_car[0].speed = 6
         gonky_car[0].texture = gonky_green_car
         gonky_car[0].hitbox.define(0,0,36,64)
         gonky_car[0].way = True
@@ -805,7 +806,7 @@ def gonky_game_update():
         gamemenu_bool = True
         blackscreen_timer = 120
 
-    for i in range(round(gonky_viev_pos/1080)):
+    for i in range(round(gonky_viev_pos/1000)):
         Window.blit(gonky_info_player_1_go,(614,442-((i+1)*8)))
 
     for i in range(round((120-gonky_time)/240*100)):
@@ -855,7 +856,7 @@ def gonky_game_update():
         gonky_time -= 1
 
 def gonky_prizegame_update():
-    global gonky_viev_pos, gonky_R_bool, gonky_L_bool, gonky_F_bool, gonky_B_bool, gonky_time, gonky_subtime, gonky_prizegame_bool, gonky_game_bool, prizegame_timer, blackscreen_timer, goldcoin_get_timer,gamemenu_bool
+    global gonky_viev_pos, gonky_R_bool, gonky_L_bool, gonky_F_bool, gonky_B_bool, gonky_time, gonky_subtime, gonky_prizegame_bool, gonky_game_bool, prizegame_timer, blackscreen_timer, goldcoin_get_timer,gamemenu_bool, goldencoins
     
     Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480) + int(gonky_viev_pos%2 == 1)))
     Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480)-480 + int(gonky_viev_pos%2 == 1)))
@@ -864,7 +865,7 @@ def gonky_prizegame_update():
     Window.blit(gonky_info_player_1_go,(614,442))
     Window.blit(gonky_info_timer_go,(628,442))
 
-    if (round(gonky_viev_pos/1080) > 50):
+    if (round(gonky_viev_pos/1000) > 50):
         gamemenu_bool = True
         gonky_prizegame_bool = False
         goldencoins += 1
@@ -876,7 +877,7 @@ def gonky_prizegame_update():
         gonky_prizegame_bool = False
         blackscreen_timer = 120
 
-    for i in range(round(gonky_viev_pos/1080)):
+    for i in range(round(gonky_viev_pos/1000)):
         Window.blit(gonky_info_player_1_go,(614,442-((i+1)*8)))
 
     for i in range(round((120-gonky_time)/240*100)):
@@ -1447,6 +1448,7 @@ while Run:
                                     gonky_time = 120
 
                                     gonky_viev_pos = 0
+                                    gonky_car[0].distract = 0
                                     gonky_car[0].type = "green"
                                     gonky_car[0].control = True
                                     gonky_car[0].pos_x = 340
@@ -1481,7 +1483,7 @@ while Run:
                                 morskaya_ohota_torpedos_left -= 1
                                 MO_TWs[morskaya_ohota_torpedos_left].spawn(morskaya_ohota_var_pos)
                                 
-                    elif (gonky_game_bool):
+                    elif (gonky_game_bool or gonky_prizegame_bool):
                         if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): gonky_R_bool = True
                         if (event.key == pygame.K_LEFT or event.key == pygame.K_a): gonky_L_bool = True
                         if (event.key == pygame.K_UP or event.key == pygame.K_w): gonky_F_bool = True
