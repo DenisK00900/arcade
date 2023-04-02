@@ -4,6 +4,9 @@ import time
 import pathlib
 from pathlib import Path
 from random import randint
+import numpy as np
+import sys
+import cv2
 
 directiry = pathlib.Path.cwd()
 dir_path = str(directiry)
@@ -173,12 +176,15 @@ gonky_info_finish = pygame.image.load(dir_path+'/data/texture/gonky_info_finish.
 gonky_info_player_1_go = pygame.image.load(dir_path+'/data/texture/gonky_info_player_1_go.png').convert()
 gonky_info_timer_go = pygame.image.load(dir_path+'/data/texture/gonky_info_timer_go.png').convert()
 gonky_green_car = [0]*2
+gonky_blue_car = [0]*2
 gonky_brown_car = [0]*2
 gonky_grey_car = [0]*2
 gonky_red_car = [0]*2
 gonky_vio_car = [0]*2
 gonky_green_car[0] = pygame.image.load(dir_path+'/data/texture/gonky_green_car1.png').convert(); gonky_green_car[0].set_colorkey((255,255,255))
 gonky_green_car[1] = pygame.image.load(dir_path+'/data/texture/gonky_green_car2.png').convert(); gonky_green_car[1].set_colorkey((255,255,255))
+gonky_blue_car[0] = pygame.image.load(dir_path+'/data/texture/gonky_blue_car1.png').convert(); gonky_blue_car[0].set_colorkey((255,255,255))
+gonky_blue_car[1] = pygame.image.load(dir_path+'/data/texture/gonky_blue_car2.png').convert(); gonky_blue_car[1].set_colorkey((255,255,255))
 gonky_brown_car[0] = pygame.image.load(dir_path+'/data/texture/gonky_brown_car1.png').convert(); gonky_brown_car[0].set_colorkey((255,255,255))
 gonky_brown_car[1] = pygame.image.load(dir_path+'/data/texture/gonky_brown_car2.png').convert(); gonky_brown_car[1].set_colorkey((255,255,255))
 gonky_grey_car[0] = pygame.image.load(dir_path+'/data/texture/gonky_grey_car1.png').convert(); gonky_grey_car[0].set_colorkey((255,255,255))
@@ -196,11 +202,13 @@ pamat_banner = pygame.image.load(dir_path+'/data/texture/pamat_banner.png').conv
 pamat_gamename_1 = pygame.image.load(dir_path+'/data/texture/pamat_gamename_1.png').convert()
 pamat_gamename_2 = pygame.image.load(dir_path+'/data/texture/pamat_gamename_2.png').convert()
 
+gonky_II_roadsegment = pygame.image.load(dir_path+'/data/texture/gonky_II_roadsegment.png').convert()
+
 text=[]
-for i in range(46):
+for i in range(77):
     text.append([0]*2)
 
-for i in range(46):
+for i in range(77):
     text[i][0] = pygame.image.load(dir_path+'/data/texture/text/grey/LT'+str(i+1)+'.png').convert(); (text[i][0]).set_colorkey((0,0,0))
     text[i][1] = pygame.image.load(dir_path+'/data/texture/text/white/LT'+str(i+1)+'.png').convert(); (text[i][1]).set_colorkey((0,0,0))
     
@@ -247,6 +255,10 @@ gonky_F_bool = False
 gonky_B_bool = False
 gonky_time = 0
 gonky_subtime = 0
+effect_6_tick = 0
+gonky_II_game_bool = False
+gonky_II_player1_viev_pos = 0
+gonky_II_player2_viev_pos = 0
 
 class CollisionBox():
     def __init__(self):
@@ -288,19 +300,19 @@ class car():
         else: self.pos_y = -200 - int(not(way))*600
         
         if (cartype == "brown"):
-            self.speed = randint(200,600)/100
+            self.speed = randint(300-100*int(gonky_prizegame_bool),500+50*int(gonky_prizegame_bool))/100
             self.texture = gonky_brown_car
             self.hitbox.define(0,0,36,58)
         if (cartype == "grey"):
-            self.speed = randint(250,800)/100
+            self.speed = randint(350-100*int(gonky_prizegame_bool),700+50*int(gonky_prizegame_bool))/100
             self.texture = gonky_grey_car
             self.hitbox.define(0,0,36,60)
         if (cartype == "red"):
-            self.speed = randint(300,900)/100
+            self.speed = randint(400-100*int(gonky_prizegame_bool),800+50*int(gonky_prizegame_bool))/100
             self.texture = gonky_red_car
             self.hitbox.define(0,0,36,64)
         if (cartype == "vio"):
-            self.speed = randint(100,500)/100
+            self.speed = randint(200-100*int(gonky_prizegame_bool),400+50*int(gonky_prizegame_bool))/100
             self.texture = gonky_vio_car
             self.hitbox.define(0,0,36,130)
 
@@ -337,6 +349,28 @@ for i in range(5):
     gonky_car[i+6].pos_y = -999
     gonky_car[i+6].pos_x = 64+52*i
 
+gonky_II_cars_count = 10
+gonky_II_car = [0]*gonky_II_cars_count
+
+gonky_II_car[0] = car()
+gonky_II_car[0].type = "green"
+gonky_II_car[0].control = True
+gonky_II_car[0].pos_x = 168
+gonky_II_car[0].pos_y = -1
+gonky_II_car[0].speed = 5
+gonky_II_car[0].texture = gonky_green_car
+gonky_II_car[0].hitbox.define(0,0,36,64)
+gonky_II_car[0].way = True
+
+gonky_II_car[1] = car()
+gonky_II_car[1].type = "blue"
+gonky_II_car[1].control = True
+gonky_II_car[1].pos_x = 488
+gonky_II_car[1].pos_y = -1
+gonky_II_car[1].speed = 5
+gonky_II_car[1].texture = gonky_blue_car
+gonky_II_car[1].hitbox.define(0,0,36,64)
+gonky_II_car[1].way = True
     
 class MO_TW():
     def __init__(self):
@@ -507,6 +541,20 @@ def take_screen(topleft, bottomright):
     img.blit(Window, (0, 0), (topleft, size))
     return img
 
+def rot_center(image, rect, angle): #Функция поворота
+        rot_image = pygame.transform.rotate(image, angle)
+        rot_rect = rot_image.get_rect(center=rect.center)
+        return rot_image,rot_rect
+
+def changColor(image, color): #Функция, меняющая цвет
+    colouredImage = pygame.Surface(image.get_size())
+    colouredImage.fill(color)
+    
+    finalImage = image.copy()
+    finalImage.blit(colouredImage, (0, 0), special_flags = pygame.BLEND_MULT)
+    return finalImage
+
+
 def text_print(S,l,x,y):
     S = S.lower()
     for C in S:
@@ -561,6 +609,37 @@ def text_print(S,l,x,y):
             elif (C == "9"): Window.blit(text[41][l],(x,y))                   
             elif (C == "0"): Window.blit(text[42][l],(x,y))
             elif (C == "-"): Window.blit(text[43][l],(x,y))
+            elif (C == "a"): Window.blit(text[46][l],(x,y))
+            elif (C == "b"): Window.blit(text[47][l],(x,y))
+            elif (C == "c"): Window.blit(text[48][l],(x,y))            
+            elif (C == "d"): Window.blit(text[49][l],(x,y))
+            elif (C == "e"): Window.blit(text[50][l],(x,y))
+            elif (C == "f"): Window.blit(text[51][l],(x,y))                   
+            elif (C == "g"): Window.blit(text[52][l],(x,y))
+            elif (C == "h"): Window.blit(text[53][l],(x,y))
+            elif (C == "i"): Window.blit(text[54][l],(x,y))            
+            elif (C == "j"): Window.blit(text[55][l],(x,y))
+            elif (C == "k"): Window.blit(text[56][l],(x,y))
+            elif (C == "l"): Window.blit(text[57][l],(x,y))             
+            elif (C == "m"): Window.blit(text[58][l],(x,y))
+            elif (C == "n"): Window.blit(text[59][l],(x,y))
+            elif (C == "o"): Window.blit(text[60][l],(x,y))            
+            elif (C == "p"): Window.blit(text[61][l],(x,y))
+            elif (C == "q"): Window.blit(text[62][l],(x,y))
+            elif (C == "r"): Window.blit(text[63][l],(x,y))                   
+            elif (C == "s"): Window.blit(text[64][l],(x,y))
+            elif (C == "t"): Window.blit(text[65][l],(x,y))                   
+            elif (C == "u"): Window.blit(text[66][l],(x,y))
+            elif (C == "v"): Window.blit(text[67][l],(x,y))
+            elif (C == "w"): Window.blit(text[68][l],(x,y))            
+            elif (C == "x"): Window.blit(text[69][l],(x,y))
+            elif (C == "y"): Window.blit(text[70][l],(x,y))
+            elif (C == "z"): Window.blit(text[71][l],(x,y))
+            elif (C == "+"): Window.blit(text[72][l],(x,y))
+            elif (C == "-"): Window.blit(text[73][l],(x,y))            
+            elif (C == "*"): Window.blit(text[74][l],(x,y))
+            elif (C == "%"): Window.blit(text[75][l],(x,y))
+            elif (C == "="): Window.blit(text[76][l],(x,y))            
             x += 12
             
             
@@ -598,6 +677,47 @@ def effect_4(tick,pos):
     Window.blit(a52,(0,pos+8))
     Window.blit(a62,(0,pos+10))
     Window.blit(a72,(0,pos+12))
+
+def effect_5():
+
+    if (1):
+
+        src = pygame.surfarray.array3d(Window)
+    
+        h, w = src.shape[0:2]
+     
+        intrinsics = np.zeros((3, 3), np.float64)
+     
+        intrinsics[0, 0] = 5000
+        intrinsics[1, 1] = 5000
+        intrinsics[2, 2] = 1.0
+        intrinsics[0, 2] = w/2.
+        intrinsics[1, 2] = h/2.
+     
+        newCamMtx = np.zeros((3, 3), np.float64)
+        newCamMtx[0, 0] = 5000
+        newCamMtx[1, 1] = 5000
+        newCamMtx[2, 2] = 1.0
+        newCamMtx[0, 2] = w/2.
+        newCamMtx[1, 2] = h/2.
+     
+        dist_coeffs = np.zeros((1, 4), np.float64)
+        dist_coeffs[0, 0] = 30.0
+        dist_coeffs[0, 1] = 0
+        dist_coeffs[0, 2] = 0
+        dist_coeffs[0, 3] = 0
+     
+        map1, map2 = cv2.initUndistortRectifyMap(intrinsics, dist_coeffs, None, newCamMtx, [src.shape[1],src.shape[0]], cv2.CV_16SC2)
+        
+        if (effect_6_tick > 0):
+            res = cv2.cvtColor(src, cv2.COLOR_BGR2HSV )
+            res = cv2.remap(res, map1, map2, cv2.INTER_LINEAR)
+        else:
+            res = cv2.remap(src, map1, map2, cv2.INTER_LINEAR)
+        
+        
+        pygame.pixelcopy.array_to_surface(Window,res)
+
     
 def gamemenu_map(x,d):
     if (d == 1):
@@ -772,8 +892,34 @@ def game_select_update(select):
         text_print("- Доберитесь до финиша,",1,32,214)
         text_print("  чтобы получить призовую игру.",1,32,240)
         text_print("- Доберитесь до финиша в",1,32,266)        
-        text_print("  призовой игре, чтоьы",1,32,292)
+        text_print("  призовой игре, чтобы",1,32,292)
         text_print("  получить золотую монету.",1,32,318)
+
+    if (game_select == "gonky_II"):
+        text_print("Гонки II",1,32,32)
+        text_print("- Игра для двоих игроков,",1,32,84)
+        text_print("  используйте WASD + Q и",1,32,110)
+        text_print("  стрелочки + правый CTRL.",1,32,136)
+        text_print("- Доберитесь до финиша как",1,32,162)
+        text_print("  можно быстрее.",1,32,188)
+        text_print("- Столкновения с другими",1,32,214)
+        text_print("  машинами замедляют вас.",1,32,240)
+        text_print("- время игры - 2 минуты.",1,32,266)      
+        text_print("- По истечении времени",1,32,292)
+        text_print("  игрок с большей дистанцией",1,32,318)
+        text_print("  побеждает.",1,32,344)        
+        text_print("- В этой игре нельзя",1,32,370)
+        text_print("  получить золотую монету.",1,32,396)
+
+def gonky_II_game_update():
+
+
+    
+    Window.blit(gonky_II_roadsegment,(0,int(gonky_II_player1_viev_pos%480) + int(gonky_II_player1_viev_pos%2 == 1)))
+    Window.blit(gonky_II_roadsegment,(320,int(gonky_II_player2_viev_pos%480) + int(gonky_II_player2_viev_pos%2 == 1)))
+
+    Window.blit(gonky_II_car[0].texture[0],(gonky_II_car[0].pos_x,374))
+    Window.blit(gonky_II_car[1].texture[0],(gonky_II_car[1].pos_x,374))
 
 def gonky_game_update():
     global gonky_viev_pos, gonky_R_bool, gonky_L_bool, gonky_F_bool, gonky_B_bool, gonky_time, gonky_subtime, gonky_prizegame_bool, gonky_game_bool, prizegame_timer, blackscreen_timer,gamemenu_bool
@@ -781,9 +927,9 @@ def gonky_game_update():
     Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480) + int(gonky_viev_pos%2 == 1)))
     Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480)-480 + int(gonky_viev_pos%2 == 1)))
 
-    Window.blit(gonky_info_finish,(612,30))
     Window.blit(gonky_info_player_1_go,(614,442))
     Window.blit(gonky_info_timer_go,(628,442))
+    Window.blit(gonky_info_finish,(612,30))
 
     if (round(gonky_viev_pos/1000) > 50):
         gonky_car[0].distract = 0
@@ -861,9 +1007,9 @@ def gonky_prizegame_update():
     Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480) + int(gonky_viev_pos%2 == 1)))
     Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480)-480 + int(gonky_viev_pos%2 == 1)))
 
-    Window.blit(gonky_info_finish,(612,30))
     Window.blit(gonky_info_player_1_go,(614,442))
     Window.blit(gonky_info_timer_go,(628,442))
+    Window.blit(gonky_info_finish,(612,30))
 
     if (round(gonky_viev_pos/1000) > 50):
         gamemenu_bool = True
@@ -1153,7 +1299,7 @@ def morskaya_ohota_prizegame_update():
         for i in range(10-morskaya_ohota_torpedos_left): Window.blit(morskaya_ohota_torpedo_used,(212+16*(9-i),394))
         
 def update():
-    global effect_2_tick, effect_4_tick, coinfalls_tick,blackscreen_timer, prizegame_timer, goldcoin_get_timer
+    global effect_2_tick, effect_4_tick, coinfalls_tick,blackscreen_timer, prizegame_timer, goldcoin_get_timer, effect_6_tick
     
     Window.fill((0,0,0))
 
@@ -1311,6 +1457,8 @@ def update():
                     
                     if (gonky_game_bool): gonky_game_update()
                     elif (gonky_prizegame_bool): gonky_prizegame_update()
+
+                    if (gonky_II_game_bool): gonky_II_game_update()
                         
 
                     
@@ -1343,6 +1491,13 @@ def update():
     if (effect_4_tick > 0) :
             effect_4(effect_4_tick,effect_4_pos)
             effect_4_tick -= 1
+
+    if (effect_6_tick > 0):
+        effect_6_tick -= 1
+        if (effect_6_tick == 0):
+            Window.blit(blackscreen,(0,0))
+
+    effect_5()
     
 Run = True
 while Run:
@@ -1353,6 +1508,9 @@ while Run:
         if event.type == pygame.QUIT: Run = False 
         if (event.type == pygame.KEYDOWN):
             if (event.key == pygame.K_ESCAPE): Run = False
+            if (loadtick < 420 and (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL)):
+                loadtick = 419
+                mainmenu_bool = True
 
             if (loadtick >= 420):
 
@@ -1363,7 +1521,7 @@ while Run:
                             if (mainmenu_select > 1): mainmenu_select -= 1
                         if (event.key == pygame.K_DOWN or event.key == pygame.K_s):
                             if (mainmenu_select < 3): mainmenu_select += 1
-                        if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN):
+                        if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
                             if (mainmenu_select == 1):
                                 mainmenu_bool = False
                                 gamemenu_bool = True
@@ -1381,7 +1539,7 @@ while Run:
                         if (event.key == pygame.K_DOWN or event.key == pygame.K_s):
                             if (settmenu_select < 1): settmenu_select += 1
                             
-                        if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN):
+                        if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
                                 if (settmenu_select == 0):
                                     settmenu_bool = False
                                     mainmenu_bool = True
@@ -1401,7 +1559,7 @@ while Run:
                         elif (gamemenu_select >= 7 and gamemenu_select <= 15): gamemenu_razdel = 1
                         elif (gamemenu_select >= 16 and gamemenu_select <= 21): gamemenu_razdel = 2
                             
-                        if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN):
+                        if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
                                 if (gamemenu_select == 0):
                                     gamemenu_bool = False
                                     mainmenu_bool = True
@@ -1414,6 +1572,10 @@ while Run:
                                     gamemenu_bool = False
                                     game_select = "gonky"
                                     mainmenu_select = 0
+                                if (gamemenu_select == 3):
+                                    gamemenu_bool = False
+                                    game_select = "gonky_II"
+                                    mainmenu_select = 0                                
 
 
                     elif (game_select != "none"):
@@ -1421,7 +1583,7 @@ while Run:
                             if (game_select_button > 0): game_select_button -= 1
                         if (event.key == pygame.K_DOWN or event.key == pygame.K_s):
                             if (game_select_button < 1): game_select_button += 1
-                        if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN):
+                        if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
                             if (game_select_button == 0):
                                 game_select = "none"
                                 gamemenu_bool = True
@@ -1468,6 +1630,9 @@ while Run:
                                         gonky_car[i+6].way = False
                                         gonky_car[i+6].pos_y = -999
                                         gonky_car[i+6].pos_x = 64+52*i
+
+                                if (game_select == "gonky_II"):
+                                    gonky_II_game_bool = True
                                     
                                 game_select = "none"
                                 gamemenu_bool = False
@@ -1478,7 +1643,7 @@ while Run:
                     elif (morskaya_ohota_game_bool or morskaya_ohota_prizegame_bool):
                         if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): morskaya_ohota_R_bool = True
                         if (event.key == pygame.K_LEFT or event.key == pygame.K_a): morskaya_ohota_L_bool = True
-                        if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN):
+                        if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
                             if (morskaya_ohota_torpedos_left > 0):
                                 morskaya_ohota_torpedos_left -= 1
                                 MO_TWs[morskaya_ohota_torpedos_left].spawn(morskaya_ohota_var_pos)
@@ -1504,6 +1669,9 @@ while Run:
     if (chascecount(0.0025) and effect_4_tick == 0):
         effect_4_tick = 20
         effect_4_pos = randint(0,234)*2
+
+    if (chascecount(0.0003) and effect_6_tick == 0):
+        effect_6_tick = randint(12,48)
 
     if (loadtick < 420):
         loadtick += 1
