@@ -171,9 +171,13 @@ for i in range(60):
 
 goldcoin_get = pygame.image.load(dir_path+'/data/texture/goldcoin_get.png').convert(); goldcoin_get.set_colorkey((0,0,0))
 
+wins_player1 = pygame.image.load(dir_path+'/data/texture/wins_player1.png').convert(); wins_player1.set_colorkey((0,0,0))
+wins_player2 = pygame.image.load(dir_path+'/data/texture/wins_player2.png').convert(); wins_player2.set_colorkey((0,0,0))
+
 gonky_roadsegment = pygame.image.load(dir_path+'/data/texture/gonky_roadsegment.png').convert()
 gonky_info_finish = pygame.image.load(dir_path+'/data/texture/gonky_info_finish.png').convert()
 gonky_info_player_1_go = pygame.image.load(dir_path+'/data/texture/gonky_info_player_1_go.png').convert()
+gonky_info_player_2_go = pygame.image.load(dir_path+'/data/texture/gonky_info_player_2_go.png').convert()
 gonky_info_timer_go = pygame.image.load(dir_path+'/data/texture/gonky_info_timer_go.png').convert()
 gonky_green_car = [0]*2
 gonky_blue_car = [0]*2
@@ -203,6 +207,7 @@ pamat_gamename_1 = pygame.image.load(dir_path+'/data/texture/pamat_gamename_1.pn
 pamat_gamename_2 = pygame.image.load(dir_path+'/data/texture/pamat_gamename_2.png').convert()
 
 gonky_II_roadsegment = pygame.image.load(dir_path+'/data/texture/gonky_II_roadsegment.png').convert()
+gonky_II_info_finish = pygame.image.load(dir_path+'/data/texture/gonky_II_info_finish.png').convert()
 
 text=[]
 for i in range(77):
@@ -259,6 +264,18 @@ effect_6_tick = 0
 gonky_II_game_bool = False
 gonky_II_player1_viev_pos = 0
 gonky_II_player2_viev_pos = 0
+gonky_II_R1_bool = False
+gonky_II_L1_bool = False
+gonky_II_F1_bool = False
+gonky_II_B1_bool = False
+gonky_II_R2_bool = False
+gonky_II_L2_bool = False
+gonky_II_F2_bool = False
+gonky_II_B2_bool = False
+gonky_II_timer = 0
+gonky_II_subtime = 0
+wins_player1_tick = 0
+wins_player2_tick = 0
 
 class CollisionBox():
     def __init__(self):
@@ -300,19 +317,19 @@ class car():
         else: self.pos_y = -200 - int(not(way))*600
         
         if (cartype == "brown"):
-            self.speed = randint(300-100*int(gonky_prizegame_bool),500+50*int(gonky_prizegame_bool))/100
+            self.speed = randint(300-100*int(gonky_prizegame_bool or gonky_II_game_bool),500+50*int(gonky_prizegame_bool or gonky_II_game_bool))/100
             self.texture = gonky_brown_car
             self.hitbox.define(0,0,36,58)
         if (cartype == "grey"):
-            self.speed = randint(350-100*int(gonky_prizegame_bool),700+50*int(gonky_prizegame_bool))/100
+            self.speed = randint(350-100*int(gonky_prizegame_bool or gonky_II_game_bool),700+50*int(gonky_prizegame_bool or gonky_II_game_bool))/100
             self.texture = gonky_grey_car
             self.hitbox.define(0,0,36,60)
         if (cartype == "red"):
-            self.speed = randint(400-100*int(gonky_prizegame_bool),800+50*int(gonky_prizegame_bool))/100
+            self.speed = randint(400-100*int(gonky_prizegame_bool or gonky_II_game_bool),800+50*int(gonky_prizegame_bool or gonky_II_game_bool))/100
             self.texture = gonky_red_car
             self.hitbox.define(0,0,36,64)
         if (cartype == "vio"):
-            self.speed = randint(200-100*int(gonky_prizegame_bool),400+50*int(gonky_prizegame_bool))/100
+            self.speed = randint(200-100*int(gonky_prizegame_bool or gonky_II_game_bool),400+50*int(gonky_prizegame_bool or gonky_II_game_bool))/100
             self.texture = gonky_vio_car
             self.hitbox.define(0,0,36,130)
 
@@ -371,6 +388,28 @@ gonky_II_car[1].speed = 5
 gonky_II_car[1].texture = gonky_blue_car
 gonky_II_car[1].hitbox.define(0,0,36,64)
 gonky_II_car[1].way = True
+
+for i in range(8):
+    gonky_II_car[i+2] = car()
+    gonky_II_car[i+2].control = False
+    gonky_II_car[i+2].pos_y = -999
+
+gonky_II_car[2].way = False
+gonky_II_car[2].pos_x = 64
+gonky_II_car[3].way = False
+gonky_II_car[3].pos_x = 116
+gonky_II_car[4].way = True
+gonky_II_car[4].pos_x = 168
+gonky_II_car[5].way = True
+gonky_II_car[5].pos_x = 220
+gonky_II_car[6].way = False
+gonky_II_car[6].pos_x = 384
+gonky_II_car[7].way = False
+gonky_II_car[7].pos_x = 436
+gonky_II_car[8].way = True
+gonky_II_car[8].pos_x = 488
+gonky_II_car[9].way = True
+gonky_II_car[9].pos_x = 540   
     
 class MO_TW():
     def __init__(self):
@@ -912,20 +951,123 @@ def game_select_update(select):
         text_print("  получить золотую монету.",1,32,396)
 
 def gonky_II_game_update():
-
-
+    global gonky_II_player1_viev_pos, gonky_II_player2_viev_pos, gonky_II_time, gonky_II_subtime, wins_player1_tick, wins_player2_tick, gonky_II_game_bool
     
-    Window.blit(gonky_II_roadsegment,(0,int(gonky_II_player1_viev_pos%480) + int(gonky_II_player1_viev_pos%2 == 1)))
-    Window.blit(gonky_II_roadsegment,(320,int(gonky_II_player2_viev_pos%480) + int(gonky_II_player2_viev_pos%2 == 1)))
+    Window.blit(gonky_II_roadsegment,(0,int(gonky_II_player1_viev_pos%480) + int(int(gonky_II_player1_viev_pos)%2 == 1)))
+    Window.blit(gonky_II_roadsegment,(0,int(gonky_II_player1_viev_pos%480)-480 + int(int(gonky_II_player1_viev_pos)%2 == 1)))
+    
+    Window.blit(gonky_II_roadsegment,(320,int(gonky_II_player2_viev_pos%480) + int(int(gonky_II_player2_viev_pos)%2 == 1)))
+    Window.blit(gonky_II_roadsegment,(320,int(gonky_II_player2_viev_pos%480)-480 + int(int(gonky_II_player2_viev_pos)%2 == 1)))
 
-    Window.blit(gonky_II_car[0].texture[0],(gonky_II_car[0].pos_x,374))
-    Window.blit(gonky_II_car[1].texture[0],(gonky_II_car[1].pos_x,374))
+    Window.blit(gonky_info_player_1_go,(304,438))
+    Window.blit(gonky_info_timer_go,(316,438))
+    Window.blit(gonky_info_player_2_go,(328,438))
+    Window.blit(gonky_II_info_finish,(302,24))
+
+    if (round(gonky_II_player1_viev_pos/1000) > 50):
+        gonky_II_game_bool = False
+        gamemenu_bool = True
+        wins_player1_tick = 240
+
+    elif (round(gonky_II_player2_viev_pos/1000) > 50):
+        gonky_II_game_bool = False
+        gamemenu_bool = True
+        wins_player2_tick = 240
+        
+    elif (round((120-gonky_II_time)/240*100) > 50):
+        gonky_II_game_bool = False
+        gamemenu_bool = True
+        if (gonky_II_player1_viev_pos > gonky_II_player2_viev_pos):
+            wins_player1_tick = 240
+        else:
+            wins_player2_tick = 240
+
+    for i in range(round(gonky_II_player1_viev_pos/1000)):
+        Window.blit(gonky_info_player_1_go,(304,438-((i+1)*8)))
+
+    for i in range(round((120-gonky_II_time)/240*100)):
+        Window.blit(gonky_info_timer_go,(316,438-((i+1)*8)))  
+
+    for i in range(round(gonky_II_player2_viev_pos/1000)):
+        Window.blit(gonky_info_player_2_go,(328,438-((i+1)*8)))
+
+    gonky_II_player1_viev_pos += gonky_II_car[0].speed
+
+    if (gonky_II_car[0].distract == 0 and gonky_II_F1_bool): gonky_II_car[0].speed += 0.0625
+    if (gonky_II_B1_bool): gonky_II_car[0].speed -= 0.0625
+
+    if (gonky_II_car[0].speed < 0): gonky_II_car[0].speed = 0
+    if (gonky_II_car[0].speed > 12): gonky_II_car[0].speed = 12
+
+    if (gonky_II_R1_bool and gonky_II_car[0].speed != 0): gonky_II_car[0].pos_x += 2
+    if (gonky_II_L1_bool and gonky_II_car[0].speed != 0): gonky_II_car[0].pos_x -= 2
+
+    if (gonky_II_car[0].pos_x < 38): gonky_II_car[0].pos_x = 38
+    if (gonky_II_car[0].pos_x > 246): gonky_II_car[0].pos_x = 246
+
+    if (gonky_II_car[0].distract > 0): gonky_II_car[0].distract -= 1
+            
+    if ((gonky_II_car[0].distract/2)%2 == 0):Window.blit(gonky_II_car[0].texture[int(gonky_II_B1_bool or gonky_II_car[0].speed == 0)],(gonky_II_car[0].pos_x,374))
+
+    Boxs = CollisionBox()
+    Boxt = CollisionBox()
+
+    Boxs.define(gonky_II_car[0].pos_x,374,gonky_II_car[0].hitbox.size_x,gonky_II_car[0].hitbox.size_y)
+    for i in range(4):
+        if (gonky_II_car[i+2].hitbox.size_y > 64): S = gonky_II_car[i+2].hitbox.size_y-64
+        else: S = 0
+        Boxt.define(gonky_II_car[i+2].pos_x,gonky_II_car[i+2].pos_y+S,gonky_II_car[i+2].hitbox.size_x,gonky_II_car[i+2].hitbox.size_y)
+        if (gonky_II_car[0].distract == 0 and cheak_BoxC(Boxs,Boxt)):
+            gonky_II_car[0].distract = 60
+            gonky_II_car[0].speed = round((gonky_II_car[0].speed*0.25)*16)/16
+            
+        gonky_II_car[i+2].update()
+        gonky_II_car[i+2].pos_y += gonky_II_car[0].speed
+            
+        Window.blit(gonky_II_car[i+2].texture[not(gonky_II_car[i+2].way)],(gonky_II_car[i+2].pos_x,round(gonky_II_car[i+2].pos_y)+int(round(gonky_II_car[i+2].pos_y)%2 == 1)))
+        
+    gonky_II_player2_viev_pos += gonky_II_car[1].speed
+
+    if (gonky_II_car[1].distract == 0 and gonky_II_F2_bool): gonky_II_car[1].speed += 0.0625
+    if (gonky_II_B2_bool): gonky_II_car[1].speed -= 0.0625
+
+    if (gonky_II_car[1].speed < 0): gonky_II_car[1].speed = 0
+    if (gonky_II_car[1].speed > 12): gonky_II_car[1].speed = 12
+
+    if (gonky_II_R2_bool and gonky_II_car[1].speed != 0): gonky_II_car[1].pos_x += 2
+    if (gonky_II_L2_bool and gonky_II_car[1].speed != 0): gonky_II_car[1].pos_x -= 2
+
+    if (gonky_II_car[1].pos_x < 358): gonky_II_car[1].pos_x = 358
+    if (gonky_II_car[1].pos_x > 566 ): gonky_II_car[1].pos_x = 566
+
+    if (gonky_II_car[1].distract > 0): gonky_II_car[1].distract -= 1
+            
+    if ((gonky_II_car[1].distract/2)%2 == 0):Window.blit(gonky_II_car[1].texture[int(gonky_II_B2_bool or gonky_II_car[1].speed == 0)],(gonky_II_car[1].pos_x,374))
+
+    Boxs.define(gonky_II_car[1].pos_x,374,gonky_II_car[1].hitbox.size_x,gonky_II_car[1].hitbox.size_y)
+    for i in range(4):
+        if (gonky_II_car[i+6].hitbox.size_y > 64): S = gonky_II_car[i+6].hitbox.size_y-64
+        else: S = 0
+        Boxt.define(gonky_II_car[i+6].pos_x,gonky_II_car[i+6].pos_y+S,gonky_II_car[i+6].hitbox.size_x,gonky_II_car[i+6].hitbox.size_y)
+        if (gonky_II_car[1].distract == 0 and cheak_BoxC(Boxs,Boxt)):
+            gonky_II_car[1].distract = 60
+            gonky_II_car[1].speed = round((gonky_II_car[1].speed*0.25)*16)/16
+            
+        gonky_II_car[i+6].update()
+        gonky_II_car[i+6].pos_y += gonky_II_car[1].speed
+            
+        Window.blit(gonky_II_car[i+6].texture[not(gonky_II_car[i+6].way)],(gonky_II_car[i+6].pos_x,round(gonky_II_car[i+6].pos_y)+int(round(gonky_II_car[i+6].pos_y)%2 == 1)))
+
+    gonky_II_subtime += 1
+    if (gonky_II_subtime >= 59):
+        gonky_II_subtime = 0
+        gonky_II_time -= 1
 
 def gonky_game_update():
     global gonky_viev_pos, gonky_R_bool, gonky_L_bool, gonky_F_bool, gonky_B_bool, gonky_time, gonky_subtime, gonky_prizegame_bool, gonky_game_bool, prizegame_timer, blackscreen_timer,gamemenu_bool
     
-    Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480) + int(gonky_viev_pos%2 == 1)))
-    Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480)-480 + int(gonky_viev_pos%2 == 1)))
+    Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480) + int(int(gonky_viev_pos)%2 == 1)))
+    Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480)-480 + int(int(gonky_viev_pos)%2 == 1)))
 
     Window.blit(gonky_info_player_1_go,(614,442))
     Window.blit(gonky_info_timer_go,(628,442))
@@ -1004,8 +1146,8 @@ def gonky_game_update():
 def gonky_prizegame_update():
     global gonky_viev_pos, gonky_R_bool, gonky_L_bool, gonky_F_bool, gonky_B_bool, gonky_time, gonky_subtime, gonky_prizegame_bool, gonky_game_bool, prizegame_timer, blackscreen_timer, goldcoin_get_timer,gamemenu_bool, goldencoins
     
-    Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480) + int(gonky_viev_pos%2 == 1)))
-    Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480)-480 + int(gonky_viev_pos%2 == 1)))
+    Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480) + int(int(gonky_viev_pos)%2 == 1)))
+    Window.blit(gonky_roadsegment,(0,int(gonky_viev_pos%480)-480 + int(int(gonky_viev_pos)%2 == 1)))
 
     Window.blit(gonky_info_player_1_go,(614,442))
     Window.blit(gonky_info_timer_go,(628,442))
@@ -1299,7 +1441,7 @@ def morskaya_ohota_prizegame_update():
         for i in range(10-morskaya_ohota_torpedos_left): Window.blit(morskaya_ohota_torpedo_used,(212+16*(9-i),394))
         
 def update():
-    global effect_2_tick, effect_4_tick, coinfalls_tick,blackscreen_timer, prizegame_timer, goldcoin_get_timer, effect_6_tick
+    global effect_2_tick, effect_4_tick, coinfalls_tick,blackscreen_timer, prizegame_timer, goldcoin_get_timer, effect_6_tick, wins_player1_tick, wins_player2_tick
     
     Window.fill((0,0,0))
 
@@ -1317,6 +1459,16 @@ def update():
         goldcoin_get_timer -= 1
         if (goldcoin_get_timer >= 60 and goldcoin_get_timer <= 180):
             Window.blit(goldcoin_get,(270,190))
+
+    elif (wins_player1_tick > 0):
+        wins_player1_tick -= 1
+        if (wins_player1_tick >= 60 and wins_player1_tick <= 180):
+            Window.blit(wins_player1,(0,0))
+
+    elif (wins_player2_tick > 0):
+        wins_player2_tick -= 1
+        if (wins_player2_tick >= 60 and wins_player2_tick <= 180):
+            Window.blit(wins_player2,(0,0))    
         
     else:
         if (loadtick < 420):
@@ -1514,7 +1666,7 @@ while Run:
 
             if (loadtick >= 420):
 
-                if (blackscreen_timer <= 0 and prizegame_timer <= 0 and goldcoin_get_timer <= 0):
+                if (blackscreen_timer <= 0 and prizegame_timer <= 0 and goldcoin_get_timer <= 0 and wins_player1_tick <= 0 and wins_player2_tick <= 0):
             
                     if (mainmenu_bool):
                         if (event.key == pygame.K_UP or event.key == pygame.K_w):
@@ -1633,6 +1785,28 @@ while Run:
 
                                 if (game_select == "gonky_II"):
                                     gonky_II_game_bool = True
+                                    gonky_II_time = 120
+
+                                    gonky_player1_viev_pos = 0
+                                    gonky_II_car[0].distract = 0
+                                    gonky_II_car[0].type = "green"
+                                    gonky_II_car[0].control = True
+                                    gonky_II_car[0].pos_x = 168
+                                    gonky_II_car[0].pos_y = -1
+                                    gonky_II_car[0].speed = 5
+                                    gonky_II_car[0].texture = gonky_green_car
+                                    gonky_II_car[0].hitbox.define(0,0,36,64)
+                                    gonky_II_car[0].way = True
+
+                                    gonky_player2_viev_pos = 0
+                                    gonky_II_car[1].type = "blue"
+                                    gonky_II_car[1].control = True
+                                    gonky_II_car[1].pos_x = 488
+                                    gonky_II_car[1].pos_y = -1
+                                    gonky_II_car[1].speed = 5
+                                    gonky_II_car[1].texture = gonky_blue_car
+                                    gonky_II_car[1].hitbox.define(0,0,36,64)
+                                    gonky_II_car[1].way = True
                                     
                                 game_select = "none"
                                 gamemenu_bool = False
@@ -1653,6 +1827,16 @@ while Run:
                         if (event.key == pygame.K_LEFT or event.key == pygame.K_a): gonky_L_bool = True
                         if (event.key == pygame.K_UP or event.key == pygame.K_w): gonky_F_bool = True
                         if (event.key == pygame.K_DOWN or event.key == pygame.K_s): gonky_B_bool = True
+
+                    elif (gonky_II_game_bool):
+                        if (event.key == pygame.K_d): gonky_II_R1_bool = True
+                        if (event.key == pygame.K_a): gonky_II_L1_bool = True
+                        if (event.key == pygame.K_w): gonky_II_F1_bool = True
+                        if (event.key == pygame.K_s): gonky_II_B1_bool = True
+                        if (event.key == pygame.K_RIGHT):  gonky_II_R2_bool = True
+                        if (event.key == pygame.K_LEFT):   gonky_II_L2_bool = True
+                        if (event.key == pygame.K_UP):     gonky_II_F2_bool = True
+                        if (event.key == pygame.K_DOWN):   gonky_II_B2_bool = True
                     
                     
 
@@ -1665,6 +1849,15 @@ while Run:
                     if (event.key == pygame.K_LEFT or event.key == pygame.K_a): gonky_L_bool = False
                     if (event.key == pygame.K_UP or event.key == pygame.K_w): gonky_F_bool = False
                     if (event.key == pygame.K_DOWN or event.key == pygame.K_s): gonky_B_bool = False
+                elif (gonky_II_game_bool):
+                        if (event.key == pygame.K_d): gonky_II_R1_bool = False
+                        if (event.key == pygame.K_a): gonky_II_L1_bool = False
+                        if (event.key == pygame.K_w): gonky_II_F1_bool = False
+                        if (event.key == pygame.K_s): gonky_II_B1_bool = False
+                        if (event.key == pygame.K_RIGHT):  gonky_II_R2_bool = False
+                        if (event.key == pygame.K_LEFT):   gonky_II_L2_bool = False
+                        if (event.key == pygame.K_UP):     gonky_II_F2_bool = False
+                        if (event.key == pygame.K_DOWN):   gonky_II_B2_bool = False
                     
     if (chascecount(0.0025) and effect_4_tick == 0):
         effect_4_tick = 20
