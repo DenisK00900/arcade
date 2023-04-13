@@ -16,11 +16,16 @@ FPS = 60
 clock = pygame.time.Clock() 
 
 fullscreen_bool = True
+merzanie_bool = True
+effect_2_int = 2
+linza_effect = 3
+defects_bool = True
+retropixel_bool = True
 
 goldencoins = 0
 
 def settings_input():
-    global fullscreen_bool
+    global fullscreen_bool, merzanie_bool, effect_2_int, linza_effect, defects_bool, retropixel_bool
     f = open(dir_path+'/data/save/settings.bin','rb')
     while True:
         S = (f.readline()).decode('utf-8')
@@ -28,13 +33,23 @@ def settings_input():
         else:
             V,E,D = S.split()
             if (V == "fullscreen_bool"): fullscreen_bool = bool(int(D))
+            if (V == "merzanie_bool"): merzanie_bool = bool(int(D))
+            if (V == "effect_2_int"): effect_2_int = (int(D))
+            if (V == "linza_effect"): linza_effect = (int(D))
+            if (V == "defects_bool"): defects_bool = bool(int(D))
+            if (V == "retropixel_bool"): retropixel_bool = bool(int(D))
 
     f.close()
 
 def settings_output():
-    global fullscreen_bool
+    global fullscreen_bool, merzanie_bool, effect_2_int, linza_effect, defects_bool, retropixel_bool             
     f = open(dir_path+'/data/save/settings.bin','wb')
     f.write(("fullscreen_bool = "+str(int(fullscreen_bool))+"\n").encode('utf-8'))
+    f.write(("merzanie_bool = "+str(int(merzanie_bool))+"\n").encode('utf-8'))
+    f.write(("effect_2_int = "+str(int(effect_2_int))+"\n").encode('utf-8'))
+    f.write(("linza_effect = "+str(int(linza_effect))+"\n").encode('utf-8'))
+    f.write(("defects_bool = "+str(int(defects_bool))+"\n").encode('utf-8'))
+    f.write(("retropixel_bool = "+str(int(retropixel_bool))+"\n").encode('utf-8'))
     f.write(("end").encode('utf-8'))
     f.close()
 
@@ -101,6 +116,94 @@ settmenu_fullscreen_1 = pygame.image.load(dir_path+'/data/texture/settmenu_fulls
 settmenu_fullscreen_2 = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_2.png').convert()
 settmenu_fullscreen_cheak_1 = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_cheak_1.png').convert(); settmenu_fullscreen_cheak_1.set_colorkey((0,0,0))
 settmenu_fullscreen_cheak_2 = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_cheak_2.png').convert(); settmenu_fullscreen_cheak_2.set_colorkey((0,0,0))
+
+settmenu_grahigs_1 = pygame.image.load(dir_path+'/data/texture/settmenu_grahigs_1.png').convert()
+settmenu_grahigs_2 = pygame.image.load(dir_path+'/data/texture/settmenu_grahigs_2.png').convert()
+settmenu_audio_1 = pygame.image.load(dir_path+'/data/texture/settmenu_audio_1.png').convert()
+settmenu_audio_2 = pygame.image.load(dir_path+'/data/texture/settmenu_audio_2.png').convert()
+settmenu_languare_1 = pygame.image.load(dir_path+'/data/texture/settmenu_languare_1.png').convert()
+settmenu_languare_2 = pygame.image.load(dir_path+'/data/texture/settmenu_languare_2.png').convert()
+settmenu_resetprogress_1 = pygame.image.load(dir_path+'/data/texture/settmenu_resetprogress_1.png').convert()
+settmenu_resetprogress_2 = pygame.image.load(dir_path+'/data/texture/settmenu_resetprogress_2.png').convert()
+
+grafmenu_merzanie_str = [0]*2
+grafmenu_merzanie_str[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_1.png').convert()
+grafmenu_merzanie_str[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_2.png').convert()
+grafmenu_merzanie = [[0,0],[0,0]]
+grafmenu_merzanie[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_off_2.png').convert(); grafmenu_merzanie[0][0].set_colorkey((0,0,0))
+grafmenu_merzanie[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_off_1.png').convert(); grafmenu_merzanie[0][1].set_colorkey((0,0,0))
+grafmenu_merzanie[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_on_2.png').convert(); grafmenu_merzanie[1][0].set_colorkey((0,0,0))
+grafmenu_merzanie[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_on_1.png').convert(); grafmenu_merzanie[1][1].set_colorkey((0,0,0))
+
+grafmenu_lostpixel_str = [0]*2
+grafmenu_lostpixel_str[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel1.png').convert()
+grafmenu_lostpixel_str[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel2.png').convert()
+grafmenu_lostpixel = [[0,0],[0,0],[0,0],[0,0],[0,0]]
+grafmenu_lostpixel[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_1_1.png').convert(); grafmenu_lostpixel[0][1].set_colorkey((0,0,0))
+grafmenu_lostpixel[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_1_2.png').convert(); grafmenu_lostpixel[0][0].set_colorkey((0,0,0))
+grafmenu_lostpixel[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_2_1.png').convert(); grafmenu_lostpixel[1][1].set_colorkey((0,0,0))
+grafmenu_lostpixel[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_2_2.png').convert(); grafmenu_lostpixel[1][0].set_colorkey((0,0,0))
+grafmenu_lostpixel[2][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_3_1.png').convert(); grafmenu_lostpixel[2][1].set_colorkey((0,0,0))
+grafmenu_lostpixel[2][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_3_2.png').convert(); grafmenu_lostpixel[2][0].set_colorkey((0,0,0))
+grafmenu_lostpixel[3][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_4_1.png').convert(); grafmenu_lostpixel[3][1].set_colorkey((0,0,0))
+grafmenu_lostpixel[3][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_4_2.png').convert(); grafmenu_lostpixel[3][0].set_colorkey((0,0,0))
+grafmenu_lostpixel[4][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_5_1.png').convert(); grafmenu_lostpixel[4][1].set_colorkey((0,0,0))
+grafmenu_lostpixel[4][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_5_2.png').convert(); grafmenu_lostpixel[4][0].set_colorkey((0,0,0))
+
+grafmenu_linza_str = [0]*2
+grafmenu_linza_str[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza1.png').convert()
+grafmenu_linza_str[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza2.png').convert()
+grafmenu_linza = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
+grafmenu_linza[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_1_1.png').convert(); grafmenu_linza[0][1].set_colorkey((0,0,0))
+grafmenu_linza[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_1_2.png').convert(); grafmenu_linza[0][0].set_colorkey((0,0,0))
+grafmenu_linza[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_2_1.png').convert(); grafmenu_linza[1][1].set_colorkey((0,0,0))
+grafmenu_linza[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_2_2.png').convert(); grafmenu_linza[1][0].set_colorkey((0,0,0))
+grafmenu_linza[2][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_3_1.png').convert(); grafmenu_linza[2][1].set_colorkey((0,0,0))
+grafmenu_linza[2][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_3_2.png').convert(); grafmenu_linza[2][0].set_colorkey((0,0,0))
+grafmenu_linza[3][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_4_1.png').convert(); grafmenu_linza[3][1].set_colorkey((0,0,0))
+grafmenu_linza[3][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_4_2.png').convert(); grafmenu_linza[3][0].set_colorkey((0,0,0))
+grafmenu_linza[4][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_5_1.png').convert(); grafmenu_linza[4][1].set_colorkey((0,0,0))
+grafmenu_linza[4][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_5_2.png').convert(); grafmenu_linza[4][0].set_colorkey((0,0,0))
+grafmenu_linza[5][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_6_1.png').convert(); grafmenu_linza[5][1].set_colorkey((0,0,0))
+grafmenu_linza[5][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_6_2.png').convert(); grafmenu_linza[5][0].set_colorkey((0,0,0))
+grafmenu_linza[6][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_7_1.png').convert(); grafmenu_linza[6][1].set_colorkey((0,0,0))
+grafmenu_linza[6][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_7_2.png').convert(); grafmenu_linza[6][0].set_colorkey((0,0,0))
+grafmenu_linza[7][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_8_1.png').convert(); grafmenu_linza[7][1].set_colorkey((0,0,0))
+grafmenu_linza[7][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_8_2.png').convert(); grafmenu_linza[7][0].set_colorkey((0,0,0))
+grafmenu_linza[8][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_9_1.png').convert(); grafmenu_linza[8][1].set_colorkey((0,0,0))
+grafmenu_linza[8][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_9_2.png').convert(); grafmenu_linza[8][0].set_colorkey((0,0,0))
+grafmenu_linza[9][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_10_1.png').convert(); grafmenu_linza[9][1].set_colorkey((0,0,0))
+grafmenu_linza[9][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_10_2.png').convert(); grafmenu_linza[9][0].set_colorkey((0,0,0))
+grafmenu_linza[10][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_11_1.png').convert(); grafmenu_linza[10][1].set_colorkey((0,0,0))
+grafmenu_linza[10][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_11_2.png').convert(); grafmenu_linza[10][0].set_colorkey((0,0,0))
+grafmenu_linza[11][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_12_1.png').convert(); grafmenu_linza[11][1].set_colorkey((0,0,0))
+grafmenu_linza[11][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_12_2.png').convert(); grafmenu_linza[11][0].set_colorkey((0,0,0))
+grafmenu_linza[12][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_13_1.png').convert(); grafmenu_linza[12][1].set_colorkey((0,0,0))
+grafmenu_linza[12][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_13_2.png').convert(); grafmenu_linza[12][0].set_colorkey((0,0,0))
+
+grafmenu_defects_str = [0]*2
+grafmenu_defects_str[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_1.png').convert()
+grafmenu_defects_str[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_2.png').convert()
+grafmenu_defects = [[0,0],[0,0]]
+grafmenu_defects[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_off_1.png').convert(); grafmenu_defects[0][1].set_colorkey((0,0,0))
+grafmenu_defects[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_off_2.png').convert(); grafmenu_defects[0][0].set_colorkey((0,0,0))
+grafmenu_defects[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_on_1.png').convert(); grafmenu_defects[1][1].set_colorkey((0,0,0))
+grafmenu_defects[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_on_2.png').convert(); grafmenu_defects[1][0].set_colorkey((0,0,0))
+
+grafmenu_retropixel_str = [0]*2
+grafmenu_retropixel_str[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_1.png').convert()
+grafmenu_retropixel_str[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_2.png').convert()
+grafmenu_retropixel = [[0,0],[0,0]]
+grafmenu_retropixel[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_off_1.png').convert(); grafmenu_retropixel[0][1].set_colorkey((0,0,0))
+grafmenu_retropixel[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_off_2.png').convert(); grafmenu_retropixel[0][0].set_colorkey((0,0,0))
+grafmenu_retropixel[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_on_1.png').convert(); grafmenu_retropixel[1][1].set_colorkey((0,0,0))
+grafmenu_retropixel[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_on_2.png').convert(); grafmenu_retropixel[1][0].set_colorkey((0,0,0))
+
+grafmenu_setdefents = [0]*2
+grafmenu_setdefents[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_setdefents_1.png').convert()
+grafmenu_setdefents[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_setdefents_2.png').convert()
+
+safari_piramid = pygame.image.load(dir_path+'/data/texture/safari_piramid.png').convert(); safari_piramid.set_colorkey((255,255,255))
 
 comingsoon_banner = pygame.image.load(dir_path+'/data/texture/comingsoon_banner.png').convert()
 morskaya_ohota_banner = pygame.image.load(dir_path+'/data/texture/morskaya_ohota_banner.png').convert()
@@ -209,6 +312,26 @@ pamat_gamename_2 = pygame.image.load(dir_path+'/data/texture/pamat_gamename_2.pn
 gonky_II_roadsegment = pygame.image.load(dir_path+'/data/texture/gonky_II_roadsegment.png').convert()
 gonky_II_info_finish = pygame.image.load(dir_path+'/data/texture/gonky_II_info_finish.png').convert()
 
+safari_map = pygame.image.load(dir_path+'/data/texture/safari_map.png').convert()
+safari_shots_base = pygame.image.load(dir_path+'/data/texture/safari_shots_base.png').convert(); safari_shots_base.set_colorkey((0,0,0))
+safari_shots_unysed = pygame.image.load(dir_path+'/data/texture/safari_shots_unysed.png').convert(); safari_shots_unysed.set_colorkey((0,0,0))
+safari_palma = [0]*4
+for i in range(4): safari_palma[i] = pygame.image.load(dir_path+'/data/texture/safari_palma_'+str(i+1)+'.png').convert(); safari_palma[i].set_colorkey((255,255,255))
+safari_bullet = pygame.image.load(dir_path+'/data/texture/safari_bullet.png').convert(); safari_bullet.set_colorkey((255,255,255))
+safari_player = [0]*4
+for i in range(4): safari_player[i] = pygame.image.load(dir_path+'/data/texture/safari_player_'+str(i+1)+'.png').convert(); safari_player[i].set_colorkey((255,255,255))
+safari_palma = [0]*4
+for i in range(4): safari_palma[i] = pygame.image.load(dir_path+'/data/texture/safari_palma_'+str(i+1)+'.png').convert(); safari_palma[i].set_colorkey((255,255,255))
+safari_nosorog = [0]*4
+for i in range(4): safari_nosorog[i] = pygame.image.load(dir_path+'/data/texture/safari_nosorog_'+str(i+1)+'.png').convert(); safari_nosorog[i].set_colorkey((255,0,0))
+safari_zebra = [0]*4
+for i in range(4): safari_zebra[i] = pygame.image.load(dir_path+'/data/texture/safari_zebra_'+str(i+1)+'.png').convert(); safari_zebra[i].set_colorkey((255,0,0))
+safari_kaban = [0]*4
+for i in range(4): safari_kaban[i] = pygame.image.load(dir_path+'/data/texture/safari_kaban_'+str(i+1)+'.png').convert(); safari_kaban[i].set_colorkey((255,0,0))
+safari_animals_cathc = pygame.image.load(dir_path+'/data/texture/safari_animals_cathc.png').convert(); safari_animals_cathc.set_colorkey((0,0,0))
+safari_oblako = [0]*3
+for i in range(3): safari_oblako[i] = pygame.image.load(dir_path+'/data/texture/safari_oblako_'+str(i+1)+'.png').convert(); safari_oblako[i].set_colorkey((0,0,0))
+
 text=[]
 for i in range(77):
     text.append([0]*2)
@@ -221,7 +344,6 @@ loadtick = 0
 mainmenu_tick = 0
 mainmenu_subtick = 0
 effect_2_tick = 0
-effect_2_int = 3
 mainmenu_select = 1
 mainmenu_bool = False
 gamemenu_bool = False
@@ -229,6 +351,12 @@ gamemenu_select = 0
 gamemenu_razdel = 0
 settmenu_bool = False
 settmenu_select = 0
+grafmenu_bool = False
+grafmenu_select = 0
+audimenu_bool = False
+audimenu_select = 0
+langmenu_bool = False
+langmenu_select = 0
 effect_4_tick = 0
 effect_4_pos = 0
 game_select = "none"
@@ -276,6 +404,20 @@ gonky_II_timer = 0
 gonky_II_subtime = 0
 wins_player1_tick = 0
 wins_player2_tick = 0
+safari_game_bool = False
+safari_prizegame_bool = False
+safari_player_tick = 0
+safari_player_subtick = 0
+safari_shots_left = 0
+safari_timer = 0
+safari_subtimer = 0
+safari_jump_tick = 0
+safari_jump_tick_pos = 0
+safari_zebra_lives = 2
+safari_kaban_lives = 4
+safari_kaban_ct_count = 0
+safari_zebra_ct_count = 0
+safari_nosorog_ct_count = 0
 
 class CollisionBox():
     def __init__(self):
@@ -410,7 +552,395 @@ gonky_II_car[8].way = True
 gonky_II_car[8].pos_x = 488
 gonky_II_car[9].way = True
 gonky_II_car[9].pos_x = 540   
+
+class SF_bullet():
+    def __init__(self):
+        self.pos_x = -999
+        self.pos_y = -999
+        self.texture = safari_bullet
+        self.active = False
+        self.hitbox = CollisionBox()
+
+    def spawn(self,y):
+        self.pos_x = 88
+        self.pos_y = 382+y
+        self.active = True
+        
+    def update(self):
+        self.pos_x += 2.5
+        self.pos_y -= 2.5
+
+class SF_palma():
+    def __init__(self):
+        self.pos_x = -999
+        self.pos_y = -999
+        self.texture = safari_palma[0]
+        self.speed = 0
+        self.border = 0
+        self.hitbox = CollisionBox()
+
+    def update(self):
+        self.pos_x -= self.speed
+        if (self.pos_x <= -self.border): self.pos_x = 640 + self.border
+
+class SF_animal():
     
+    def __init__(self):
+        self.pos_x = -999
+        self.pos_y = -999
+        self.texture = safari_kaban
+        self.speed = 0
+        self.border = 0
+        self.hitbox = CollisionBox()
+        self.active = True
+
+    def update(self,szl,skl):
+        self.pos_x -= self.speed
+        if (self.pos_x <= -self.border):
+            self.pos_x = 640 + self.border
+            if (self.pos_y == 210):
+                if (szl >= 0):
+                    szl -= 1
+                    self.active = True
+            if (self.pos_y == 300):
+                if (skl >= 0):
+                    skl -= 1
+                    self.active = True
+
+        return szl, skl
+
+class SF_oblako():
+    def __init__(self):
+        self.pos_x = -999
+        self.pos_y = -999
+        self.texture = safari_oblako[0]
+        self.speed = 0.0
+
+    def update(self):
+        self.pos_x += self.speed
+        if (self.pos_x <= -100.0):
+            self.pos_x = 740.0
+            self.pos_y = randint(-4,30)
+            self.speed = -(randint(1,16)/10.0)
+            self.texture = safari_oblako[randint(0,2)]
+
+safari_Coblakos = [0]*6
+for i in range(6):
+    safari_Coblakos[i] = SF_oblako()
+    safari_Coblakos[i].pos_x = randint(-100,740)
+    safari_Coblakos[i].pos_y = randint(-4,30)
+    safari_Coblakos[i].speed = -(randint(1,16)/10.0)
+    safari_Coblakos[i].texture = safari_oblako[randint(0,2)]
+
+
+safari_Cpalmas = [0]*16
+for i in range(16): safari_Cpalmas[i] = SF_palma()
+
+safari_Canimals = [0]*10
+for i in range(10): safari_Canimals[i] = SF_animal()
+
+def safari_reset_subf():
+    global safari_Cpalmas, safari_Canimals
+
+    R1 = randint(-10,10)/100.0
+    R2 = randint(-10,10)/100.0
+    R3 = randint(-10,10)/100.0
+    R4 = randint(-10,10)/100.0
+
+    safari_Cpalmas[0].pos_y = 390
+    safari_Cpalmas[0].pos_x = -40
+    safari_Cpalmas[0].border = 400
+    safari_Cpalmas[0].speed = 1.0 + R1
+    safari_Cpalmas[0].texture = safari_palma[0]
+    safari_Cpalmas[1].pos_y = 390
+    safari_Cpalmas[1].pos_x = 320
+    safari_Cpalmas[1].border = 400
+    safari_Cpalmas[1].speed = 1.0 + R1
+    safari_Cpalmas[1].texture = safari_palma[1]
+    safari_Cpalmas[2].pos_y = 390
+    safari_Cpalmas[2].pos_x = 680
+    safari_Cpalmas[2].border = 400
+    safari_Cpalmas[2].speed = 1.0 + R1
+    safari_Cpalmas[2].texture = safari_palma[2]
+    safari_Cpalmas[3].pos_y = 390
+    safari_Cpalmas[3].pos_x = 1040
+    safari_Cpalmas[3].border = 400
+    safari_Cpalmas[3].speed = 1.0 + R1
+    safari_Cpalmas[3].texture = safari_palma[3]
+
+    safari_Cpalmas[4].pos_y = 300
+    safari_Cpalmas[4].pos_x = 10
+    safari_Cpalmas[4].border = 300
+    safari_Cpalmas[4].speed = 0.75 + R2
+    safari_Cpalmas[4].texture = safari_palma[3]
+    safari_Cpalmas[5].pos_y = 300
+    safari_Cpalmas[5].pos_x = 320
+    safari_Cpalmas[5].border = 300
+    safari_Cpalmas[5].speed = 0.75 + R2
+    safari_Cpalmas[5].texture = safari_palma[0]
+    safari_Cpalmas[6].pos_y = 300
+    safari_Cpalmas[6].pos_x = 630
+    safari_Cpalmas[6].border = 300
+    safari_Cpalmas[6].speed = 0.75 + R2
+    safari_Cpalmas[6].texture = safari_palma[1]
+    safari_Cpalmas[7].pos_y = 300
+    safari_Cpalmas[7].pos_x = 940
+    safari_Cpalmas[7].border = 300
+    safari_Cpalmas[7].speed = 0.75 + R2
+    safari_Cpalmas[7].texture = safari_palma[2]
+
+    safari_Cpalmas[8].pos_y = 210
+    safari_Cpalmas[8].pos_x = 60
+    safari_Cpalmas[8].border = 200
+    safari_Cpalmas[8].speed = 0.50 + R3
+    safari_Cpalmas[8].texture = safari_palma[2]
+    safari_Cpalmas[9].pos_y = 210
+    safari_Cpalmas[9].pos_x = 320
+    safari_Cpalmas[9].border = 200
+    safari_Cpalmas[9].speed = 0.50 + R3
+    safari_Cpalmas[9].texture = safari_palma[3]
+    safari_Cpalmas[10].pos_y = 210
+    safari_Cpalmas[10].pos_x = 580
+    safari_Cpalmas[10].border = 200
+    safari_Cpalmas[10].speed = 0.50 + R3
+    safari_Cpalmas[10].texture = safari_palma[0]
+    safari_Cpalmas[11].pos_y = 210
+    safari_Cpalmas[11].pos_x = 840
+    safari_Cpalmas[11].border = 200
+    safari_Cpalmas[11].speed = 0.50 + R3
+    safari_Cpalmas[11].texture = safari_palma[1]
+
+    safari_Cpalmas[12].pos_y = 120
+    safari_Cpalmas[12].pos_x = 110
+    safari_Cpalmas[12].border = 100
+    safari_Cpalmas[12].speed = 0.25 + R4
+    safari_Cpalmas[12].texture = safari_palma[1]
+    safari_Cpalmas[13].pos_y = 120
+    safari_Cpalmas[13].pos_x = 320
+    safari_Cpalmas[13].border = 100
+    safari_Cpalmas[13].speed = 0.25 + R4
+    safari_Cpalmas[13].texture = safari_palma[2]
+    safari_Cpalmas[14].pos_y = 120
+    safari_Cpalmas[14].pos_x = 530
+    safari_Cpalmas[14].border = 100
+    safari_Cpalmas[14].speed = 0.25 + R4
+    safari_Cpalmas[14].texture = safari_palma[3]
+    safari_Cpalmas[15].pos_y = 120
+    safari_Cpalmas[15].pos_x = 740
+    safari_Cpalmas[15].border = 100
+    safari_Cpalmas[15].speed = 0.25 + R4
+    safari_Cpalmas[15].texture = safari_palma[0]
+
+    for i in range(10): safari_Canimals[i].active = True
+    
+    safari_Canimals[0].pos_y = 120
+    safari_Canimals[0].pos_x = 195
+    safari_Canimals[0].border = 100
+    safari_Canimals[0].speed = 0.25 + R4
+    safari_Canimals[0].texture = safari_nosorog
+    safari_Canimals[1].pos_y = 120
+    safari_Canimals[1].pos_x = 615
+    safari_Canimals[1].border = 100
+    safari_Canimals[1].speed = 0.25 + R4
+    safari_Canimals[1].texture = safari_nosorog
+
+    safari_Canimals[2].pos_y = 210
+    safari_Canimals[2].pos_x = 172
+    safari_Canimals[2].border = 200
+    safari_Canimals[2].speed = 0.50 + R3
+    safari_Canimals[2].texture = safari_zebra
+    safari_Canimals[3].pos_y = 210
+    safari_Canimals[3].pos_x = 432
+    safari_Canimals[3].border = 200
+    safari_Canimals[3].speed = 0.50 + R3
+    safari_Canimals[3].texture = safari_zebra
+    safari_Canimals[4].pos_y = 210
+    safari_Canimals[4].pos_x = 692
+    safari_Canimals[4].border = 200
+    safari_Canimals[4].speed = 0.50 + R3
+    safari_Canimals[4].texture = safari_zebra
+    safari_Canimals[5].pos_y = 210
+    safari_Canimals[5].pos_x = 952
+    safari_Canimals[5].border = 200
+    safari_Canimals[5].speed = 0.50 + R3
+    safari_Canimals[5].texture = safari_zebra
+
+    safari_Canimals[6].pos_y = 300
+    safari_Canimals[6].pos_x = 153 
+    safari_Canimals[6].border = 300
+    safari_Canimals[6].speed = 0.75 + R2
+    safari_Canimals[6].texture = safari_kaban
+    safari_Canimals[7].pos_y = 300
+    safari_Canimals[7].pos_x = 463
+    safari_Canimals[7].border = 300
+    safari_Canimals[7].speed = 0.75 + R2
+    safari_Canimals[7].texture = safari_kaban
+    safari_Canimals[8].pos_y = 300
+    safari_Canimals[8].pos_x = 773
+    safari_Canimals[8].border = 300
+    safari_Canimals[8].speed = 0.75 + R2
+    safari_Canimals[8].texture = safari_kaban
+    safari_Canimals[9].pos_y = 300
+    safari_Canimals[9].pos_x = 1083
+    safari_Canimals[9].border = 300
+    safari_Canimals[9].speed = 0.75 + R2
+    safari_Canimals[9].texture = safari_kaban
+
+def safari_prizegame_reset_subf():
+    global safari_Cpalmas, safari_Canimals
+
+    R1 = randint(-10,10)/100.0
+    R2 = randint(-10,10)/100.0
+    R3 = randint(-10,10)/100.0
+    R4 = randint(-10,10)/100.0
+
+    safari_Cpalmas[0].pos_y = 390
+    safari_Cpalmas[0].pos_x = -40
+    safari_Cpalmas[0].border = 400
+    safari_Cpalmas[0].speed = 1.2 + R1
+    safari_Cpalmas[0].texture = safari_palma[0]
+    safari_Cpalmas[1].pos_y = 390
+    safari_Cpalmas[1].pos_x = 320
+    safari_Cpalmas[1].border = 400
+    safari_Cpalmas[1].speed = 1.2 + R1
+    safari_Cpalmas[1].texture = safari_palma[1]
+    safari_Cpalmas[2].pos_y = 390
+    safari_Cpalmas[2].pos_x = 680
+    safari_Cpalmas[2].border = 400
+    safari_Cpalmas[2].speed = 1.2 + R1
+    safari_Cpalmas[2].texture = safari_palma[2]
+    safari_Cpalmas[3].pos_y = 390
+    safari_Cpalmas[3].pos_x = 1040
+    safari_Cpalmas[3].border = 400
+    safari_Cpalmas[3].speed = 1.2 + R1
+    safari_Cpalmas[3].texture = safari_palma[3]
+
+    safari_Cpalmas[4].pos_y = 300
+    safari_Cpalmas[4].pos_x = 10
+    safari_Cpalmas[4].border = 300
+    safari_Cpalmas[4].speed = 0.95 + R2
+    safari_Cpalmas[4].texture = safari_palma[3]
+    safari_Cpalmas[5].pos_y = 300
+    safari_Cpalmas[5].pos_x = 320
+    safari_Cpalmas[5].border = 300
+    safari_Cpalmas[5].speed = 0.95 + R2
+    safari_Cpalmas[5].texture = safari_palma[0]
+    safari_Cpalmas[6].pos_y = 300
+    safari_Cpalmas[6].pos_x = 630
+    safari_Cpalmas[6].border = 300
+    safari_Cpalmas[6].speed = 0.95 + R2
+    safari_Cpalmas[6].texture = safari_palma[1]
+    safari_Cpalmas[7].pos_y = 300
+    safari_Cpalmas[7].pos_x = 940
+    safari_Cpalmas[7].border = 300
+    safari_Cpalmas[7].speed = 0.95 + R2
+    safari_Cpalmas[7].texture = safari_palma[2]
+
+    safari_Cpalmas[8].pos_y = 210
+    safari_Cpalmas[8].pos_x = 60
+    safari_Cpalmas[8].border = 200
+    safari_Cpalmas[8].speed = 0.70 + R3
+    safari_Cpalmas[8].texture = safari_palma[2]
+    safari_Cpalmas[9].pos_y = 210
+    safari_Cpalmas[9].pos_x = 320
+    safari_Cpalmas[9].border = 200
+    safari_Cpalmas[9].speed = 0.70 + R3
+    safari_Cpalmas[9].texture = safari_palma[3]
+    safari_Cpalmas[10].pos_y = 210
+    safari_Cpalmas[10].pos_x = 580
+    safari_Cpalmas[10].border = 200
+    safari_Cpalmas[10].speed = 0.70 + R3
+    safari_Cpalmas[10].texture = safari_palma[0]
+    safari_Cpalmas[11].pos_y = 210
+    safari_Cpalmas[11].pos_x = 840
+    safari_Cpalmas[11].border = 200
+    safari_Cpalmas[11].speed = 0.70 + R3
+    safari_Cpalmas[11].texture = safari_palma[1]
+
+    safari_Cpalmas[12].pos_y = 120
+    safari_Cpalmas[12].pos_x = 110
+    safari_Cpalmas[12].border = 100
+    safari_Cpalmas[12].speed = 0.45 + R4
+    safari_Cpalmas[12].texture = safari_palma[1]
+    safari_Cpalmas[13].pos_y = 120
+    safari_Cpalmas[13].pos_x = 320
+    safari_Cpalmas[13].border = 100
+    safari_Cpalmas[13].speed = 0.45 + R4
+    safari_Cpalmas[13].texture = safari_palma[2]
+    safari_Cpalmas[14].pos_y = 120
+    safari_Cpalmas[14].pos_x = 530
+    safari_Cpalmas[14].border = 100
+    safari_Cpalmas[14].speed = 0.45 + R4
+    safari_Cpalmas[14].texture = safari_palma[3]
+    safari_Cpalmas[15].pos_y = 120
+    safari_Cpalmas[15].pos_x = 740
+    safari_Cpalmas[15].border = 100
+    safari_Cpalmas[15].speed = 0.45 + R4
+    safari_Cpalmas[15].texture = safari_palma[0]
+
+    for i in range(10): safari_Canimals[i].active = True
+    
+    safari_Canimals[0].pos_y = 120
+    safari_Canimals[0].pos_x = 195
+    safari_Canimals[0].border = 100
+    safari_Canimals[0].speed = 0.45 + R4
+    safari_Canimals[0].texture = safari_nosorog
+    safari_Canimals[1].pos_y = 120
+    safari_Canimals[1].pos_x = 615
+    safari_Canimals[1].border = 100
+    safari_Canimals[1].speed = 0.45 + R4
+    safari_Canimals[1].texture = safari_nosorog
+
+    safari_Canimals[2].pos_y = 210
+    safari_Canimals[2].pos_x = 172
+    safari_Canimals[2].border = 200
+    safari_Canimals[2].speed = 0.70 + R3
+    safari_Canimals[2].texture = safari_zebra
+    safari_Canimals[3].pos_y = 210
+    safari_Canimals[3].pos_x = 432
+    safari_Canimals[3].border = 200
+    safari_Canimals[3].speed = 0.70 + R3
+    safari_Canimals[3].texture = safari_zebra
+    safari_Canimals[4].pos_y = 210
+    safari_Canimals[4].pos_x = 692
+    safari_Canimals[4].border = 200
+    safari_Canimals[4].speed = 0.70 + R3
+    safari_Canimals[4].texture = safari_zebra
+    safari_Canimals[5].pos_y = 210
+    safari_Canimals[5].pos_x = 952
+    safari_Canimals[5].border = 200
+    safari_Canimals[5].speed = 0.70 + R3
+    safari_Canimals[5].texture = safari_zebra
+
+    safari_Canimals[6].pos_y = 300
+    safari_Canimals[6].pos_x = 153 
+    safari_Canimals[6].border = 300
+    safari_Canimals[6].speed = 0.95 + R2
+    safari_Canimals[6].texture = safari_kaban
+    safari_Canimals[7].pos_y = 300
+    safari_Canimals[7].pos_x = 463
+    safari_Canimals[7].border = 300
+    safari_Canimals[7].speed = 0.95 + R2
+    safari_Canimals[7].texture = safari_kaban
+    safari_Canimals[8].pos_y = 300
+    safari_Canimals[8].pos_x = 773
+    safari_Canimals[8].border = 300
+    safari_Canimals[8].speed = 0.95 + R2
+    safari_Canimals[8].texture = safari_kaban
+    safari_Canimals[9].pos_y = 300
+    safari_Canimals[9].pos_x = 1083
+    safari_Canimals[9].border = 300
+    safari_Canimals[9].speed = 0.95 + R2
+    safari_Canimals[9].texture = safari_kaban
+
+
+
+safari_reset_subf()
+
+
+safari_Cbullets = [0]*16
+for i in range(16): safari_Cbullets[i] = SF_bullet()
+
 class MO_TW():
     def __init__(self):
         self.pos_x = -999
@@ -718,8 +1248,11 @@ def effect_4(tick,pos):
     Window.blit(a72,(0,pos+12))
 
 def effect_5():
+    global Window
 
     if (1):
+
+        if (not(retropixel_bool)): Window.blit(pygame.transform.scale((pygame.transform.scale(Window, (320,240))),(640,480)),(0,0))
 
         src = pygame.surfarray.array3d(Window)
     
@@ -741,7 +1274,7 @@ def effect_5():
         newCamMtx[1, 2] = h/2.
      
         dist_coeffs = np.zeros((1, 4), np.float64)
-        dist_coeffs[0, 0] = 30.0
+        dist_coeffs[0, 0] = linza_effect * 10.0
         dist_coeffs[0, 1] = 0
         dist_coeffs[0, 2] = 0
         dist_coeffs[0, 3] = 0
@@ -753,7 +1286,6 @@ def effect_5():
             res = cv2.remap(res, map1, map2, cv2.INTER_LINEAR)
         else:
             res = cv2.remap(src, map1, map2, cv2.INTER_LINEAR)
-        
         
         pygame.pixelcopy.array_to_surface(Window,res)
 
@@ -950,8 +1482,284 @@ def game_select_update(select):
         text_print("- В этой игре нельзя",1,32,370)
         text_print("  получить золотую монету.",1,32,396)
 
+    if (game_select == "safari"):
+        text_print("Сафари",1,32,32)
+        text_print("- Поразите как можно,",1,32,84)
+        text_print("  больше животных.",1,32,110)
+        text_print("- Цельтись с упреждением,",1,32,136)
+        text_print("  чтобы поразить цель.",1,32,162)
+        text_print("- Пальмы останавливают пули.",1,32,188)
+        text_print("- Иногда вы будете подпрыгивать.",1,32,214)
+        text_print("  Учитывайте это при стрельбе.",1,32,240)
+        text_print("- у вас будет только 16 выстрелов.",1,32,266)      
+        text_print("- время игры - 2 минуты.",1,32,292)
+        text_print("- поразите хотя бы 13 животных,",1,32,318)
+        text_print("  чтобы получить призовую игру.",1,32,344)        
+        text_print("- поразите хотя бы 13 животных в",1,32,370)
+        text_print("  призовой игре, чтобы получить",1,32,396)
+        text_print("  золотую монету.",1,32,422)
+
+    if (game_select == "pamat"):
+        text_print("Память",1,32,32)
+        text_print("- Вам будет показана неполная",1,32,84)
+        text_print("  фигура и несколько вариантов",1,32,110)
+        text_print("  ответов. укажите, какую фигуру",1,32,136)
+        text_print("  нужно добавить, чтобы",1,32,162)
+        text_print("  получилась полная фигура.",1,32,188)
+        text_print("- Вам будет задано 20 вопросов.",1,32,214)
+        text_print("  время игры - 2 минуты.",1,32,240)
+        text_print("- Ответье хотя бы на 16 вопросов,",1,32,266)      
+        text_print("  чтобы получить призовую игру.",1,32,292)
+        text_print("- Ответье хотя бы на 16 вопросов",1,32,318)        
+        text_print("  в призовой игре, чтобы получить",1,32,344)
+        text_print("  золотую монету",1,32,370)        
+        
+def safari_prizegame_update():
+    global safari_player_tick, safari_player_subtick, safari_shots_left, safari_Cbullets, safari_timer, safari_subtimer, safari_jump_tick, safari_jump_tick_pos, safari_zebra_lives, safari_kaban_lives, goldencoins
+    global safari_kaban_ct_count, safari_zebra_ct_count, safari_nosorog_ct_count, safari_game_bool, gamemenu_bool, blackscreen_timer, prizegame_timer, safari_Coblakos, goldcoin_get_timer, safari_prizegame_bool
+
+    F = False
+    for i in range(16): F = F or safari_Cbullets[i].active
+    if ((not(F) and safari_shots_left == 0) or safari_timer <= 0):
+
+        summ = safari_kaban_ct_count + safari_zebra_ct_count + safari_nosorog_ct_count
+
+        if (summ >= 13):
+            safari_prizegame_bool = False
+            gamemenu_bool = True
+            goldencoins += 1
+            progress_output()
+            goldcoin_get_timer = 240
+
+        else:
+            safari_prizegame_bool = False
+            gamemenu_bool = True
+            blackscreen_timer = 120
+        
+
+    Window.blit(safari_map,(0,0))
+
+    for i in range(6):
+        safari_Coblakos[i].update()
+        Window.blit(safari_Coblakos[i].texture,(round(safari_Coblakos[i].pos_x) + int(round(safari_Coblakos[i].pos_x)%2 == 1),round(safari_Coblakos[i].pos_y) + int(round(safari_Coblakos[i].pos_y)%2 == 1)))
+        
+
+    Window.blit(safari_piramid,((round((round(-safari_subtimer/15.0 - -safari_timer/0.25)/2.0)*4))%1000-200,110))
+
+    
+    Window.blit(safari_player[safari_player_tick],(56,380-(round(safari_jump_tick_pos) + int(round(safari_jump_tick_pos)%2 == 1))))
+    safari_player_subtick += 1
+    if (safari_player_subtick == 10):
+        safari_player_subtick = 0
+        safari_player_tick = (safari_player_tick + 1)%4
+
+    Window.blit(safari_shots_base,(4,424))
+    
+    Window.blit(safari_animals_cathc,(334,424))
+
+    if (safari_kaban_ct_count <= 4):
+        for i in range(safari_kaban_ct_count): Window.blit(safari_kaban[0],(336+32*i,414))
+    else:
+        for i in range(4): Window.blit(safari_kaban[0],(336+32*i,414))
+        for i in range(safari_kaban_ct_count-4): Window.blit(safari_kaban[0],(336+32*i,440))
+
+    if (safari_zebra_ct_count <= 3):
+        for i in range(safari_zebra_ct_count): Window.blit(safari_zebra[3],(464+44*i,418))
+    else:
+        for i in range(3): Window.blit(safari_zebra[3],(464+44*i,418))
+        for i in range(safari_zebra_ct_count-3): Window.blit(safari_zebra[3],(464+44*i,444))
+
+    if (safari_nosorog_ct_count > 0): Window.blit(safari_nosorog[1],(594,416))
+    if (safari_nosorog_ct_count > 1): Window.blit(safari_nosorog[1],(594,444))
+
+    if (safari_shots_left <= 8):
+        for i in range(safari_shots_left): Window.blit(safari_shots_unysed,(6+18*i,426))
+    else:
+        for i in range(8): Window.blit(safari_shots_unysed,(6+18*i,426))
+        for i in range(safari_shots_left-8): Window.blit(safari_shots_unysed,(6+18*i,454))
+
+    for i in range(16):
+        if (safari_Cbullets[i].active):
+            safari_Cbullets[i].update()
+            safari_Cbullets[i].hitbox.define(safari_Cbullets[i].pos_x,safari_Cbullets[i].pos_y,6,6)
+            if (safari_Cbullets[i].pos_y < -6): safari_Cbullets[i].active = False
+            for j in range(16):
+                if (cheak_BoxC(safari_Cbullets[i].hitbox,safari_Cpalmas[j].hitbox)): safari_Cbullets[i].active = False
+            else: Window.blit(safari_Cbullets[i].texture,(round(safari_Cbullets[i].pos_x) + int(round(safari_Cbullets[i].pos_x)%2 == 1),round(safari_Cbullets[i].pos_y) + int(round(safari_Cbullets[i].pos_y)%2 == 1)))
+
+    for i in range(16):
+        safari_Cpalmas[i].hitbox.define(safari_Cpalmas[i].pos_x + 4,safari_Cpalmas[i].pos_y + 4,14,22)
+        if (i < 4):
+            if (safari_jump_tick_pos == 0.0 and safari_Cpalmas[i].pos_x >= 121.5 and safari_Cpalmas[i].pos_x <= 123): safari_jump_tick = 2.3
+        safari_Cpalmas[i].update()
+        Window.blit(safari_Cpalmas[i].texture,(round(safari_Cpalmas[i].pos_x) + round(round(safari_Cpalmas[i].pos_x)%2 == 1),safari_Cpalmas[i].pos_y))
+
+    for i in range(10):
+        safari_zebra_lives, safari_kaban_lives = safari_Canimals[i].update(safari_zebra_lives, safari_kaban_lives)
+        if (safari_Canimals[i].pos_y ==  120): safari_Canimals[i].hitbox.define(safari_Canimals[i].pos_x+4,safari_Canimals[i].pos_y+14,32,10)
+        if (safari_Canimals[i].pos_y ==  210): safari_Canimals[i].hitbox.define(safari_Canimals[i].pos_x+2,safari_Canimals[i].pos_y+14,32,8)
+        if (safari_Canimals[i].pos_y ==  300): safari_Canimals[i].hitbox.define(safari_Canimals[i].pos_x+2,safari_Canimals[i].pos_y+20,20,6)
+        if (safari_Canimals[i].active): Window.blit(safari_Canimals[i].texture[safari_subtimer//15],(round(safari_Canimals[i].pos_x) + int(round(safari_Canimals[i].pos_x)%2 == 1),safari_Canimals[i].pos_y))
+
+    for i in range(10):
+        for j in range(16):
+            if (safari_Canimals[i].active and safari_Cbullets[j].active):
+                if (cheak_BoxC(safari_Canimals[i].hitbox,safari_Cbullets[j].hitbox)):
+                    safari_Canimals[i].active = False
+                    safari_Cbullets[j].active = False
+                    if (safari_Canimals[i].pos_y ==  120): safari_nosorog_ct_count += 1
+                    if (safari_Canimals[i].pos_y ==  210): safari_zebra_ct_count += 1
+                    if (safari_Canimals[i].pos_y ==  300): safari_kaban_ct_count += 1
+            
+        
+    if (safari_jump_tick >= -2.3):
+        safari_jump_tick_pos += safari_jump_tick
+        safari_jump_tick -= 0.05
+    else: safari_jump_tick_pos = 0.0
+
+    safari_subtimer += 1
+    if (safari_subtimer >= 59):
+        safari_subtimer = 0
+        safari_timer -= 1
+
+    text_print(str(safari_timer//60),1,148,420)
+    ss = str(safari_timer%60)
+    if (len(ss)==1): ss = "0" + ss
+    text_print(ss,1,164,420)
+    Window.blit(morskaya_ohota_dd,(162,426))
+    
+def safari_game_update():
+    global safari_player_tick, safari_player_subtick, safari_shots_left, safari_Cbullets, safari_timer, safari_subtimer, safari_jump_tick, safari_jump_tick_pos, safari_zebra_lives, safari_kaban_lives
+    global safari_kaban_ct_count, safari_zebra_ct_count, safari_nosorog_ct_count, safari_game_bool, gamemenu_bool, blackscreen_timer, prizegame_timer, safari_Coblakos, safari_prizegame_bool
+
+    F = False
+    for i in range(16): F = F or safari_Cbullets[i].active
+    if ((not(F) and safari_shots_left == 0) or safari_timer <= 0):
+
+        summ = safari_kaban_ct_count + safari_zebra_ct_count + safari_nosorog_ct_count
+
+        if (summ >= 13):
+            safari_game_bool = False
+            safari_prizegame_bool = True
+            prizegame_timer = 240
+
+            safari_shots_left = 16
+            safari_timer = 120
+            safari_jump_tick = -32
+            safari_jump_tick_pos = 0
+            safari_nosorog_ct_count = 0
+            safari_zebra_ct_count = 0
+            safari_kaban_ct_count = 0
+            safari_zebra_lives = 2
+            safari_kaban_lives = 4
+            for i in range(6):
+                safari_Coblakos[i] = SF_oblako()
+                safari_Coblakos[i].pos_x = randint(-100,740)
+                safari_Coblakos[i].pos_y = randint(-4,30)
+                safari_Coblakos[i].speed = -(randint(1,16)/10.0)
+                safari_Coblakos[i].texture = safari_oblako[randint(0,2)]
+
+            safari_prizegame_reset_subf()
+
+        else:
+            safari_game_bool = False
+            gamemenu_bool = True
+            blackscreen_timer = 120
+        
+
+    Window.blit(safari_map,(0,0))
+
+    for i in range(6):
+        safari_Coblakos[i].update()
+        Window.blit(safari_Coblakos[i].texture,(round(safari_Coblakos[i].pos_x) + int(round(safari_Coblakos[i].pos_x)%2 == 1),round(safari_Coblakos[i].pos_y) + int(round(safari_Coblakos[i].pos_y)%2 == 1)))
+        
+
+    Window.blit(safari_piramid,((round((round(-safari_subtimer/15.0 - -safari_timer/0.25)/2.0)*4))%1000-200,110))
+
+    
+    Window.blit(safari_player[safari_player_tick],(56,380-(round(safari_jump_tick_pos) + int(round(safari_jump_tick_pos)%2 == 1))))
+    safari_player_subtick += 1
+    if (safari_player_subtick == 10):
+        safari_player_subtick = 0
+        safari_player_tick = (safari_player_tick + 1)%4
+
+    Window.blit(safari_shots_base,(4,424))
+    
+    Window.blit(safari_animals_cathc,(334,424))
+
+    if (safari_kaban_ct_count <= 4):
+        for i in range(safari_kaban_ct_count): Window.blit(safari_kaban[0],(336+32*i,414))
+    else:
+        for i in range(4): Window.blit(safari_kaban[0],(336+32*i,414))
+        for i in range(safari_kaban_ct_count-4): Window.blit(safari_kaban[0],(336+32*i,440))
+
+    if (safari_zebra_ct_count <= 3):
+        for i in range(safari_zebra_ct_count): Window.blit(safari_zebra[3],(464+44*i,418))
+    else:
+        for i in range(3): Window.blit(safari_zebra[3],(464+44*i,418))
+        for i in range(safari_zebra_ct_count-3): Window.blit(safari_zebra[3],(464+44*i,444))
+
+    if (safari_nosorog_ct_count > 0): Window.blit(safari_nosorog[1],(594,416))
+    if (safari_nosorog_ct_count > 1): Window.blit(safari_nosorog[1],(594,444))
+
+    if (safari_shots_left <= 8):
+        for i in range(safari_shots_left): Window.blit(safari_shots_unysed,(6+18*i,426))
+    else:
+        for i in range(8): Window.blit(safari_shots_unysed,(6+18*i,426))
+        for i in range(safari_shots_left-8): Window.blit(safari_shots_unysed,(6+18*i,454))
+
+    for i in range(16):
+        if (safari_Cbullets[i].active):
+            safari_Cbullets[i].update()
+            safari_Cbullets[i].hitbox.define(safari_Cbullets[i].pos_x,safari_Cbullets[i].pos_y,6,6)
+            if (safari_Cbullets[i].pos_y < -6): safari_Cbullets[i].active = False
+            for j in range(16):
+                if (cheak_BoxC(safari_Cbullets[i].hitbox,safari_Cpalmas[j].hitbox)): safari_Cbullets[i].active = False
+            else: Window.blit(safari_Cbullets[i].texture,(round(safari_Cbullets[i].pos_x) + int(round(safari_Cbullets[i].pos_x)%2 == 1),round(safari_Cbullets[i].pos_y) + int(round(safari_Cbullets[i].pos_y)%2 == 1)))
+
+    for i in range(16):
+        safari_Cpalmas[i].hitbox.define(safari_Cpalmas[i].pos_x + 4,safari_Cpalmas[i].pos_y + 4,14,22)
+        if (i < 4):
+            if (safari_jump_tick_pos == 0.0 and safari_Cpalmas[i].pos_x >= 121.5 and safari_Cpalmas[i].pos_x <= 123): safari_jump_tick = 2.3
+        safari_Cpalmas[i].update()
+        Window.blit(safari_Cpalmas[i].texture,(round(safari_Cpalmas[i].pos_x) + round(round(safari_Cpalmas[i].pos_x)%2 == 1),safari_Cpalmas[i].pos_y))
+
+    for i in range(10):
+        safari_zebra_lives, safari_kaban_lives = safari_Canimals[i].update(safari_zebra_lives, safari_kaban_lives)
+        if (safari_Canimals[i].pos_y ==  120): safari_Canimals[i].hitbox.define(safari_Canimals[i].pos_x+4,safari_Canimals[i].pos_y+14,32,10)
+        if (safari_Canimals[i].pos_y ==  210): safari_Canimals[i].hitbox.define(safari_Canimals[i].pos_x+2,safari_Canimals[i].pos_y+14,32,8)
+        if (safari_Canimals[i].pos_y ==  300): safari_Canimals[i].hitbox.define(safari_Canimals[i].pos_x+2,safari_Canimals[i].pos_y+20,20,6)
+        if (safari_Canimals[i].active): Window.blit(safari_Canimals[i].texture[safari_subtimer//15],(round(safari_Canimals[i].pos_x) + int(round(safari_Canimals[i].pos_x)%2 == 1),safari_Canimals[i].pos_y))
+
+    for i in range(10):
+        for j in range(16):
+            if (safari_Canimals[i].active and safari_Cbullets[j].active):
+                if (cheak_BoxC(safari_Canimals[i].hitbox,safari_Cbullets[j].hitbox)):
+                    safari_Canimals[i].active = False
+                    safari_Cbullets[j].active = False
+                    if (safari_Canimals[i].pos_y ==  120): safari_nosorog_ct_count += 1
+                    if (safari_Canimals[i].pos_y ==  210): safari_zebra_ct_count += 1
+                    if (safari_Canimals[i].pos_y ==  300): safari_kaban_ct_count += 1
+            
+        
+    if (safari_jump_tick >= -2.3):
+        safari_jump_tick_pos += safari_jump_tick
+        safari_jump_tick -= 0.05
+    else: safari_jump_tick_pos = 0.0
+
+    safari_subtimer += 1
+    if (safari_subtimer >= 59):
+        safari_subtimer = 0
+        safari_timer -= 1
+
+    text_print(str(safari_timer//60),1,148,420)
+    ss = str(safari_timer%60)
+    if (len(ss)==1): ss = "0" + ss
+    text_print(ss,1,164,420)
+    Window.blit(morskaya_ohota_dd,(162,426))
+    
 def gonky_II_game_update():
-    global gonky_II_player1_viev_pos, gonky_II_player2_viev_pos, gonky_II_time, gonky_II_subtime, wins_player1_tick, wins_player2_tick, gonky_II_game_bool
+    global gonky_II_player1_viev_pos, gonky_II_player2_viev_pos, gonky_II_time, gonky_II_subtime, wins_player1_tick, wins_player2_tick, gonky_II_game_bool, gamemenu_bool
     
     Window.blit(gonky_II_roadsegment,(0,int(gonky_II_player1_viev_pos%480) + int(int(gonky_II_player1_viev_pos)%2 == 1)))
     Window.blit(gonky_II_roadsegment,(0,int(gonky_II_player1_viev_pos%480)-480 + int(int(gonky_II_player1_viev_pos)%2 == 1)))
@@ -962,7 +1770,7 @@ def gonky_II_game_update():
     Window.blit(gonky_info_player_1_go,(304,438))
     Window.blit(gonky_info_timer_go,(316,438))
     Window.blit(gonky_info_player_2_go,(328,438))
-    Window.blit(gonky_II_info_finish,(302,24))
+    Window.blit(gonky_II_info_finish,(302,22))
 
     if (round(gonky_II_player1_viev_pos/1000) > 50):
         gonky_II_game_bool = False
@@ -1508,6 +2316,48 @@ def update():
                     Window.blit(settmenu_fullscreen_2,(62,100))
                     if (fullscreen_bool): Window.blit(settmenu_fullscreen_cheak_2,(62,100))
 
+                if (settmenu_select == 2):  Window.blit(settmenu_grahigs_1,(62,160))
+                else:   Window.blit(settmenu_grahigs_2,(62,160))
+
+                if (settmenu_select == 3):  Window.blit(settmenu_audio_1,(62,220))
+                else:   Window.blit(settmenu_audio_2,(62,220))
+
+                if (settmenu_select == 4):  Window.blit(settmenu_languare_1,(62,280))
+                else:   Window.blit(settmenu_languare_2,(62,280))
+
+                if (settmenu_select == 5):  Window.blit(settmenu_resetprogress_1,(62,340))
+                else:   Window.blit(settmenu_resetprogress_2,(62,340))
+
+            if (grafmenu_bool):
+                if (grafmenu_select == 0): Window.blit(back_button_1,(32,32))
+                else: Window.blit(back_button_2,(32,32))
+
+                Window.blit(grafmenu_merzanie_str[grafmenu_select == 1],(62,100))
+                Window.blit(grafmenu_merzanie[merzanie_bool][grafmenu_select == 1],(62,100))
+
+                Window.blit(grafmenu_lostpixel_str[grafmenu_select == 2],(10,160))
+                Window.blit(grafmenu_lostpixel[effect_2_int][grafmenu_select == 2],(10,160))
+
+                Window.blit(grafmenu_linza_str[grafmenu_select == 3],(10,220))
+                Window.blit(grafmenu_linza[linza_effect][grafmenu_select == 3],(10,220))
+
+                Window.blit(grafmenu_defects_str[grafmenu_select == 4],(62,280))
+                Window.blit(grafmenu_defects[defects_bool][grafmenu_select == 4],(62,280))
+
+                Window.blit(grafmenu_retropixel_str[grafmenu_select == 5],(62,340))
+                Window.blit(grafmenu_retropixel[retropixel_bool][grafmenu_select == 5],(62,340))
+
+                Window.blit(grafmenu_setdefents[grafmenu_select == 6],(62,400))
+
+            if (audimenu_bool):
+                if (audimenu_select == 0): Window.blit(back_button_1,(32,32))
+                else: Window.blit(back_button_2,(32,32))
+
+            if (langmenu_bool):
+                if (langmenu_select == 0): Window.blit(back_button_1,(32,32))
+                else: Window.blit(back_button_2,(32,32))
+
+
             if (gamemenu_bool):
                     if (gamemenu_razdel == 0):
                         if (gamemenu_select == 0): Window.blit(back_button_1,(32,32))
@@ -1611,6 +2461,9 @@ def update():
                     elif (gonky_prizegame_bool): gonky_prizegame_update()
 
                     if (gonky_II_game_bool): gonky_II_game_update()
+
+                    if (safari_game_bool): safari_game_update()
+                    elif (safari_prizegame_bool): safari_prizegame_update()
                         
 
                     
@@ -1624,11 +2477,11 @@ def update():
                 R = randint(1,60)
                 Window.blit(pygame.transform.scale(effect_3_2,(640,R)),(0,randint(0,479-R)))
 
-    for i in range(randint(1,5) + int(bool(effect_2_tick)) * effect_2_int * 100):
+    for i in range(((effect_2_int + 5*int(bool(effect_2_tick)))**2 * 3)):
             lpx = randint(0,319); lpy = randint(0,239)
             pygame.draw.rect(Window, (0,0,0),(lpx*2,lpy*2, 2, 2))
 
-    Window.blit(effect_1[mainmenu_subtick%3],(0,0))
+    if (merzanie_bool): Window.blit(effect_1[mainmenu_subtick%3],(0,0))
 
     if (effect_2_tick > 0):
             effect_2_tick -= 1
@@ -1689,7 +2542,7 @@ while Run:
                         if (event.key == pygame.K_UP or event.key == pygame.K_w):
                             if (settmenu_select > 0): settmenu_select -= 1
                         if (event.key == pygame.K_DOWN or event.key == pygame.K_s):
-                            if (settmenu_select < 1): settmenu_select += 1
+                            if (settmenu_select < 5): settmenu_select += 1
                             
                         if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
                                 if (settmenu_select == 0):
@@ -1698,8 +2551,95 @@ while Run:
                                     mainmenu_select = 2
                                 if (settmenu_select == 1):
                                     fullscreen_bool = not(fullscreen_bool)
-                                    pygame .display.toggle_fullscreen()
+                                    pygame.display.toggle_fullscreen()
                                     settings_output()
+                                if (settmenu_select == 2):
+                                    settmenu_bool = False
+                                    grafmenu_bool = True
+                                if (settmenu_select == 3):
+                                    settmenu_bool = False
+                                    audimenu_bool = True
+                                if (settmenu_select == 4):
+                                    settmenu_bool = False
+                                    langmenu_bool = True
+
+                    elif (grafmenu_bool):
+                        if (event.key == pygame.K_UP or event.key == pygame.K_w):
+                            if (grafmenu_select > 0): grafmenu_select -= 1
+                        if (event.key == pygame.K_DOWN or event.key == pygame.K_s):
+                            if (grafmenu_select < 6): grafmenu_select += 1
+
+                        if (grafmenu_select == 0 and event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
+                            grafmenu_bool = False
+                            settmenu_bool = True
+                            audimenu_select = 2
+                            
+                        if (grafmenu_select == 1 and (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL or
+                            (event.key == pygame.K_RIGHT or event.key == pygame.K_d) or
+                            (event.key == pygame.K_LEFT or event.key == pygame.K_a))):
+                            merzanie_bool = not(merzanie_bool)
+                            settings_output()
+
+                        if (grafmenu_select == 2):
+                            if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL or (event.key == pygame.K_RIGHT or event.key == pygame.K_d)):
+                                effect_2_int = (effect_2_int+1)%5
+                                settings_output()
+                            if ((event.key == pygame.K_LEFT or event.key == pygame.K_a)):
+                                effect_2_int = (effect_2_int-1)%5
+                                settings_output()
+
+                        if (grafmenu_select == 3):
+                            if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL or (event.key == pygame.K_RIGHT or event.key == pygame.K_d)):
+                                linza_effect = (linza_effect+1)%13
+                                settings_output()
+                            if ((event.key == pygame.K_LEFT or event.key == pygame.K_a)):
+                                linza_effect = (linza_effect-1)%13
+                                settings_output()
+
+                        if (grafmenu_select == 4 and (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL or
+                            (event.key == pygame.K_RIGHT or event.key == pygame.K_d) or
+                            (event.key == pygame.K_LEFT or event.key == pygame.K_a))):
+                            defects_bool = not(defects_bool)
+                            settings_output()
+
+                        if (grafmenu_select == 5 and (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL or
+                            (event.key == pygame.K_RIGHT or event.key == pygame.K_d) or
+                            (event.key == pygame.K_LEFT or event.key == pygame.K_a))):
+                            retropixel_bool = not(retropixel_bool)
+                            settings_output()
+
+                        if (grafmenu_select == 6 and (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL)):
+                            merzanie_bool = True
+                            effect_2_int = 2
+                            linza_effect = 3
+                            defects_bool = True
+                            retropixel_bool = True
+                            settings_output()
+
+                            
+
+                    elif (audimenu_bool):
+                        if (event.key == pygame.K_UP or event.key == pygame.K_w):
+                            if (audimenu_select > 0): audimenu_select -= 1
+                        if (event.key == pygame.K_DOWN or event.key == pygame.K_s):
+                            if (audimenu_select < 0): audimenu_select += 1
+
+                        if (audimenu_select == 0 and event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
+                            audimenu_bool = False
+                            settmenu_bool = True
+                            settmenu_select = 3
+
+                    elif (langmenu_bool):
+                        if (event.key == pygame.K_UP or event.key == pygame.K_w):
+                            if (langmenu_select > 0): langmenu_select -= 1
+                        if (event.key == pygame.K_DOWN or event.key == pygame.K_s):
+                            if (langmenu_select < 0): langmenu_select += 1
+
+                        if (langmenu_select == 0 and event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
+                            langmenu_bool = False
+                            settmenu_bool = True
+                            settmenu_select = 4
+                                
                                     
                     elif (gamemenu_bool):
                         if (event.key == pygame.K_UP or event.key == pygame.K_w): gamemenu_select = gamemenu_map(gamemenu_select,1)
@@ -1727,6 +2667,14 @@ while Run:
                                 if (gamemenu_select == 3):
                                     gamemenu_bool = False
                                     game_select = "gonky_II"
+                                    mainmenu_select = 0
+                                if (gamemenu_select == 4):
+                                    gamemenu_bool = False
+                                    game_select = "safari"
+                                    mainmenu_select = 0
+                                if (gamemenu_select == 5):
+                                    gamemenu_bool = False
+                                    game_select = "pamat"
                                     mainmenu_select = 0                                
 
 
@@ -1787,7 +2735,7 @@ while Run:
                                     gonky_II_game_bool = True
                                     gonky_II_time = 120
 
-                                    gonky_player1_viev_pos = 0
+                                    gonky_II_player1_viev_pos = 0
                                     gonky_II_car[0].distract = 0
                                     gonky_II_car[0].type = "green"
                                     gonky_II_car[0].control = True
@@ -1798,7 +2746,7 @@ while Run:
                                     gonky_II_car[0].hitbox.define(0,0,36,64)
                                     gonky_II_car[0].way = True
 
-                                    gonky_player2_viev_pos = 0
+                                    gonky_II_player2_viev_pos = 0
                                     gonky_II_car[1].type = "blue"
                                     gonky_II_car[1].control = True
                                     gonky_II_car[1].pos_x = 488
@@ -1807,6 +2755,28 @@ while Run:
                                     gonky_II_car[1].texture = gonky_blue_car
                                     gonky_II_car[1].hitbox.define(0,0,36,64)
                                     gonky_II_car[1].way = True
+
+                                if (game_select == "safari"):
+                                    safari_game_bool = True
+                                    
+                                    safari_shots_left = 16
+                                    safari_timer = 120
+                                    safari_jump_tick = -32
+                                    safari_jump_tick_pos = 0
+                                    safari_nosorog_ct_count = 0
+                                    safari_zebra_ct_count = 0
+                                    safari_kaban_ct_count = 0
+                                    safari_zebra_lives = 2
+                                    safari_kaban_lives = 4
+                                    for i in range(6):
+                                        safari_Coblakos[i] = SF_oblako()
+                                        safari_Coblakos[i].pos_x = randint(-100,740)
+                                        safari_Coblakos[i].pos_y = randint(-4,30)
+                                        safari_Coblakos[i].speed = -(randint(1,16)/10.0)
+                                        safari_Coblakos[i].texture = safari_oblako[randint(0,2)]
+
+                                    safari_reset_subf()
+                                    
                                     
                                 game_select = "none"
                                 gamemenu_bool = False
@@ -1837,6 +2807,13 @@ while Run:
                         if (event.key == pygame.K_LEFT):   gonky_II_L2_bool = True
                         if (event.key == pygame.K_UP):     gonky_II_F2_bool = True
                         if (event.key == pygame.K_DOWN):   gonky_II_B2_bool = True
+
+                    elif (safari_game_bool or safari_prizegame_bool):
+                        if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
+                            if (safari_shots_left > 0):
+                                safari_shots_left -= 1
+                                safari_Cbullets[safari_shots_left].spawn(-safari_jump_tick_pos)
+                            
                     
                     
 
@@ -1859,11 +2836,11 @@ while Run:
                         if (event.key == pygame.K_UP):     gonky_II_F2_bool = False
                         if (event.key == pygame.K_DOWN):   gonky_II_B2_bool = False
                     
-    if (chascecount(0.0025) and effect_4_tick == 0):
+    if (defects_bool and chascecount(0.0025) and effect_4_tick == 0):
         effect_4_tick = 20
         effect_4_pos = randint(0,234)*2
 
-    if (chascecount(0.0003) and effect_6_tick == 0):
+    if (defects_bool and chascecount(0.0001) and effect_6_tick == 0):
         effect_6_tick = randint(12,48)
 
     if (loadtick < 420):
