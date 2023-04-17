@@ -308,6 +308,28 @@ goldcoin_have = pygame.image.load(dir_path+'/data/texture/goldcoin_have.png').co
 pamat_banner = pygame.image.load(dir_path+'/data/texture/pamat_banner.png').convert(); pamat_banner.set_colorkey((0,0,0))
 pamat_gamename_1 = pygame.image.load(dir_path+'/data/texture/pamat_gamename_1.png').convert()
 pamat_gamename_2 = pygame.image.load(dir_path+'/data/texture/pamat_gamename_2.png').convert()
+pamat_base = pygame.image.load(dir_path+'/data/texture/pamat_base.png').convert()
+pamat_ans_b_d = [0]*4
+pamat_ans_f_d = [0]*4
+pamat_ans_b_l = [0]*4
+pamat_ask_1 = [0]*4
+pamat_ask_2 = [0]*4
+pamat_ask_3 = [0]*4
+pamat_vrema = [0]*4
+for i in range(4):
+    pamat_ans_b_d[i] = pygame.image.load(dir_path+'/data/texture/pamat_ans_b_d_'+str(i+1)+'.png').convert(); pamat_ans_b_d[i].set_colorkey((0,0,0))
+    pamat_ans_f_d[i] = pygame.image.load(dir_path+'/data/texture/pamat_ans_f_d_'+str(i+1)+'.png').convert(); pamat_ans_f_d[i].set_colorkey((0,0,0))
+    pamat_ans_b_l[i] = pygame.image.load(dir_path+'/data/texture/pamat_ans_b_l_'+str(i+1)+'.png').convert(); pamat_ans_b_l[i].set_colorkey((0,0,0))
+
+    pamat_ask_1[i] = pygame.image.load(dir_path+'/data/texture/pamat_ask_1_'+str(i+1)+'.png').convert(); pamat_ask_1[i].set_colorkey((0,0,0))
+    pamat_ask_2[i] = pygame.image.load(dir_path+'/data/texture/pamat_ask_2_'+str(i+1)+'.png').convert(); pamat_ask_2[i].set_colorkey((0,0,0))
+    pamat_ask_3[i] = pygame.image.load(dir_path+'/data/texture/pamat_ask_3_'+str(i+1)+'.png').convert(); pamat_ask_3[i].set_colorkey((0,0,0))
+    pamat_vrema[i] = pygame.image.load(dir_path+'/data/texture/pamat_vrema_'+str(i+1)+'.png').convert();
+
+pamat_wrong = pygame.image.load(dir_path+'/data/texture/pamat_wrong.png').convert()
+pamat_right = pygame.image.load(dir_path+'/data/texture/pamat_right.png').convert()
+pamat_ans_l = pygame.image.load(dir_path+'/data/texture/pamat_ans_l.png').convert(); pamat_ans_l.set_colorkey((0,0,0))
+pamat_choise = pygame.image.load(dir_path+'/data/texture/pamat_choise.png').convert(); pamat_choise.set_colorkey((0,0,0))
 
 gonky_II_roadsegment = pygame.image.load(dir_path+'/data/texture/gonky_II_roadsegment.png').convert()
 gonky_II_info_finish = pygame.image.load(dir_path+'/data/texture/gonky_II_info_finish.png').convert()
@@ -418,6 +440,18 @@ safari_kaban_lives = 4
 safari_kaban_ct_count = 0
 safari_zebra_ct_count = 0
 safari_nosorog_ct_count = 0
+pamat_game_bool = False
+pamat_ask = ""
+pamat_right_ans = (0,0)
+pamat_pos = (0,0)
+pamat_wrong_tick = 0
+pamat_right_tick = 0
+pamat_vrema_timer = 0
+pamat_timer = 0
+pamat_subtimer = 0
+pamat_correct = 0
+pamat_incorrect = 0
+pamat_prizegame_bool = False
 
 class CollisionBox():
     def __init__(self):
@@ -552,6 +586,70 @@ gonky_II_car[8].way = True
 gonky_II_car[8].pos_x = 488
 gonky_II_car[9].way = True
 gonky_II_car[9].pos_x = 540   
+
+class PM_figure():
+    def __init__(self):
+        self.code = "0"*16
+
+    def random_code(self):
+        while True:
+            gcode = ""
+            for i in range(16): gcode += str(randint(0,1))
+            if (gcode.count("0") >= 6 and gcode.count("1") >= 6):
+                self.code = gcode
+                break
+
+    def get_reverse(self):
+        return ((self.code.replace("0","a")).replace("1","0")).replace("a","1")
+
+
+    def draw(self,x,y,ch):
+        if (ch):
+            Window.blit(pamat_ans_l,(x,y))
+            if (self.code[0] == "1"): Window.blit(pamat_ans_b_l[1],(x+6,y+2)); Window.blit(pamat_ans_f_d[1],(x+6,y+2))
+            if (self.code[1] == "1"): Window.blit(pamat_ans_b_l[1],(x+28,y+2)); Window.blit(pamat_ans_f_d[1],(x+28,y+2))
+            if (self.code[2] == "1"): Window.blit(pamat_ans_b_l[0],(x+46,y+6)); Window.blit(pamat_ans_f_d[0],(x+46,y+6))
+            if (self.code[3] == "1"): Window.blit(pamat_ans_b_l[0],(x+46,y+28)); Window.blit(pamat_ans_f_d[0],(x+46,y+28))
+            if (self.code[4] == "1"): Window.blit(pamat_ans_b_l[1],(x+28,y+46)); Window.blit(pamat_ans_f_d[1],(x+28,y+46))
+            if (self.code[5] == "1"): Window.blit(pamat_ans_b_l[1],(x+6,y+46)); Window.blit(pamat_ans_f_d[1],(x+6,y+46))
+            if (self.code[6] == "1"): Window.blit(pamat_ans_b_l[0],(x+2,y+28)); Window.blit(pamat_ans_f_d[0],(x+2,y+28))
+            if (self.code[7] == "1"): Window.blit(pamat_ans_b_l[0],(x+2,y+6)); Window.blit(pamat_ans_f_d[0],(x+2,y+6))
+            if (self.code[8] == "1"): Window.blit(pamat_ans_b_l[2],(x+6,y+6)); Window.blit(pamat_ans_f_d[2],(x+6,y+6))
+            if (self.code[9] == "1"): Window.blit(pamat_ans_b_l[0],(x+24,y+6)); Window.blit(pamat_ans_f_d[0],(x+24,y+6))
+            if (self.code[10]== "1"): Window.blit(pamat_ans_b_l[3],(x+28,y+6)); Window.blit(pamat_ans_f_d[3],(x+28,y+6))
+            if (self.code[11]== "1"): Window.blit(pamat_ans_b_l[1],(x+28,y+24)); Window.blit(pamat_ans_f_d[1],(x+28,y+24))
+            if (self.code[12]== "1"): Window.blit(pamat_ans_b_l[2],(x+28,y+28)); Window.blit(pamat_ans_f_d[2],(x+28,y+28))
+            if (self.code[13]== "1"): Window.blit(pamat_ans_b_l[0],(x+24,y+28)); Window.blit(pamat_ans_f_d[0],(x+24,y+28))
+            if (self.code[14]== "1"): Window.blit(pamat_ans_b_l[3],(x+6,y+28)); Window.blit(pamat_ans_f_d[3],(x+6,y+28))
+            if (self.code[15]== "1"): Window.blit(pamat_ans_b_l[1],(x+6,y+24)); Window.blit(pamat_ans_f_d[1],(x+6,y+24))
+        else:
+            if (self.code[0] == "1"): Window.blit(pamat_ans_b_d[1],(x+6,y+2)); Window.blit(pamat_ans_f_d[1],(x+6,y+2))
+            if (self.code[1] == "1"): Window.blit(pamat_ans_b_d[1],(x+28,y+2)); Window.blit(pamat_ans_f_d[1],(x+28,y+2))
+            if (self.code[2] == "1"): Window.blit(pamat_ans_b_d[0],(x+46,y+6)); Window.blit(pamat_ans_f_d[0],(x+46,y+6))
+            if (self.code[3] == "1"): Window.blit(pamat_ans_b_d[0],(x+46,y+28)); Window.blit(pamat_ans_f_d[0],(x+46,y+28))
+            if (self.code[4] == "1"): Window.blit(pamat_ans_b_d[1],(x+28,y+46)); Window.blit(pamat_ans_f_d[1],(x+28,y+46))
+            if (self.code[5] == "1"): Window.blit(pamat_ans_b_d[1],(x+6,y+46)); Window.blit(pamat_ans_f_d[1],(x+6,y+46))
+            if (self.code[6] == "1"): Window.blit(pamat_ans_b_d[0],(x+2,y+28)); Window.blit(pamat_ans_f_d[0],(x+2,y+28))
+            if (self.code[7] == "1"): Window.blit(pamat_ans_b_d[0],(x+2,y+6)); Window.blit(pamat_ans_f_d[0],(x+2,y+6))
+            if (self.code[8] == "1"): Window.blit(pamat_ans_b_d[2],(x+6,y+6)); Window.blit(pamat_ans_f_d[2],(x+6,y+6))
+            if (self.code[9] == "1"): Window.blit(pamat_ans_b_d[0],(x+24,y+6)); Window.blit(pamat_ans_f_d[0],(x+24,y+6))
+            if (self.code[10]== "1"): Window.blit(pamat_ans_b_d[3],(x+28,y+6)); Window.blit(pamat_ans_f_d[3],(x+28,y+6))
+            if (self.code[11]== "1"): Window.blit(pamat_ans_b_d[1],(x+28,y+24)); Window.blit(pamat_ans_f_d[1],(x+28,y+24))
+            if (self.code[12]== "1"): Window.blit(pamat_ans_b_d[2],(x+28,y+28)); Window.blit(pamat_ans_f_d[2],(x+28,y+28))
+            if (self.code[13]== "1"): Window.blit(pamat_ans_b_d[0],(x+24,y+28)); Window.blit(pamat_ans_f_d[0],(x+24,y+28))
+            if (self.code[14]== "1"): Window.blit(pamat_ans_b_d[3],(x+6,y+28)); Window.blit(pamat_ans_f_d[3],(x+6,y+28))
+            if (self.code[15]== "1"): Window.blit(pamat_ans_b_d[1],(x+6,y+24)); Window.blit(pamat_ans_f_d[1],(x+6,y+24))
+
+
+pamat_figures=[]
+for i in range(10):
+    pamat_figures.append([0]*(4))
+
+for i in range(10):
+    for j in range(4):
+        pamat_figures[i][j] = PM_figure()
+        pamat_figures[i][j].random_code()
+
 
 class SF_bullet():
     def __init__(self):
@@ -1507,13 +1605,188 @@ def game_select_update(select):
         text_print("  нужно добавить, чтобы",1,32,162)
         text_print("  получилась полная фигура.",1,32,188)
         text_print("- Вам будет задано 20 вопросов.",1,32,214)
-        text_print("  время игры - 2 минуты.",1,32,240)
-        text_print("- Ответье хотя бы на 16 вопросов,",1,32,266)      
-        text_print("  чтобы получить призовую игру.",1,32,292)
-        text_print("- Ответье хотя бы на 16 вопросов",1,32,318)        
-        text_print("  в призовой игре, чтобы получить",1,32,344)
-        text_print("  золотую монету",1,32,370)        
+        text_print("- время игры - 3 минуты.",1,32,240)
+        text_print("- время призовой игры - 5 минуты.",1,32,266)
+        text_print("- Ответье хотя бы на 16 вопросов,",1,32,292)      
+        text_print("  чтобы получить призовую игру.",1,32,318)
+        text_print("- Ответье хотя бы на 16 вопросов",1,32,344)        
+        text_print("  в призовой игре, чтобы получить",1,32,370)
+        text_print("  золотую монету",1,32,396)        
+
+def pamat_prizegame_update():
+    global pamat_ask, pamat_right_ans, pamat_pos, pamat_wrong_tick, pamat_right_tick, pamat_vrema_timer, pamat_timer, pamat_subtimer, pamat_correct, pamat_incorrect, pamat_game_bool, gamemenu_bool, blackscreen_timer
+    global pamat_prizegame_bool, prizegame_timer
+
+    if (pamat_correct+pamat_incorrect >= 20):
+        if (pamat_correct >= 16):
+            pamat_prizegame_bool = False
+            gamemenu_bool = True
+            goldencoins += 1
+            progress_output()
+            goldcoin_get_timer = 240
+        else:
+            pamat_prizegame_bool = False
+            gamemenu_bool = True
+            blackscreen_timer = 120
+    
+    Window.blit(pamat_base,(0,0))
+
+    if (pamat_ask == ""):
+        pamat_right_ans = (randint(0,9),randint(0,3))
+        pamat_ask = pamat_figures[pamat_right_ans[0]][pamat_right_ans[1]].get_reverse()
+
+    for i in range(13):
+        if (pamat_vrema_timer - 60*i > 60): Window.blit(pamat_vrema[0],(204+18*i,218))
+        elif (pamat_vrema_timer - 60*i < 0): Window.blit(pamat_vrema[3],(204+18*i,218))
+        else: Window.blit(pamat_vrema[3-((pamat_vrema_timer)%60)//15],(204+18*i,218))
+    
+    if (pamat_wrong_tick == 0 and pamat_right_tick == 0 and pamat_vrema_timer > 0): pamat_vrema_timer -= 1
+
+    if (pamat_wrong_tick == 0 and pamat_right_tick == 0 and pamat_vrema_timer == 0):
+        pamat_wrong_tick = 120
+        pamat_right_ans = (-1,-1)
+
+    if (pamat_right_tick > 0):
+        pamat_right_tick -= 1
+        Window.blit(pamat_right, (262,64))
+        if (pamat_right_tick == 0):
+            pamat_right_ans = (randint(0,9),randint(0,3))
+            pamat_ask = pamat_figures[pamat_right_ans[0]][pamat_right_ans[1]].get_reverse()
+            pamat_vrema_timer = 780
+            pamat_correct += 1
+    elif (pamat_wrong_tick > 0):
+        pamat_wrong_tick -= 1
+        Window.blit(pamat_wrong, (262,64))
+        if (pamat_wrong_tick == 0):
+            pamat_right_ans = (randint(0,9),randint(0,3))
+            pamat_ask = pamat_figures[pamat_right_ans[0]][pamat_right_ans[1]].get_reverse()
+            pamat_vrema_timer = 780
+            pamat_incorrect += 1
+            
+    elif (pamat_ask != ""):
+        if (pamat_ask[0] == "1"): Window.blit(pamat_ask_1[0],(244, 34));Window.blit(pamat_ask_2[0],(244, 34));Window.blit(pamat_ask_3[0],(244, 34))
+        if (pamat_ask[1] == "1"): Window.blit(pamat_ask_1[0],(324, 34));Window.blit(pamat_ask_2[0],(324, 34));Window.blit(pamat_ask_3[0],(324, 34))
+        if (pamat_ask[2] == "1"): Window.blit(pamat_ask_1[1],(392, 46));Window.blit(pamat_ask_2[1],(392, 46));Window.blit(pamat_ask_3[1],(392, 46))
+        if (pamat_ask[3] == "1"): Window.blit(pamat_ask_1[1],(392,126));Window.blit(pamat_ask_2[1],(392,126));Window.blit(pamat_ask_3[1],(392,126))
+        if (pamat_ask[4] == "1"): Window.blit(pamat_ask_1[0],(324,194));Window.blit(pamat_ask_2[0],(324,194));Window.blit(pamat_ask_3[0],(324,194))
+        if (pamat_ask[5] == "1"): Window.blit(pamat_ask_1[0],(244,194));Window.blit(pamat_ask_2[0],(244,194));Window.blit(pamat_ask_3[0],(244,194))
+        if (pamat_ask[6] == "1"): Window.blit(pamat_ask_1[1],(232,126));Window.blit(pamat_ask_2[1],(232,126));Window.blit(pamat_ask_3[1],(232,126))
+        if (pamat_ask[7] == "1"): Window.blit(pamat_ask_1[1],(232, 46));Window.blit(pamat_ask_2[1],(232, 46));Window.blit(pamat_ask_3[1],(232, 46))
+        if (pamat_ask[8] == "1"): Window.blit(pamat_ask_1[2],(244, 46));Window.blit(pamat_ask_2[2],(244, 46));Window.blit(pamat_ask_3[2],(244, 46))
+        if (pamat_ask[9] == "1"): Window.blit(pamat_ask_1[1],(312, 46));Window.blit(pamat_ask_2[1],(312, 46));Window.blit(pamat_ask_3[1],(312, 46))
+        if (pamat_ask[10]== "1"): Window.blit(pamat_ask_1[3],(324, 46));Window.blit(pamat_ask_2[3],(324, 46));Window.blit(pamat_ask_3[3],(324, 46))
+        if (pamat_ask[11]== "1"): Window.blit(pamat_ask_1[0],(324,114));Window.blit(pamat_ask_2[0],(324,114));Window.blit(pamat_ask_3[0],(324,114))
+        if (pamat_ask[12]== "1"): Window.blit(pamat_ask_1[2],(324,126));Window.blit(pamat_ask_2[2],(324,126));Window.blit(pamat_ask_3[2],(324,126))
+        if (pamat_ask[13]== "1"): Window.blit(pamat_ask_1[1],(312,126));Window.blit(pamat_ask_2[1],(312,126));Window.blit(pamat_ask_3[1],(312,126))
+        if (pamat_ask[14]== "1"): Window.blit(pamat_ask_1[3],(244,126));Window.blit(pamat_ask_2[3],(244,126));Window.blit(pamat_ask_3[3],(244,126))
+        if (pamat_ask[15]== "1"): Window.blit(pamat_ask_1[0],(244,114));Window.blit(pamat_ask_2[0],(244,114));Window.blit(pamat_ask_3[0],(244,114))
         
+    for i in range(10):
+        for j in range(4):
+            pamat_figures[i][j].draw(32+58*i,248+58*j,pamat_right_ans != (-1,-1))
+
+    Window.blit(pamat_choise,(30+58*pamat_pos[0],246+58*pamat_pos[1]))
+
+    pamat_subtimer += 1
+    if (pamat_subtimer >= 59):
+        pamat_subtimer = 0
+        pamat_timer -= 1
+
+    text_print(str(pamat_timer//60),1,444,218)
+    ss = str(pamat_timer%60)
+    if (len(ss)==1): ss = "0" + ss
+    text_print(ss,1,444+16,218)
+    Window.blit(morskaya_ohota_dd,(444+14,218+6))
+    
+def pamat_game_update():
+    global pamat_ask, pamat_right_ans, pamat_pos, pamat_wrong_tick, pamat_right_tick, pamat_vrema_timer, pamat_timer, pamat_subtimer, pamat_correct, pamat_incorrect, pamat_game_bool, gamemenu_bool, blackscreen_timer
+    global pamat_prizegame_bool, prizegame_timer
+
+    if (pamat_correct+pamat_incorrect >= 20):
+        if (pamat_correct >= 16):
+            pamat_game_bool = False
+            pamat_prizegame_bool = True
+            prizegame_timer = 240
+
+            pamat_timer = 300
+            pamat_correct = 0
+            pamat_incorrect = 0
+            pamat_vrema_timer = 0
+            
+        else:
+            pamat_game_bool = False
+            gamemenu_bool = True
+            blackscreen_timer = 120
+    
+    Window.blit(pamat_base,(0,0))
+
+    if (pamat_ask == ""):
+        pamat_right_ans = (randint(0,9),randint(0,3))
+        pamat_ask = pamat_figures[pamat_right_ans[0]][pamat_right_ans[1]].get_reverse()
+
+    for i in range(7):
+        if (pamat_vrema_timer - 60*i > 60): Window.blit(pamat_vrema[0],(228+28*i,218))
+        elif (pamat_vrema_timer - 60*i < 0): Window.blit(pamat_vrema[3],(228+28*i,218))
+        else: Window.blit(pamat_vrema[3-((pamat_vrema_timer)%60)//15],(228+28*i,218))
+    
+    if (pamat_wrong_tick == 0 and pamat_right_tick == 0 and pamat_vrema_timer > 0): pamat_vrema_timer -= 1
+
+    if (pamat_wrong_tick == 0 and pamat_right_tick == 0 and pamat_vrema_timer == 0):
+        pamat_wrong_tick = 120
+        pamat_right_ans = (-1,-1)
+
+    if (pamat_right_tick > 0):
+        pamat_right_tick -= 1
+        Window.blit(pamat_right, (262,64))
+        if (pamat_right_tick == 0):
+            pamat_right_ans = (randint(0,9),randint(0,3))
+            pamat_ask = pamat_figures[pamat_right_ans[0]][pamat_right_ans[1]].get_reverse()
+            pamat_vrema_timer = 420
+            pamat_correct += 1
+    elif (pamat_wrong_tick > 0):
+        pamat_wrong_tick -= 1
+        Window.blit(pamat_wrong, (262,64))
+        if (pamat_wrong_tick == 0):
+            pamat_right_ans = (randint(0,9),randint(0,3))
+            pamat_ask = pamat_figures[pamat_right_ans[0]][pamat_right_ans[1]].get_reverse()
+            pamat_vrema_timer = 420
+            pamat_incorrect += 1
+            
+    elif (pamat_ask != ""):
+        if (pamat_ask[0] == "1"): Window.blit(pamat_ask_1[0],(244, 34));Window.blit(pamat_ask_2[0],(244, 34));Window.blit(pamat_ask_3[0],(244, 34))
+        if (pamat_ask[1] == "1"): Window.blit(pamat_ask_1[0],(324, 34));Window.blit(pamat_ask_2[0],(324, 34));Window.blit(pamat_ask_3[0],(324, 34))
+        if (pamat_ask[2] == "1"): Window.blit(pamat_ask_1[1],(392, 46));Window.blit(pamat_ask_2[1],(392, 46));Window.blit(pamat_ask_3[1],(392, 46))
+        if (pamat_ask[3] == "1"): Window.blit(pamat_ask_1[1],(392,126));Window.blit(pamat_ask_2[1],(392,126));Window.blit(pamat_ask_3[1],(392,126))
+        if (pamat_ask[4] == "1"): Window.blit(pamat_ask_1[0],(324,194));Window.blit(pamat_ask_2[0],(324,194));Window.blit(pamat_ask_3[0],(324,194))
+        if (pamat_ask[5] == "1"): Window.blit(pamat_ask_1[0],(244,194));Window.blit(pamat_ask_2[0],(244,194));Window.blit(pamat_ask_3[0],(244,194))
+        if (pamat_ask[6] == "1"): Window.blit(pamat_ask_1[1],(232,126));Window.blit(pamat_ask_2[1],(232,126));Window.blit(pamat_ask_3[1],(232,126))
+        if (pamat_ask[7] == "1"): Window.blit(pamat_ask_1[1],(232, 46));Window.blit(pamat_ask_2[1],(232, 46));Window.blit(pamat_ask_3[1],(232, 46))
+        if (pamat_ask[8] == "1"): Window.blit(pamat_ask_1[2],(244, 46));Window.blit(pamat_ask_2[2],(244, 46));Window.blit(pamat_ask_3[2],(244, 46))
+        if (pamat_ask[9] == "1"): Window.blit(pamat_ask_1[1],(312, 46));Window.blit(pamat_ask_2[1],(312, 46));Window.blit(pamat_ask_3[1],(312, 46))
+        if (pamat_ask[10]== "1"): Window.blit(pamat_ask_1[3],(324, 46));Window.blit(pamat_ask_2[3],(324, 46));Window.blit(pamat_ask_3[3],(324, 46))
+        if (pamat_ask[11]== "1"): Window.blit(pamat_ask_1[0],(324,114));Window.blit(pamat_ask_2[0],(324,114));Window.blit(pamat_ask_3[0],(324,114))
+        if (pamat_ask[12]== "1"): Window.blit(pamat_ask_1[2],(324,126));Window.blit(pamat_ask_2[2],(324,126));Window.blit(pamat_ask_3[2],(324,126))
+        if (pamat_ask[13]== "1"): Window.blit(pamat_ask_1[1],(312,126));Window.blit(pamat_ask_2[1],(312,126));Window.blit(pamat_ask_3[1],(312,126))
+        if (pamat_ask[14]== "1"): Window.blit(pamat_ask_1[3],(244,126));Window.blit(pamat_ask_2[3],(244,126));Window.blit(pamat_ask_3[3],(244,126))
+        if (pamat_ask[15]== "1"): Window.blit(pamat_ask_1[0],(244,114));Window.blit(pamat_ask_2[0],(244,114));Window.blit(pamat_ask_3[0],(244,114))
+        
+    for i in range(10):
+        for j in range(4):
+            pamat_figures[i][j].draw(32+58*i,248+58*j,pamat_right_ans[1] == j)
+
+    Window.blit(pamat_choise,(30+58*pamat_pos[0],246+58*pamat_pos[1]))
+
+    pamat_subtimer += 1
+    if (pamat_subtimer >= 59):
+        pamat_subtimer = 0
+        pamat_timer -= 1
+
+    text_print(str(pamat_timer//60),1,444,218)
+    ss = str(pamat_timer%60)
+    if (len(ss)==1): ss = "0" + ss
+    text_print(ss,1,444+16,218)
+    Window.blit(morskaya_ohota_dd,(444+14,218+6))
+
 def safari_prizegame_update():
     global safari_player_tick, safari_player_subtick, safari_shots_left, safari_Cbullets, safari_timer, safari_subtimer, safari_jump_tick, safari_jump_tick_pos, safari_zebra_lives, safari_kaban_lives, goldencoins
     global safari_kaban_ct_count, safari_zebra_ct_count, safari_nosorog_ct_count, safari_game_bool, gamemenu_bool, blackscreen_timer, prizegame_timer, safari_Coblakos, goldcoin_get_timer, safari_prizegame_bool
@@ -2464,6 +2737,9 @@ def update():
 
                     if (safari_game_bool): safari_game_update()
                     elif (safari_prizegame_bool): safari_prizegame_update()
+
+                    if (pamat_game_bool): pamat_game_update()
+                    elif (pamat_prizegame_bool): pamat_prizegame_update()
                         
 
                     
@@ -2647,6 +2923,8 @@ while Run:
                         if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): gamemenu_select = gamemenu_map(gamemenu_select,2)
                         if (event.key == pygame.K_LEFT or event.key == pygame.K_a): gamemenu_select = gamemenu_map(gamemenu_select,4)
 
+                        if (gamemenu_select > 6): gamemenu_select = 6
+
                         if   (gamemenu_select >= 0 and gamemenu_select <= 6): gamemenu_razdel = 0
                         elif (gamemenu_select >= 7 and gamemenu_select <= 15): gamemenu_razdel = 1
                         elif (gamemenu_select >= 16 and gamemenu_select <= 21): gamemenu_razdel = 2
@@ -2776,6 +3054,19 @@ while Run:
                                         safari_Coblakos[i].texture = safari_oblako[randint(0,2)]
 
                                     safari_reset_subf()
+
+                                if (game_select == "pamat"):
+                                    pamat_game_bool = True
+
+                                    pamat_timer = 180
+                                    pamat_correct = 0
+                                    pamat_incorrect = 0
+                                    pamat_vrema_timer = 0
+
+                                    for i in range(10):
+                                        for j in range(4):
+                                            pamat_figures[i][j].random_code()
+                        
                                     
                                     
                                 game_select = "none"
@@ -2813,6 +3104,16 @@ while Run:
                             if (safari_shots_left > 0):
                                 safari_shots_left -= 1
                                 safari_Cbullets[safari_shots_left].spawn(-safari_jump_tick_pos)
+
+                    elif (pamat_game_bool or pamat_prizegame_bool):
+                        if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): pamat_pos = ((pamat_pos[0]+1)%10,pamat_pos[1])
+                        if (event.key == pygame.K_LEFT or event.key == pygame.K_a): pamat_pos = ((pamat_pos[0]-1)%10,pamat_pos[1])
+                        if (event.key == pygame.K_UP or event.key == pygame.K_w): pamat_pos = (pamat_pos[0],(pamat_pos[1]-1)%4)
+                        if (event.key == pygame.K_DOWN or event.key == pygame.K_s): pamat_pos = (pamat_pos[0],(pamat_pos[1]+1)%4)
+                        if(event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
+                            if(pamat_right_ans == pamat_pos): pamat_right_tick = 120
+                            else: pamat_wrong_tick = 120
+                            pamat_right_ans = (-1,-1)
                             
                     
                     
