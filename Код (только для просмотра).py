@@ -7,13 +7,14 @@ from random import randint
 import numpy as np
 import sys
 import cv2
+pygame.init()
 
 directiry = pathlib.Path.cwd()
 dir_path = str(directiry)
 
 FPS = 60 
 
-clock = pygame.time.Clock() 
+clock = pygame.time.Clock()
 
 fullscreen_bool = True
 merzanie_bool = True
@@ -77,6 +78,10 @@ progress_input()
 
 Window = pygame.display.set_mode((640, 480), vsync=True)
 pygame.display.set_caption("Arcade")
+
+icon = pygame.image.load(dir_path+"/data/texture/icon.ico").convert()
+icon.set_colorkey((0,0,0))
+pygame.display.set_icon(icon)
 
 if (fullscreen_bool): pygame .display.toggle_fullscreen()
 
@@ -210,6 +215,7 @@ morskaya_ohota_banner = pygame.image.load(dir_path+'/data/texture/morskaya_ohota
 gonky_banner = pygame.image.load(dir_path+'/data/texture/gonky_banner.png').convert()
 gonky_II_banner = pygame.image.load(dir_path+'/data/texture/gonky_II_banner.png').convert()
 safary_banner = pygame.image.load(dir_path+'/data/texture/safary_banner.png').convert()
+ralli_banner = pygame.image.load(dir_path+'/data/texture/ralli_banner.png').convert()
 select_game = pygame.image.load(dir_path+'/data/texture/select_game.png').convert(); select_game.set_colorkey((0,0,0))
 
 comingsoon_gamename_1 = pygame.image.load(dir_path+'/data/texture/comingsoon_gamename_1.png').convert()
@@ -222,6 +228,8 @@ gonky_II_gamename_1 = pygame.image.load(dir_path+'/data/texture/gonky_II_gamenam
 gonky_II_gamename_2 = pygame.image.load(dir_path+'/data/texture/gonky_II_gamename_2.png').convert()
 safary_gamename_1 = pygame.image.load(dir_path+'/data/texture/safary_gamename_1.png').convert()
 safary_gamename_2 = pygame.image.load(dir_path+'/data/texture/safary_gamename_2.png').convert()
+ralli_gamename_1 = pygame.image.load(dir_path+'/data/texture/ralli_gamename_1.png').convert()
+ralli_gamename_2 = pygame.image.load(dir_path+'/data/texture/ralli_gamename_2.png').convert()
 
 morskaya_ohota_map = pygame.image.load(dir_path+'/data/texture/morskaya_ohota_map.png').convert()
 morskaya_ohota_bordersmap = [0]*2
@@ -354,6 +362,11 @@ safari_animals_cathc = pygame.image.load(dir_path+'/data/texture/safari_animals_
 safari_oblako = [0]*3
 for i in range(3): safari_oblako[i] = pygame.image.load(dir_path+'/data/texture/safari_oblako_'+str(i+1)+'.png').convert(); safari_oblako[i].set_colorkey((0,0,0))
 
+ralli_map = pygame.image.load(dir_path+'/data/texture/ralli_map.png').convert();
+ralli_car = pygame.image.load(dir_path+'/data/texture/ralli_car.png').convert();
+ralli_segm_road = [0]*7
+for i in range(7): ralli_segm_road[i] = pygame.image.load(dir_path+'/data/texture/ralli_segm_road_'+str(i+1)+'.png').convert();
+
 text=[]
 for i in range(77):
     text.append([0]*2)
@@ -361,6 +374,14 @@ for i in range(77):
 for i in range(77):
     text[i][0] = pygame.image.load(dir_path+'/data/texture/text/grey/LT'+str(i+1)+'.png').convert(); (text[i][0]).set_colorkey((0,0,0))
     text[i][1] = pygame.image.load(dir_path+'/data/texture/text/white/LT'+str(i+1)+'.png').convert(); (text[i][1]).set_colorkey((0,0,0))
+
+
+
+menu_button_click = pygame.mixer.Sound(dir_path+'/data/audio/menu_button_click.mp3')
+intro_sound = pygame.mixer.Sound(dir_path+'/data/audio/intro_sound.mp3')
+game_start = pygame.mixer.Sound(dir_path+'/data/audio/game_start.mp3')
+white_noise = pygame.mixer.Sound(dir_path+'/data/audio/white_noise.mp3')
+    
     
 loadtick = 0
 mainmenu_tick = 0
@@ -452,6 +473,87 @@ pamat_subtimer = 0
 pamat_correct = 0
 pamat_incorrect = 0
 pamat_prizegame_bool = False
+pamat_fake_roll = 0
+ralli_game_bool = False
+ralli_f = False
+ralli_b = False
+ralli_l = False
+ralli_r = False
+
+
+
+def take_screen(topleft, bottomright):
+    size = bottomright[0] - topleft[0], bottomright[1] - topleft[1]
+    img = pygame.Surface(size)
+    img.blit(Window, (0, 0), (topleft, size))
+    return img
+
+def rot_center(image, rect, angle): #Функция поворота
+        rot_image = pygame.transform.rotate(image, angle)
+        rot_rect = rot_image.get_rect(center=rect.center)
+        return rot_image,rot_rect
+
+def changColor(image, color): #Функция, меняющая цвет
+    colouredImage = pygame.Surface(image.get_size())
+    colouredImage.fill(color)
+    
+    finalImage = image.copy()
+    finalImage.blit(colouredImage, (0, 0), special_flags = pygame.BLEND_MULT)
+    return finalImage
+
+palitra = [[(  0,  0,  0),(  0,  0,  0),(  0,  0,  0)],
+           [(  0,  0,255),(  0,  0,191),(  0,  0,127)],
+           [(255,255,255),(191,191,191),(127,127,127)],
+           [(  0,255,  0),(  0,191,  0),(  0,127,  0)],
+           [(127, 63,  0),( 95, 47,  0),( 63, 31,  0)],
+           [(127,127,127),( 95, 95, 95),( 63, 63, 63)],
+           [(  0,255,255),(  0,191,191),(  0,127,127)],
+           [(  0,  0,127),(  0,  0, 95),(  0,  0, 63)],
+           [(255,127,  0),(191, 95,  0),(127, 63,  0)],
+           [(255,  0,  0),(191,  0,  0),(127,  0,  0)],
+           [(127,  0,  0),( 95,  0,  0),( 63,  0,  0)],
+           [(  0,127,  0),(  0, 95,  0),(  0,  0, 63)],
+           [(255,255,  0),(191,191,  0),(127,127,  0)],
+           [(191,191,191),(127,127,127),( 95, 95, 95)],
+           [( 63, 63, 63),( 47, 47, 47),( 31, 31, 31)],
+           [(255,191,127),(191,143, 95),(127, 95, 63)],
+           [(127,127,  0),( 95, 95,  0),( 63, 63,  0)],
+           [(255,  0,255),(191,  0,191),(127,  0,127)],
+           [(  0, 63,  0),(  0, 47,  0),(  0, 31,  0)],
+           [(  0,191,  0),(  0,127,  0),(  0, 95,  0)],
+           [(127, 95, 63),( 95, 63, 47),( 63, 47, 31)],
+           [( 95, 47,  0),( 63, 31,  0),( 48, 15,  0)],
+           [(191,191,  0),(127,127,  0),( 95, 95,  0)],
+           [( 63, 31,  0),( 47, 15,  0),( 31,  7,  0)],
+           [(159, 95,  0),(127, 63,  0),( 95, 47,  0)]]
+
+def make_retropixel(image,clipcolor):
+    x,y = image.get_size()
+    newImage = pygame.Surface((x*2,y*2))
+    for xs in range (x):
+        for ys in range(y):
+            pixel = image.get_at((xs,ys))
+            pixel = (pixel[0],pixel[1],pixel[2])
+            if (pixel != clipcolor):
+                for i in range(25):
+                    if (pixel == palitra[i][0]):
+                        newImage.set_at((xs*2,ys*2),palitra[i][0])
+                        newImage.set_at((xs*2+1,ys*2),palitra[i][1])
+                        newImage.set_at((xs*2,ys*2+1),palitra[i][1])
+                        newImage.set_at((xs*2+1,ys*2+1),palitra[i][2])
+                        break
+            else:
+                newImage.set_at((xs*2,ys*2),(1,0,0,255))
+                newImage.set_at((xs*2+1,ys*2),(1,0,0,255))
+                newImage.set_at((xs*2,ys*2+1),(1,0,0,255))
+                newImage.set_at((xs*2+1,ys*2+1),(1,0,0,255))
+
+    newImage.set_colorkey((1,0,0))
+    return newImage 
+
+
+
+
 
 class CollisionBox():
     def __init__(self):
@@ -474,6 +576,69 @@ def cheak_BoxC(Box1,Box2):
        ((cheak_point(Box1.pos_x,Box1.pos_y+Box2.size_y,Box2)) or (cheak_point(Box2.pos_x,Box2.pos_y+Box2.size_y,Box1))) or
        ((cheak_point(Box1.pos_x+Box1.size_x,Box1.pos_y,Box2)) or (cheak_point(Box2.pos_x+Box2.size_x,Box2.pos_y,Box1))) or
        ((cheak_point(Box1.pos_x+Box1.size_x,Box1.pos_y+Box2.size_y,Box2)) or (cheak_point(Box2.pos_x+Box2.size_x,Box2.pos_y+Box2.size_y,Box1))))
+
+class RL_segm():
+    def __init__(self):
+        self.type = "empty"
+        self.can_generate = True
+        self.texture = None
+        self.hitbox = CollisionBox()
+
+ralli_segm = []
+for i in range(26):
+    ralli_segm.append([0]*22)
+
+for i in range(26):
+    for j in range(22):
+        ralli_segm[i][j] = RL_segm()
+        ralli_segm[i][j].hitbox.define(12+22*i,20+22*j,22,22)
+
+ralli_map_hitbox = [0]*4
+for i in range(4): ralli_map_hitbox[i] = CollisionBox()
+ralli_map_hitbox[0].define(0,0,640,20)
+ralli_map_hitbox[1].define(0,460,640,20)
+ralli_map_hitbox[2].define(0,20,12,440)
+ralli_map_hitbox[3].define(628,20,12,440)
+
+def ralli_map_generate():
+    
+    R1 = randint(7,18)
+    R2 = randint(3,18)
+
+    for i in range(3):
+        for j in range(3):
+            ralli_segm[R1+i-1][R2+j-1].type = "road"
+            ralli_segm[R1+i-1][R2+j-1].can_generate = False
+            ralli_segm[R1+i-1][R2+j-1].texture = ralli_segm_road[0]
+
+    if (1):
+        ralli_segm[R1-2][R2].type = "road"
+        ralli_segm[R1-2][R2].can_generate = True
+        ralli_segm[R1-2][R2].texture = ralli_segm_road[1]
+        ralli_segm[R1+2][R2].type = "road"
+        ralli_segm[R1+2][R2].can_generate = True
+        ralli_segm[R1+2][R2].texture = ralli_segm_road[1]
+
+class RL_car():
+    def __init__(self):
+        self.pos_x = -1
+        self.pos_y = -1
+        self.speed = 0
+        self.turn = 0
+        self.hitbox = CollisionBox()
+        self.texture = None
+
+    def draw(self):
+        rect = self.texture.get_rect(center=(int(self.pos_x),int(self.pos_y))) 
+        txr, pos = rot_center(self.texture, rect, (self.turn))
+
+        txr = make_retropixel(txr,(255,0,255))
+
+        Window.blit(txr,(pos[0] + int(round(pos[0])%2 == 1),pos[1] + int(round(pos[1])%2 == 1)))
+
+ralli_player = RL_car()
+ralli_player.hitbox.define(0,0,14,14)
+ralli_player.texture = ralli_car
 
 cartypes = ["brown","grey","red","vio","green","blue"]  
 class car():
@@ -1200,27 +1365,7 @@ MO_PG_ships[7].size = 3
 MO_PG_ships[8].size = 3
 MO_PG_ships[9].size = 3
 MO_TWs = []
-for i in range(10): MO_TWs.append(MO_TW())
-
-def take_screen(topleft, bottomright):
-    size = bottomright[0] - topleft[0], bottomright[1] - topleft[1]
-    img = pygame.Surface(size)
-    img.blit(Window, (0, 0), (topleft, size))
-    return img
-
-def rot_center(image, rect, angle): #Функция поворота
-        rot_image = pygame.transform.rotate(image, angle)
-        rot_rect = rot_image.get_rect(center=rect.center)
-        return rot_image,rot_rect
-
-def changColor(image, color): #Функция, меняющая цвет
-    colouredImage = pygame.Surface(image.get_size())
-    colouredImage.fill(color)
-    
-    finalImage = image.copy()
-    finalImage.blit(colouredImage, (0, 0), special_flags = pygame.BLEND_MULT)
-    return finalImage
-
+for i in range(10): MO_TWs.append(MO_TW())       
 
 def text_print(S,l,x,y):
     S = S.lower()
@@ -1346,7 +1491,7 @@ def effect_4(tick,pos):
     Window.blit(a72,(0,pos+12))
 
 def effect_5():
-    global Window
+    global Window, retropixel_bool
 
     if (1):
 
@@ -1606,16 +1751,59 @@ def game_select_update(select):
         text_print("  получилась полная фигура.",1,32,188)
         text_print("- Вам будет задано 20 вопросов.",1,32,214)
         text_print("- время игры - 3 минуты.",1,32,240)
-        text_print("- время призовой игры - 5 минуты.",1,32,266)
-        text_print("- Ответье хотя бы на 16 вопросов,",1,32,292)      
-        text_print("  чтобы получить призовую игру.",1,32,318)
-        text_print("- Ответье хотя бы на 16 вопросов",1,32,344)        
-        text_print("  в призовой игре, чтобы получить",1,32,370)
-        text_print("  золотую монету",1,32,396)        
+        text_print("- Ответье хотя бы на 16 вопросов,",1,32,266)      
+        text_print("  чтобы получить призовую игру.",1,32,292)
+        text_print("- Ответье хотя бы на 16 вопросов",1,32,318)        
+        text_print("  в призовой игре, чтобы получить",1,32,344)
+        text_print("  золотую монету",1,32,370)
+
+    if (game_select == "ralli"):
+        text_print("Ралл-и",1,32,32)
+        text_print("- Приедте на указаный флажок,",1,32,84)
+        text_print("  чтобы получить очки, указанные",1,32,110)
+        text_print("  на нём.",1,32,136)
+        text_print("- время игры - 2 минуты.",1,32,162)        
+        text_print("- Наберите 50 очков до",1,32,188)
+        text_print("  конца игры, чтобы",1,32,214)
+        text_print("  получить призовую игру.",1,32,240)
+        text_print("- Наберите 50 очков до",1,32,266)
+        text_print("  конца призовой игры, чтобы",1,32,292)
+        text_print("  получить золотую монету.",1,32,318)
+
+def ralli_update():
+    Window.blit(ralli_map,(0,0))
+
+    for x in range(26):
+        for y in range(22):
+            if (ralli_segm[x][y].type != "empty"):
+                Window.blit(ralli_segm[x][y].texture,(12+x*22,20+y*22))
+
+    if (ralli_f): ralli_player.speed += 0.0625
+    if (ralli_b): ralli_player.speed -= 0.125
+    
+    hbx = (ralli_player.pos_x - ralli_player.speed * math.sin(math.radians(ralli_player.turn)))
+    hby = (ralli_player.pos_y - ralli_player.speed * math.cos(math.radians(ralli_player.turn)))
+    ralli_player.hitbox.define(hbx-0,hby-0,14,14)
+    map_cheak = False
+    for i in range(4): map_cheak = map_cheak or cheak_BoxC(ralli_player.hitbox,ralli_map_hitbox[i])
+
+    if (ralli_f): ralli_player.speed += 0.125
+    if (ralli_b): ralli_player.speed -= 0.125
+    if (map_cheak): ralli_player.speed = 0
+    if (ralli_l): ralli_player.turn += 0.5 * (ralli_player.speed)
+    if (ralli_r): ralli_player.turn -= 0.5 * (ralli_player.speed)
+
+    if (ralli_player.speed > 3.5): ralli_player.speed = 3.5
+    if (ralli_player.speed < -1): ralli_player.speed = -1
+
+    ralli_player.pos_x -= ralli_player.speed * math.sin(math.radians(ralli_player.turn))
+    ralli_player.pos_y -= ralli_player.speed * math.cos(math.radians(ralli_player.turn))
+
+    ralli_player.draw()
 
 def pamat_prizegame_update():
     global pamat_ask, pamat_right_ans, pamat_pos, pamat_wrong_tick, pamat_right_tick, pamat_vrema_timer, pamat_timer, pamat_subtimer, pamat_correct, pamat_incorrect, pamat_game_bool, gamemenu_bool, blackscreen_timer
-    global pamat_prizegame_bool, prizegame_timer
+    global pamat_prizegame_bool, prizegame_timer, pamat_fake_roll
 
     if (pamat_correct+pamat_incorrect >= 20):
         if (pamat_correct >= 16):
@@ -1635,32 +1823,39 @@ def pamat_prizegame_update():
         pamat_right_ans = (randint(0,9),randint(0,3))
         pamat_ask = pamat_figures[pamat_right_ans[0]][pamat_right_ans[1]].get_reverse()
 
-    for i in range(13):
-        if (pamat_vrema_timer - 60*i > 60): Window.blit(pamat_vrema[0],(204+18*i,218))
-        elif (pamat_vrema_timer - 60*i < 0): Window.blit(pamat_vrema[3],(204+18*i,218))
-        else: Window.blit(pamat_vrema[3-((pamat_vrema_timer)%60)//15],(204+18*i,218))
+    for i in range(7):
+        if (pamat_vrema_timer - 60*i > 60): Window.blit(pamat_vrema[0],(228+28*i,218))
+        elif (pamat_vrema_timer - 60*i < 0): Window.blit(pamat_vrema[3],(228+28*i,218))
+        else: Window.blit(pamat_vrema[3-((pamat_vrema_timer)%60)//15],(228+28*i,218))
     
     if (pamat_wrong_tick == 0 and pamat_right_tick == 0 and pamat_vrema_timer > 0): pamat_vrema_timer -= 1
 
     if (pamat_wrong_tick == 0 and pamat_right_tick == 0 and pamat_vrema_timer == 0):
         pamat_wrong_tick = 120
         pamat_right_ans = (-1,-1)
+        pamat_fake_roll = -1
 
     if (pamat_right_tick > 0):
         pamat_right_tick -= 1
         Window.blit(pamat_right, (262,64))
         if (pamat_right_tick == 0):
             pamat_right_ans = (randint(0,9),randint(0,3))
+            while True:
+                pamat_fake_roll = randint(0,3)
+                if (pamat_fake_roll != pamat_right_ans[1]): break
             pamat_ask = pamat_figures[pamat_right_ans[0]][pamat_right_ans[1]].get_reverse()
-            pamat_vrema_timer = 780
+            pamat_vrema_timer = 420
             pamat_correct += 1
     elif (pamat_wrong_tick > 0):
         pamat_wrong_tick -= 1
         Window.blit(pamat_wrong, (262,64))
         if (pamat_wrong_tick == 0):
             pamat_right_ans = (randint(0,9),randint(0,3))
+            while True:
+                pamat_fake_roll = randint(0,3)
+                if (pamat_fake_roll != pamat_right_ans[1]): break
             pamat_ask = pamat_figures[pamat_right_ans[0]][pamat_right_ans[1]].get_reverse()
-            pamat_vrema_timer = 780
+            pamat_vrema_timer = 420
             pamat_incorrect += 1
             
     elif (pamat_ask != ""):
@@ -1683,7 +1878,7 @@ def pamat_prizegame_update():
         
     for i in range(10):
         for j in range(4):
-            pamat_figures[i][j].draw(32+58*i,248+58*j,pamat_right_ans != (-1,-1))
+            pamat_figures[i][j].draw(32+58*i,248+58*j,(pamat_right_ans[1] == j or pamat_fake_roll == j) and pamat_right_ans[1] != -1)
 
     Window.blit(pamat_choise,(30+58*pamat_pos[0],246+58*pamat_pos[1]))
 
@@ -1700,7 +1895,7 @@ def pamat_prizegame_update():
     
 def pamat_game_update():
     global pamat_ask, pamat_right_ans, pamat_pos, pamat_wrong_tick, pamat_right_tick, pamat_vrema_timer, pamat_timer, pamat_subtimer, pamat_correct, pamat_incorrect, pamat_game_bool, gamemenu_bool, blackscreen_timer
-    global pamat_prizegame_bool, prizegame_timer
+    global pamat_prizegame_bool, prizegame_timer, pamat_fake_roll
 
     if (pamat_correct+pamat_incorrect >= 20):
         if (pamat_correct >= 16):
@@ -1708,10 +1903,11 @@ def pamat_game_update():
             pamat_prizegame_bool = True
             prizegame_timer = 240
 
-            pamat_timer = 300
+            pamat_timer = 180
             pamat_correct = 0
             pamat_incorrect = 0
             pamat_vrema_timer = 0
+            pamat_fake_roll = -1
             
         else:
             pamat_game_bool = False
@@ -2658,9 +2854,9 @@ def update():
                         Window.blit(pamat_banner,(240,368))
                         if (gamemenu_select == 5): Window.blit(pamat_gamename_1,(236,338))
                         else: Window.blit(pamat_gamename_2,(236,338))
-                        Window.blit(comingsoon_banner,(448,368))
-                        if (gamemenu_select == 6): Window.blit(comingsoon_gamename_1,(444,338))
-                        else: Window.blit(comingsoon_gamename_2,(444,338))                
+                        Window.blit(ralli_banner,(448,368))
+                        if (gamemenu_select == 6): Window.blit(ralli_gamename_1,(444,338))
+                        else: Window.blit(ralli_gamename_2,(444,338))                
 
                     if (gamemenu_razdel == 1):
 
@@ -2740,6 +2936,8 @@ def update():
 
                     if (pamat_game_bool): pamat_game_update()
                     elif (pamat_prizegame_bool): pamat_prizegame_update()
+
+                    if (ralli_game_bool): ralli_update()
                         
 
                     
@@ -2779,7 +2977,8 @@ def update():
             Window.blit(blackscreen,(0,0))
 
     effect_5()
-    
+
+white_noise.play(-1)
 Run = True
 while Run:
 
@@ -2807,10 +3006,12 @@ while Run:
                                 mainmenu_bool = False
                                 gamemenu_bool = True
                                 gamemenu_select = 0
+                                menu_button_click.play()
                             if (mainmenu_select == 2):
                                 mainmenu_bool = False
                                 settmenu_bool = True
                                 settmenu_select = 0
+                                menu_button_click.play()
                             if (mainmenu_select == 3):
                                 Run = False
 
@@ -2825,19 +3026,24 @@ while Run:
                                     settmenu_bool = False
                                     mainmenu_bool = True
                                     mainmenu_select = 2
+                                    menu_button_click.play()
                                 if (settmenu_select == 1):
                                     fullscreen_bool = not(fullscreen_bool)
                                     pygame.display.toggle_fullscreen()
                                     settings_output()
+                                    menu_button_click.play()
                                 if (settmenu_select == 2):
                                     settmenu_bool = False
                                     grafmenu_bool = True
+                                    menu_button_click.play()
                                 if (settmenu_select == 3):
                                     settmenu_bool = False
                                     audimenu_bool = True
+                                    menu_button_click.play()
                                 if (settmenu_select == 4):
                                     settmenu_bool = False
                                     langmenu_bool = True
+                                    menu_button_click.play()
 
                     elif (grafmenu_bool):
                         if (event.key == pygame.K_UP or event.key == pygame.K_w):
@@ -2849,40 +3055,48 @@ while Run:
                             grafmenu_bool = False
                             settmenu_bool = True
                             audimenu_select = 2
+                            menu_button_click.play()
                             
                         if (grafmenu_select == 1 and (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL or
                             (event.key == pygame.K_RIGHT or event.key == pygame.K_d) or
                             (event.key == pygame.K_LEFT or event.key == pygame.K_a))):
                             merzanie_bool = not(merzanie_bool)
                             settings_output()
+                            menu_button_click.play()
 
                         if (grafmenu_select == 2):
                             if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL or (event.key == pygame.K_RIGHT or event.key == pygame.K_d)):
                                 effect_2_int = (effect_2_int+1)%5
                                 settings_output()
+                                menu_button_click.play()
                             if ((event.key == pygame.K_LEFT or event.key == pygame.K_a)):
                                 effect_2_int = (effect_2_int-1)%5
                                 settings_output()
+                                menu_button_click.play()
 
                         if (grafmenu_select == 3):
                             if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL or (event.key == pygame.K_RIGHT or event.key == pygame.K_d)):
                                 linza_effect = (linza_effect+1)%13
                                 settings_output()
+                                menu_button_click.play()
                             if ((event.key == pygame.K_LEFT or event.key == pygame.K_a)):
                                 linza_effect = (linza_effect-1)%13
                                 settings_output()
+                                menu_button_click.play()
 
                         if (grafmenu_select == 4 and (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL or
                             (event.key == pygame.K_RIGHT or event.key == pygame.K_d) or
                             (event.key == pygame.K_LEFT or event.key == pygame.K_a))):
                             defects_bool = not(defects_bool)
                             settings_output()
+                            menu_button_click.play()
 
                         if (grafmenu_select == 5 and (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL or
                             (event.key == pygame.K_RIGHT or event.key == pygame.K_d) or
                             (event.key == pygame.K_LEFT or event.key == pygame.K_a))):
                             retropixel_bool = not(retropixel_bool)
                             settings_output()
+                            menu_button_click.play()
 
                         if (grafmenu_select == 6 and (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL)):
                             merzanie_bool = True
@@ -2891,6 +3105,7 @@ while Run:
                             defects_bool = True
                             retropixel_bool = True
                             settings_output()
+                            menu_button_click.play()
 
                             
 
@@ -2904,6 +3119,7 @@ while Run:
                             audimenu_bool = False
                             settmenu_bool = True
                             settmenu_select = 3
+                            menu_button_click.play()
 
                     elif (langmenu_bool):
                         if (event.key == pygame.K_UP or event.key == pygame.K_w):
@@ -2915,6 +3131,7 @@ while Run:
                             langmenu_bool = False
                             settmenu_bool = True
                             settmenu_select = 4
+                            menu_button_click.play()
                                 
                                     
                     elif (gamemenu_bool):
@@ -2934,27 +3151,37 @@ while Run:
                                     gamemenu_bool = False
                                     mainmenu_bool = True
                                     mainmenu_select = 1
+                                    menu_button_click.play()
                                 if (gamemenu_select == 1):
                                     gamemenu_bool = False
                                     game_select = "morskaya_ohota"
                                     mainmenu_select = 0
+                                    menu_button_click.play()
                                 if (gamemenu_select == 2):
                                     gamemenu_bool = False
                                     game_select = "gonky"
                                     mainmenu_select = 0
+                                    menu_button_click.play()
                                 if (gamemenu_select == 3):
                                     gamemenu_bool = False
                                     game_select = "gonky_II"
                                     mainmenu_select = 0
+                                    menu_button_click.play()
                                 if (gamemenu_select == 4):
                                     gamemenu_bool = False
                                     game_select = "safari"
                                     mainmenu_select = 0
+                                    menu_button_click.play()
                                 if (gamemenu_select == 5):
                                     gamemenu_bool = False
                                     game_select = "pamat"
-                                    mainmenu_select = 0                                
-
+                                    mainmenu_select = 0
+                                    menu_button_click.play()
+                                if (gamemenu_select == 6):
+                                    gamemenu_bool = False
+                                    game_select = "ralli"
+                                    mainmenu_select = 0
+                                    menu_button_click.play()
 
                     elif (game_select != "none"):
                         if (event.key == pygame.K_UP or event.key == pygame.K_w):
@@ -2965,7 +3192,10 @@ while Run:
                             if (game_select_button == 0):
                                 game_select = "none"
                                 gamemenu_bool = True
+                                menu_button_click.play()
                             if (game_select_button == 1):
+
+                                menu_button_click.play()
                                 
                                 if (game_select == "morskaya_ohota"):
                                     morskaya_ohota_game_bool = True
@@ -3066,9 +3296,18 @@ while Run:
                                     for i in range(10):
                                         for j in range(4):
                                             pamat_figures[i][j].random_code()
+
+                                if (game_select == "ralli"):
+                                    ralli_game_bool = True
+
+                                    ralli_map_generate()
+
+                                    ralli_player.pos_x = 300
+                                    ralli_player.pos_y = 300
                         
                                     
-                                    
+
+                                game_start.play()
                                 game_select = "none"
                                 gamemenu_bool = False
                                 coinfalls_tick = 120
@@ -3114,6 +3353,12 @@ while Run:
                             if(pamat_right_ans == pamat_pos): pamat_right_tick = 120
                             else: pamat_wrong_tick = 120
                             pamat_right_ans = (-1,-1)
+
+                    elif (ralli_game_bool):
+                        if (event.key == pygame.K_UP or event.key == pygame.K_w): ralli_f = True
+                        if (event.key == pygame.K_DOWN or event.key == pygame.K_s): ralli_b = True
+                        if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): ralli_r = True
+                        if (event.key == pygame.K_LEFT or event.key == pygame.K_a): ralli_l = True
                             
                     
                     
@@ -3136,6 +3381,11 @@ while Run:
                         if (event.key == pygame.K_LEFT):   gonky_II_L2_bool = False
                         if (event.key == pygame.K_UP):     gonky_II_F2_bool = False
                         if (event.key == pygame.K_DOWN):   gonky_II_B2_bool = False
+                elif (ralli_game_bool):
+                    if (event.key == pygame.K_UP or event.key == pygame.K_w): ralli_f = False
+                    if (event.key == pygame.K_DOWN or event.key == pygame.K_s): ralli_b = False
+                    if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): ralli_r = False
+                    if (event.key == pygame.K_LEFT or event.key == pygame.K_a): ralli_l = False                 
                     
     if (defects_bool and chascecount(0.0025) and effect_4_tick == 0):
         effect_4_tick = 20
@@ -3146,7 +3396,7 @@ while Run:
 
     if (loadtick < 420):
         loadtick += 1
-        if (loadtick == 50 or loadtick == 170 or loadtick == 290): effect_2_tick = 20
+        if (loadtick == 50 or loadtick == 170 or loadtick == 290): effect_2_tick = 20; intro_sound.play()
         if (loadtick == 420): mainmenu_bool = True
         
     mainmenu_subtick += 1
