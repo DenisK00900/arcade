@@ -22,11 +22,16 @@ effect_2_int = 2
 linza_effect = 3
 defects_bool = True
 retropixel_bool = True
+languare = "RUS"
+volume_GN = 100
+volume_WN = 100
+volume_EF = 100
+volume_MS = 100
 
 goldencoins = 0
 
 def settings_input():
-    global fullscreen_bool, merzanie_bool, effect_2_int, linza_effect, defects_bool, retropixel_bool
+    global fullscreen_bool, merzanie_bool, effect_2_int, linza_effect, defects_bool, retropixel_bool, languare, volume_GN, volume_WN, volume_EF, volume_MS
     f = open(dir_path+'/data/save/settings.bin','rb')
     while True:
         S = (f.readline()).decode('utf-8')
@@ -39,11 +44,16 @@ def settings_input():
             if (V == "linza_effect"): linza_effect = (int(D))
             if (V == "defects_bool"): defects_bool = bool(int(D))
             if (V == "retropixel_bool"): retropixel_bool = bool(int(D))
+            if (V == "languare"): languare = (str(D))
+            if (V == "volume_GN"): volume_GN = (float(D))
+            if (V == "volume_WN"): volume_WN = (float(D))
+            if (V == "volume_EF"): volume_EF = (float(D))
+            if (V == "volume_MS"): volume_MS = (float(D))
 
     f.close()
 
 def settings_output():
-    global fullscreen_bool, merzanie_bool, effect_2_int, linza_effect, defects_bool, retropixel_bool             
+    global fullscreen_bool, merzanie_bool, effect_2_int, linza_effect, defects_bool, retropixel_bool, languare, volume_GN, volume_WN, volume_EF, volume_MS        
     f = open(dir_path+'/data/save/settings.bin','wb')
     f.write(("fullscreen_bool = "+str(int(fullscreen_bool))+"\n").encode('utf-8'))
     f.write(("merzanie_bool = "+str(int(merzanie_bool))+"\n").encode('utf-8'))
@@ -51,6 +61,11 @@ def settings_output():
     f.write(("linza_effect = "+str(int(linza_effect))+"\n").encode('utf-8'))
     f.write(("defects_bool = "+str(int(defects_bool))+"\n").encode('utf-8'))
     f.write(("retropixel_bool = "+str(int(retropixel_bool))+"\n").encode('utf-8'))
+    f.write(("languare = "+str(languare)+"\n").encode('utf-8'))
+    f.write(("volume_GN = "+str(volume_GN)+"\n").encode('utf-8'))
+    f.write(("volume_WN = "+str(volume_WN)+"\n").encode('utf-8'))
+    f.write(("volume_EF = "+str(volume_EF)+"\n").encode('utf-8'))
+    f.write(("volume_MS = "+str(volume_MS)+"\n").encode('utf-8'))
     f.write(("end").encode('utf-8'))
     f.close()
 
@@ -87,11 +102,13 @@ if (fullscreen_bool): pygame .display.toggle_fullscreen()
 
 pygame.mouse.set_visible(False)
 
-
+def chascecount(x):
+    return x >= randint(0,100000)/100000
 
 effect_1 = [0]*3
 coinfalls = [0]*4
-intro_screen_1 = pygame.image.load(dir_path+'/data/texture/intro_screen_1.png').convert()
+intro_screen_1_RUS = pygame.image.load(dir_path+'/data/texture/intro_screen_1.png').convert()
+intro_screen_1_ENG = pygame.image.load(dir_path+'/data/texture/intro_screen_1_ENG.png').convert()
 intro_screen_2 = pygame.image.load(dir_path+'/data/texture/intro_screen_2.png').convert()
 mainmenu_logo_1 = pygame.image.load(dir_path+'/data/texture/mainmenu_logo_1.png').convert()
 mainmenu_logo_2 = pygame.image.load(dir_path+'/data/texture/mainmenu_logo_2.png').convert()
@@ -103,61 +120,119 @@ effect_2_1 = pygame.image.load(dir_path+'/data/texture/effect_2_1.png').convert(
 effect_2_2 = pygame.image.load(dir_path+'/data/texture/effect_2_2.png').convert();effect_2_2.set_alpha(25)
 effect_3_1 = pygame.image.load(dir_path+'/data/texture/effect_3_1.png').convert();
 effect_3_2 = pygame.image.load(dir_path+'/data/texture/effect_3_2.png').convert();
-play_button_1 = pygame.image.load(dir_path+'/data/texture/play_button_1.png').convert()
-play_button_2 = pygame.image.load(dir_path+'/data/texture/play_button_2.png').convert()
-settings_button_1 = pygame.image.load(dir_path+'/data/texture/settings_button_1.png').convert()
-settings_button_2 = pygame.image.load(dir_path+'/data/texture/settings_button_2.png').convert()
-quit_button_1 = pygame.image.load(dir_path+'/data/texture/quit_button_1.png').convert()
-quit_button_2 = pygame.image.load(dir_path+'/data/texture/quit_button_2.png').convert()
-version_text = pygame.image.load(dir_path+'/data/texture/version_text.png').convert()
-back_button_1 = pygame.image.load(dir_path+'/data/texture/back_button_1.png').convert()
-back_button_2 = pygame.image.load(dir_path+'/data/texture/back_button_2.png').convert()
+play_button_1_RUS = pygame.image.load(dir_path+'/data/texture/play_button_1.png').convert()
+play_button_2_RUS = pygame.image.load(dir_path+'/data/texture/play_button_2.png').convert()
+play_button_1_ENG = pygame.image.load(dir_path+'/data/texture/play_button_1_ENG.png').convert()
+play_button_2_ENG = pygame.image.load(dir_path+'/data/texture/play_button_2_ENG.png').convert()
+settings_button_1_RUS = pygame.image.load(dir_path+'/data/texture/settings_button_1.png').convert()
+settings_button_2_RUS = pygame.image.load(dir_path+'/data/texture/settings_button_2.png').convert()
+settings_button_1_ENG = pygame.image.load(dir_path+'/data/texture/settings_button_1_ENG.png').convert()
+settings_button_2_ENG = pygame.image.load(dir_path+'/data/texture/settings_button_2_ENG.png').convert()
+quit_button_1_RUS = pygame.image.load(dir_path+'/data/texture/quit_button_1.png').convert()
+quit_button_2_RUS = pygame.image.load(dir_path+'/data/texture/quit_button_2.png').convert()
+quit_button_1_ENG = pygame.image.load(dir_path+'/data/texture/quit_button_1_ENG.png').convert()
+quit_button_2_ENG = pygame.image.load(dir_path+'/data/texture/quit_button_2_ENG.png').convert()
+version_text_RUS = pygame.image.load(dir_path+'/data/texture/version_text.png').convert()
+version_text_ENG = pygame.image.load(dir_path+'/data/texture/version_text_ENG.png').convert()
+back_button_1_RUS = pygame.image.load(dir_path+'/data/texture/back_button_1.png').convert()
+back_button_2_RUS = pygame.image.load(dir_path+'/data/texture/back_button_2.png').convert()
+back_button_1_ENG = pygame.image.load(dir_path+'/data/texture/back_button_1_ENG.png').convert()
+back_button_2_ENG = pygame.image.load(dir_path+'/data/texture/back_button_2_ENG.png').convert()
 coinfalls[0] = pygame.image.load(dir_path+'/data/texture/coinfalls_1.png').convert()
 coinfalls[1] = pygame.image.load(dir_path+'/data/texture/coinfalls_2.png').convert()
 coinfalls[2] = pygame.image.load(dir_path+'/data/texture/coinfalls_3.png').convert()
 coinfalls[3] = pygame.image.load(dir_path+'/data/texture/coinfalls_4.png').convert()
 
-settmenu_fullscreen_1 = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_1.png').convert()
-settmenu_fullscreen_2 = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_2.png').convert()
-settmenu_fullscreen_cheak_1 = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_cheak_1.png').convert(); settmenu_fullscreen_cheak_1.set_colorkey((0,0,0))
-settmenu_fullscreen_cheak_2 = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_cheak_2.png').convert(); settmenu_fullscreen_cheak_2.set_colorkey((0,0,0))
+settmenu_fullscreen_1_RUS = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_1.png').convert()
+settmenu_fullscreen_2_RUS = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_2.png').convert()
+settmenu_fullscreen_cheak_1_RUS = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_cheak_1.png').convert(); settmenu_fullscreen_cheak_1_RUS.set_colorkey((0,0,0))
+settmenu_fullscreen_cheak_2_RUS = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_cheak_2.png').convert(); settmenu_fullscreen_cheak_2_RUS.set_colorkey((0,0,0))
+settmenu_fullscreen_1_ENG = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_1_ENG.png').convert()
+settmenu_fullscreen_2_ENG = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_2_ENG.png').convert()
+settmenu_fullscreen_cheak_1_ENG = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_cheak_1_ENG.png').convert(); settmenu_fullscreen_cheak_1_ENG.set_colorkey((0,0,0))
+settmenu_fullscreen_cheak_2_ENG = pygame.image.load(dir_path+'/data/texture/settmenu_fullscreen_cheak_2_ENG.png').convert(); settmenu_fullscreen_cheak_2_ENG.set_colorkey((0,0,0))
 
-settmenu_grahigs_1 = pygame.image.load(dir_path+'/data/texture/settmenu_grahigs_1.png').convert()
-settmenu_grahigs_2 = pygame.image.load(dir_path+'/data/texture/settmenu_grahigs_2.png').convert()
-settmenu_audio_1 = pygame.image.load(dir_path+'/data/texture/settmenu_audio_1.png').convert()
-settmenu_audio_2 = pygame.image.load(dir_path+'/data/texture/settmenu_audio_2.png').convert()
-settmenu_languare_1 = pygame.image.load(dir_path+'/data/texture/settmenu_languare_1.png').convert()
-settmenu_languare_2 = pygame.image.load(dir_path+'/data/texture/settmenu_languare_2.png').convert()
-settmenu_resetprogress_1 = pygame.image.load(dir_path+'/data/texture/settmenu_resetprogress_1.png').convert()
-settmenu_resetprogress_2 = pygame.image.load(dir_path+'/data/texture/settmenu_resetprogress_2.png').convert()
+settmenu_grahigs_1_RUS = pygame.image.load(dir_path+'/data/texture/settmenu_grahigs_1.png').convert()
+settmenu_grahigs_2_RUS = pygame.image.load(dir_path+'/data/texture/settmenu_grahigs_2.png').convert()
+settmenu_grahigs_1_ENG = pygame.image.load(dir_path+'/data/texture/settmenu_grahigs_1_ENG.png').convert()
+settmenu_grahigs_2_ENG = pygame.image.load(dir_path+'/data/texture/settmenu_grahigs_2_ENG.png').convert()
+settmenu_audio_1_RUS = pygame.image.load(dir_path+'/data/texture/settmenu_audio_1.png').convert()
+settmenu_audio_2_RUS = pygame.image.load(dir_path+'/data/texture/settmenu_audio_2.png').convert()
+settmenu_audio_1_ENG = pygame.image.load(dir_path+'/data/texture/settmenu_audio_1_ENG.png').convert()
+settmenu_audio_2_ENG = pygame.image.load(dir_path+'/data/texture/settmenu_audio_2_ENG.png').convert()
+settmenu_languare_1_RUS = pygame.image.load(dir_path+'/data/texture/settmenu_languare_1.png').convert()
+settmenu_languare_2_RUS = pygame.image.load(dir_path+'/data/texture/settmenu_languare_2.png').convert()
+settmenu_languare_1_ENG = pygame.image.load(dir_path+'/data/texture/settmenu_languare_1_ENG.png').convert()
+settmenu_languare_2_ENG = pygame.image.load(dir_path+'/data/texture/settmenu_languare_2_ENG.png').convert()
+settmenu_resetprogress_1_RUS = pygame.image.load(dir_path+'/data/texture/settmenu_resetprogress_1.png').convert()
+settmenu_resetprogress_2_RUS = pygame.image.load(dir_path+'/data/texture/settmenu_resetprogress_2.png').convert()
+settmenu_resetprogress_1_ENG = pygame.image.load(dir_path+'/data/texture/settmenu_resetprogress_1_ENG.png').convert()
+settmenu_resetprogress_2_ENG = pygame.image.load(dir_path+'/data/texture/settmenu_resetprogress_2_ENG.png').convert()
 
-grafmenu_merzanie_str = [0]*2
-grafmenu_merzanie_str[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_1.png').convert()
-grafmenu_merzanie_str[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_2.png').convert()
-grafmenu_merzanie = [[0,0],[0,0]]
-grafmenu_merzanie[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_off_2.png').convert(); grafmenu_merzanie[0][0].set_colorkey((0,0,0))
-grafmenu_merzanie[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_off_1.png').convert(); grafmenu_merzanie[0][1].set_colorkey((0,0,0))
-grafmenu_merzanie[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_on_2.png').convert(); grafmenu_merzanie[1][0].set_colorkey((0,0,0))
-grafmenu_merzanie[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_on_1.png').convert(); grafmenu_merzanie[1][1].set_colorkey((0,0,0))
+settmenu_languare_rus_1 = pygame.image.load(dir_path+'/data/texture/settmenu_languare_rus_1.png').convert()
+settmenu_languare_rus_2 = pygame.image.load(dir_path+'/data/texture/settmenu_languare_rus_2.png').convert()
+settmenu_languare_eng_1 = pygame.image.load(dir_path+'/data/texture/settmenu_languare_eng_1.png').convert()
+settmenu_languare_eng_2 = pygame.image.load(dir_path+'/data/texture/settmenu_languare_eng_2.png').convert()
 
-grafmenu_lostpixel_str = [0]*2
-grafmenu_lostpixel_str[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel1.png').convert()
-grafmenu_lostpixel_str[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel2.png').convert()
-grafmenu_lostpixel = [[0,0],[0,0],[0,0],[0,0],[0,0]]
-grafmenu_lostpixel[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_1_1.png').convert(); grafmenu_lostpixel[0][1].set_colorkey((0,0,0))
-grafmenu_lostpixel[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_1_2.png').convert(); grafmenu_lostpixel[0][0].set_colorkey((0,0,0))
-grafmenu_lostpixel[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_2_1.png').convert(); grafmenu_lostpixel[1][1].set_colorkey((0,0,0))
-grafmenu_lostpixel[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_2_2.png').convert(); grafmenu_lostpixel[1][0].set_colorkey((0,0,0))
-grafmenu_lostpixel[2][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_3_1.png').convert(); grafmenu_lostpixel[2][1].set_colorkey((0,0,0))
-grafmenu_lostpixel[2][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_3_2.png').convert(); grafmenu_lostpixel[2][0].set_colorkey((0,0,0))
-grafmenu_lostpixel[3][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_4_1.png').convert(); grafmenu_lostpixel[3][1].set_colorkey((0,0,0))
-grafmenu_lostpixel[3][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_4_2.png').convert(); grafmenu_lostpixel[3][0].set_colorkey((0,0,0))
-grafmenu_lostpixel[4][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_5_1.png').convert(); grafmenu_lostpixel[4][1].set_colorkey((0,0,0))
-grafmenu_lostpixel[4][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_5_2.png').convert(); grafmenu_lostpixel[4][0].set_colorkey((0,0,0))
+resetprogress_1_RUS = pygame.image.load(dir_path+'/data/texture/resetprogress_1.png').convert()
+resetprogress_2_RUS = pygame.image.load(dir_path+'/data/texture/resetprogress_2.png').convert()
+resetprogress_1_ENG = pygame.image.load(dir_path+'/data/texture/resetprogress_1_ENG.png').convert()
+resetprogress_2_ENG = pygame.image.load(dir_path+'/data/texture/resetprogress_2_ENG.png').convert()
 
-grafmenu_linza_str = [0]*2
-grafmenu_linza_str[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza1.png').convert()
-grafmenu_linza_str[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza2.png').convert()
+grafmenu_merzanie_str_RUS = [0]*2
+grafmenu_merzanie_str_RUS[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_1.png').convert()
+grafmenu_merzanie_str_RUS[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_2.png').convert()
+grafmenu_merzanie_RUS = [[0,0],[0,0]]
+grafmenu_merzanie_RUS[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_off_2.png').convert(); grafmenu_merzanie_RUS[0][0].set_colorkey((0,0,0))
+grafmenu_merzanie_RUS[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_off_1.png').convert(); grafmenu_merzanie_RUS[0][1].set_colorkey((0,0,0))
+grafmenu_merzanie_RUS[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_on_2.png').convert(); grafmenu_merzanie_RUS[1][0].set_colorkey((0,0,0))
+grafmenu_merzanie_RUS[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_on_1.png').convert(); grafmenu_merzanie_RUS[1][1].set_colorkey((0,0,0))
+
+grafmenu_merzanie_str_ENG = [0]*2
+grafmenu_merzanie_str_ENG[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_1_ENG.png').convert()
+grafmenu_merzanie_str_ENG[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_2_ENG.png').convert()
+grafmenu_merzanie_ENG = [[0,0],[0,0]]
+grafmenu_merzanie_ENG[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_off_2_ENG.png').convert(); grafmenu_merzanie_ENG[0][0].set_colorkey((0,0,0))
+grafmenu_merzanie_ENG[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_off_1_ENG.png').convert(); grafmenu_merzanie_ENG[0][1].set_colorkey((0,0,0))
+grafmenu_merzanie_ENG[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_on_2_ENG.png').convert(); grafmenu_merzanie_ENG[1][0].set_colorkey((0,0,0))
+grafmenu_merzanie_ENG[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_merzanie_on_1_ENG.png').convert(); grafmenu_merzanie_ENG[1][1].set_colorkey((0,0,0))
+
+grafmenu_lostpixel_str_RUS = [0]*2
+grafmenu_lostpixel_str_RUS[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel1.png').convert()
+grafmenu_lostpixel_str_RUS[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel2.png').convert()
+grafmenu_lostpixel_RUS = [[0,0],[0,0],[0,0],[0,0],[0,0]]
+grafmenu_lostpixel_RUS[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_1_1.png').convert(); grafmenu_lostpixel_RUS[0][1].set_colorkey((0,0,0))
+grafmenu_lostpixel_RUS[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_1_2.png').convert(); grafmenu_lostpixel_RUS[0][0].set_colorkey((0,0,0))
+grafmenu_lostpixel_RUS[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_2_1.png').convert(); grafmenu_lostpixel_RUS[1][1].set_colorkey((0,0,0))
+grafmenu_lostpixel_RUS[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_2_2.png').convert(); grafmenu_lostpixel_RUS[1][0].set_colorkey((0,0,0))
+grafmenu_lostpixel_RUS[2][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_3_1.png').convert(); grafmenu_lostpixel_RUS[2][1].set_colorkey((0,0,0))
+grafmenu_lostpixel_RUS[2][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_3_2.png').convert(); grafmenu_lostpixel_RUS[2][0].set_colorkey((0,0,0))
+grafmenu_lostpixel_RUS[3][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_4_1.png').convert(); grafmenu_lostpixel_RUS[3][1].set_colorkey((0,0,0))
+grafmenu_lostpixel_RUS[3][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_4_2.png').convert(); grafmenu_lostpixel_RUS[3][0].set_colorkey((0,0,0))
+grafmenu_lostpixel_RUS[4][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_5_1.png').convert(); grafmenu_lostpixel_RUS[4][1].set_colorkey((0,0,0))
+grafmenu_lostpixel_RUS[4][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_5_2.png').convert(); grafmenu_lostpixel_RUS[4][0].set_colorkey((0,0,0))
+
+grafmenu_lostpixel_str_ENG = [0]*2
+grafmenu_lostpixel_str_ENG[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel1_ENG.png').convert()
+grafmenu_lostpixel_str_ENG[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel2_ENG.png').convert()
+grafmenu_lostpixel_ENG = [[0,0],[0,0],[0,0],[0,0],[0,0]]
+grafmenu_lostpixel_ENG[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_1_1_ENG.png').convert(); grafmenu_lostpixel_ENG[0][1].set_colorkey((0,0,0))
+grafmenu_lostpixel_ENG[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_1_2_ENG.png').convert(); grafmenu_lostpixel_ENG[0][0].set_colorkey((0,0,0))
+grafmenu_lostpixel_ENG[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_2_1_ENG.png').convert(); grafmenu_lostpixel_ENG[1][1].set_colorkey((0,0,0))
+grafmenu_lostpixel_ENG[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_2_2_ENG.png').convert(); grafmenu_lostpixel_ENG[1][0].set_colorkey((0,0,0))
+grafmenu_lostpixel_ENG[2][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_3_1_ENG.png').convert(); grafmenu_lostpixel_ENG[2][1].set_colorkey((0,0,0))
+grafmenu_lostpixel_ENG[2][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_3_2_ENG.png').convert(); grafmenu_lostpixel_ENG[2][0].set_colorkey((0,0,0))
+grafmenu_lostpixel_ENG[3][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_4_1_ENG.png').convert(); grafmenu_lostpixel_ENG[3][1].set_colorkey((0,0,0))
+grafmenu_lostpixel_ENG[3][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_4_2_ENG.png').convert(); grafmenu_lostpixel_ENG[3][0].set_colorkey((0,0,0))
+grafmenu_lostpixel_ENG[4][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_5_1_ENG.png').convert(); grafmenu_lostpixel_ENG[4][1].set_colorkey((0,0,0))
+grafmenu_lostpixel_ENG[4][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_lostpixel_var_5_2_ENG.png').convert(); grafmenu_lostpixel_ENG[4][0].set_colorkey((0,0,0))
+
+grafmenu_linza_str_RUS = [0]*2
+grafmenu_linza_str_RUS[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza1.png').convert()
+grafmenu_linza_str_RUS[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza2.png').convert()
+grafmenu_linza_str_ENG = [0]*2
+grafmenu_linza_str_ENG[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza1_ENG.png').convert()
+grafmenu_linza_str_ENG[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza2_ENG.png').convert()
 grafmenu_linza = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
 grafmenu_linza[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_1_1.png').convert(); grafmenu_linza[0][1].set_colorkey((0,0,0))
 grafmenu_linza[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_1_2.png').convert(); grafmenu_linza[0][0].set_colorkey((0,0,0))
@@ -186,31 +261,77 @@ grafmenu_linza[11][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza
 grafmenu_linza[12][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_13_1.png').convert(); grafmenu_linza[12][1].set_colorkey((0,0,0))
 grafmenu_linza[12][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_linza_var_13_2.png').convert(); grafmenu_linza[12][0].set_colorkey((0,0,0))
 
-grafmenu_defects_str = [0]*2
-grafmenu_defects_str[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_1.png').convert()
-grafmenu_defects_str[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_2.png').convert()
-grafmenu_defects = [[0,0],[0,0]]
-grafmenu_defects[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_off_1.png').convert(); grafmenu_defects[0][1].set_colorkey((0,0,0))
-grafmenu_defects[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_off_2.png').convert(); grafmenu_defects[0][0].set_colorkey((0,0,0))
-grafmenu_defects[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_on_1.png').convert(); grafmenu_defects[1][1].set_colorkey((0,0,0))
-grafmenu_defects[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_on_2.png').convert(); grafmenu_defects[1][0].set_colorkey((0,0,0))
+grafmenu_defects_str_RUS = [0]*2
+grafmenu_defects_str_RUS[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_1.png').convert()
+grafmenu_defects_str_RUS[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_2.png').convert()
+grafmenu_defects_RUS = [[0,0],[0,0]]
+grafmenu_defects_RUS[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_off_1.png').convert(); grafmenu_defects_RUS[0][1].set_colorkey((0,0,0))
+grafmenu_defects_RUS[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_off_2.png').convert(); grafmenu_defects_RUS[0][0].set_colorkey((0,0,0))
+grafmenu_defects_RUS[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_on_1.png').convert(); grafmenu_defects_RUS[1][1].set_colorkey((0,0,0))
+grafmenu_defects_RUS[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_on_2.png').convert(); grafmenu_defects_RUS[1][0].set_colorkey((0,0,0))
 
-grafmenu_retropixel_str = [0]*2
-grafmenu_retropixel_str[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_1.png').convert()
-grafmenu_retropixel_str[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_2.png').convert()
-grafmenu_retropixel = [[0,0],[0,0]]
-grafmenu_retropixel[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_off_1.png').convert(); grafmenu_retropixel[0][1].set_colorkey((0,0,0))
-grafmenu_retropixel[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_off_2.png').convert(); grafmenu_retropixel[0][0].set_colorkey((0,0,0))
-grafmenu_retropixel[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_on_1.png').convert(); grafmenu_retropixel[1][1].set_colorkey((0,0,0))
-grafmenu_retropixel[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_on_2.png').convert(); grafmenu_retropixel[1][0].set_colorkey((0,0,0))
+grafmenu_defects_str_ENG = [0]*2
+grafmenu_defects_str_ENG[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_1_ENG.png').convert()
+grafmenu_defects_str_ENG[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_2_ENG.png').convert()
+grafmenu_defects_ENG = [[0,0],[0,0]]
+grafmenu_defects_ENG[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_off_1_ENG.png').convert(); grafmenu_defects_ENG[0][1].set_colorkey((0,0,0))
+grafmenu_defects_ENG[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_off_2_ENG.png').convert(); grafmenu_defects_ENG[0][0].set_colorkey((0,0,0))
+grafmenu_defects_ENG[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_on_1_ENG.png').convert(); grafmenu_defects_ENG[1][1].set_colorkey((0,0,0))
+grafmenu_defects_ENG[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_defects_on_2_ENG.png').convert(); grafmenu_defects_ENG[1][0].set_colorkey((0,0,0))
 
-grafmenu_setdefents = [0]*2
-grafmenu_setdefents[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_setdefents_1.png').convert()
-grafmenu_setdefents[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_setdefents_2.png').convert()
+grafmenu_retropixel_str_RUS = [0]*2
+grafmenu_retropixel_str_RUS[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_1.png').convert()
+grafmenu_retropixel_str_RUS[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_2.png').convert()
+grafmenu_retropixel_RUS = [[0,0],[0,0]]
+grafmenu_retropixel_RUS[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_off_1.png').convert(); grafmenu_retropixel_RUS[0][1].set_colorkey((0,0,0))
+grafmenu_retropixel_RUS[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_off_2.png').convert(); grafmenu_retropixel_RUS[0][0].set_colorkey((0,0,0))
+grafmenu_retropixel_RUS[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_on_1.png').convert(); grafmenu_retropixel_RUS[1][1].set_colorkey((0,0,0))
+grafmenu_retropixel_RUS[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_on_2.png').convert(); grafmenu_retropixel_RUS[1][0].set_colorkey((0,0,0))
+
+grafmenu_retropixel_str_ENG = [0]*2
+grafmenu_retropixel_str_ENG[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_1_ENG.png').convert()
+grafmenu_retropixel_str_ENG[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_2_ENG.png').convert()
+grafmenu_retropixel_ENG = [[0,0],[0,0]]
+grafmenu_retropixel_ENG[0][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_off_1_ENG.png').convert(); grafmenu_retropixel_ENG[0][1].set_colorkey((0,0,0))
+grafmenu_retropixel_ENG[0][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_off_2_ENG.png').convert(); grafmenu_retropixel_ENG[0][0].set_colorkey((0,0,0))
+grafmenu_retropixel_ENG[1][1] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_on_1_ENG.png').convert(); grafmenu_retropixel_ENG[1][1].set_colorkey((0,0,0))
+grafmenu_retropixel_ENG[1][0] = pygame.image.load(dir_path+'/data/texture/grafmenu_retropixel_on_2_ENG.png').convert(); grafmenu_retropixel_ENG[1][0].set_colorkey((0,0,0))
+
+grafmenu_setdefents_RUS = [0]*2
+grafmenu_setdefents_RUS[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_setdefents_1.png').convert()
+grafmenu_setdefents_RUS[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_setdefents_2.png').convert()
+grafmenu_setdefents_ENG = [0]*2
+grafmenu_setdefents_ENG[1] = pygame.image.load(dir_path+'/data/texture/grafmenu_setdefents_1_ENG.png').convert()
+grafmenu_setdefents_ENG[0] = pygame.image.load(dir_path+'/data/texture/grafmenu_setdefents_2_ENG.png').convert()
+
+volumenu_effects_1_RUS = pygame.image.load(dir_path+'/data/texture/volumenu_effects_1.png').convert()
+volumenu_effects_2_RUS = pygame.image.load(dir_path+'/data/texture/volumenu_effects_2.png').convert()
+volumenu_general_1_RUS = pygame.image.load(dir_path+'/data/texture/volumenu_general_1.png').convert()
+volumenu_general_2_RUS = pygame.image.load(dir_path+'/data/texture/volumenu_general_2.png').convert()
+volumenu_music_1_RUS = pygame.image.load(dir_path+'/data/texture/volumenu_music_1.png').convert()
+volumenu_music_2_RUS = pygame.image.load(dir_path+'/data/texture/volumenu_music_2.png').convert()
+volumenu_white_noise_1_RUS = pygame.image.load(dir_path+'/data/texture/volumenu_white_noise_1.png').convert()
+volumenu_white_noise_2_RUS = pygame.image.load(dir_path+'/data/texture/volumenu_white_noise_2.png').convert()
+
+volumenu_effects_1_ENG = pygame.image.load(dir_path+'/data/texture/volumenu_effects_1_ENG.png').convert()
+volumenu_effects_2_ENG = pygame.image.load(dir_path+'/data/texture/volumenu_effects_2_ENG.png').convert()
+volumenu_general_1_ENG = pygame.image.load(dir_path+'/data/texture/volumenu_general_1_ENG.png').convert()
+volumenu_general_2_ENG = pygame.image.load(dir_path+'/data/texture/volumenu_general_2_ENG.png').convert()
+volumenu_music_1_ENG = pygame.image.load(dir_path+'/data/texture/volumenu_music_1_ENG.png').convert()
+volumenu_music_2_ENG = pygame.image.load(dir_path+'/data/texture/volumenu_music_2_ENG.png').convert()
+volumenu_white_noise_1_ENG = pygame.image.load(dir_path+'/data/texture/volumenu_white_noise_1_ENG.png').convert()
+volumenu_white_noise_2_ENG = pygame.image.load(dir_path+'/data/texture/volumenu_white_noise_2_ENG.png').convert()
+
+volume_pr_S = [0]*21
+volume_pr_U = [0]*21
+for i in range (21):
+    volume_pr_S[i] = pygame.image.load(dir_path+'/data/texture/volume_pr_S_'+str(i+1)+'.png').convert()
+    volume_pr_U[i] = pygame.image.load(dir_path+'/data/texture/volume_pr_U_'+str(i+1)+'.png').convert()
 
 safari_piramid = pygame.image.load(dir_path+'/data/texture/safari_piramid.png').convert(); safari_piramid.set_colorkey((255,255,255))
 
-comingsoon_banner = pygame.image.load(dir_path+'/data/texture/comingsoon_banner.png').convert()
+comingsoon_banner_RUS = pygame.image.load(dir_path+'/data/texture/comingsoon_banner.png').convert()
+comingsoon_banner_ENG = pygame.image.load(dir_path+'/data/texture/comingsoon_banner_ENG.png').convert()
 morskaya_ohota_banner = pygame.image.load(dir_path+'/data/texture/morskaya_ohota_banner.png').convert()
 gonky_banner = pygame.image.load(dir_path+'/data/texture/gonky_banner.png').convert()
 gonky_II_banner = pygame.image.load(dir_path+'/data/texture/gonky_II_banner.png').convert()
@@ -218,18 +339,28 @@ safary_banner = pygame.image.load(dir_path+'/data/texture/safary_banner.png').co
 ralli_banner = pygame.image.load(dir_path+'/data/texture/ralli_banner.png').convert()
 select_game = pygame.image.load(dir_path+'/data/texture/select_game.png').convert(); select_game.set_colorkey((0,0,0))
 
-comingsoon_gamename_1 = pygame.image.load(dir_path+'/data/texture/comingsoon_gamename_1.png').convert()
-comingsoon_gamename_2 = pygame.image.load(dir_path+'/data/texture/comingsoon_gamename_2.png').convert()
-morskaya_ohota_gamename_1 = pygame.image.load(dir_path+'/data/texture/morskaya_ohota_gamename_1.png').convert()
-morskaya_ohota_gamename_2 = pygame.image.load(dir_path+'/data/texture/morskaya_ohota_gamename_2.png').convert()
-gonky_gamename_1 = pygame.image.load(dir_path+'/data/texture/gonky_gamename_1.png').convert()
-gonky_gamename_2 = pygame.image.load(dir_path+'/data/texture/gonky_gamename_2.png').convert()
+comingsoon_gamename_1_RUS = pygame.image.load(dir_path+'/data/texture/comingsoon_gamename_1.png').convert()
+comingsoon_gamename_2_RUS = pygame.image.load(dir_path+'/data/texture/comingsoon_gamename_2.png').convert()
+comingsoon_gamename_1_ENG = pygame.image.load(dir_path+'/data/texture/comingsoon_gamename_1_ENG.png').convert()
+comingsoon_gamename_2_ENG = pygame.image.load(dir_path+'/data/texture/comingsoon_gamename_2_ENG.png').convert()
+morskaya_ohota_gamename_1_RUS = pygame.image.load(dir_path+'/data/texture/morskaya_ohota_gamename_1.png').convert()
+morskaya_ohota_gamename_2_RUS = pygame.image.load(dir_path+'/data/texture/morskaya_ohota_gamename_2.png').convert()
+morskaya_ohota_gamename_1_ENG = pygame.image.load(dir_path+'/data/texture/morskaya_ohota_gamename_1_ENG.png').convert()
+morskaya_ohota_gamename_2_ENG = pygame.image.load(dir_path+'/data/texture/morskaya_ohota_gamename_2_ENG.png').convert()
+gonky_gamename_1_RUS = pygame.image.load(dir_path+'/data/texture/gonky_gamename_1.png').convert()
+gonky_gamename_2_RUS = pygame.image.load(dir_path+'/data/texture/gonky_gamename_2.png').convert()
+gonky_gamename_1_ENG = pygame.image.load(dir_path+'/data/texture/gonky_gamename_1_ENG.png').convert()
+gonky_gamename_2_ENG = pygame.image.load(dir_path+'/data/texture/gonky_gamename_2_ENG.png').convert()
 gonky_II_gamename_1 = pygame.image.load(dir_path+'/data/texture/gonky_II_gamename_1.png').convert()
 gonky_II_gamename_2 = pygame.image.load(dir_path+'/data/texture/gonky_II_gamename_2.png').convert()
-safary_gamename_1 = pygame.image.load(dir_path+'/data/texture/safary_gamename_1.png').convert()
-safary_gamename_2 = pygame.image.load(dir_path+'/data/texture/safary_gamename_2.png').convert()
-ralli_gamename_1 = pygame.image.load(dir_path+'/data/texture/ralli_gamename_1.png').convert()
-ralli_gamename_2 = pygame.image.load(dir_path+'/data/texture/ralli_gamename_2.png').convert()
+safary_gamename_1_RUS = pygame.image.load(dir_path+'/data/texture/safary_gamename_1.png').convert()
+safary_gamename_2_RUS = pygame.image.load(dir_path+'/data/texture/safary_gamename_2.png').convert()
+safary_gamename_1_ENG = pygame.image.load(dir_path+'/data/texture/safary_gamename_1_ENG.png').convert()
+safary_gamename_2_ENG = pygame.image.load(dir_path+'/data/texture/safary_gamename_2_ENG.png').convert()
+ralli_gamename_1_RUS = pygame.image.load(dir_path+'/data/texture/ralli_gamename_1.png').convert()
+ralli_gamename_2_RUS = pygame.image.load(dir_path+'/data/texture/ralli_gamename_2.png').convert()
+ralli_gamename_1_ENG = pygame.image.load(dir_path+'/data/texture/ralli_gamename_1_ENG.png').convert()
+ralli_gamename_2_ENG = pygame.image.load(dir_path+'/data/texture/ralli_gamename_2_ENG.png').convert()
 
 morskaya_ohota_map = pygame.image.load(dir_path+'/data/texture/morskaya_ohota_map.png').convert()
 morskaya_ohota_bordersmap = [0]*2
@@ -269,11 +400,16 @@ blackscreen = pygame.image.load(dir_path+'/data/texture/blackscreen.png').conver
 
 morskaya_ohota_dd = pygame.image.load(dir_path+'/data/texture/morskaya_ohota_dd.png').convert(); morskaya_ohota_dd.set_colorkey((0,0,0))
 
-prizegame = [0]*4
-prizegame[0] = pygame.image.load(dir_path+'/data/texture/prizegame_1.png').convert(); prizegame[0].set_colorkey((0,0,0))
-prizegame[1] = pygame.image.load(dir_path+'/data/texture/prizegame_2.png').convert(); prizegame[1].set_colorkey((0,0,0))
-prizegame[2] = pygame.image.load(dir_path+'/data/texture/prizegame_3.png').convert(); prizegame[2].set_colorkey((0,0,0))
-prizegame[3] = pygame.image.load(dir_path+'/data/texture/prizegame_4.png').convert(); prizegame[3].set_colorkey((0,0,0))
+prizegame_RUS = [0]*4
+prizegame_RUS[0] = pygame.image.load(dir_path+'/data/texture/prizegame_1.png').convert(); prizegame_RUS[0].set_colorkey((0,0,0))
+prizegame_RUS[1] = pygame.image.load(dir_path+'/data/texture/prizegame_2.png').convert(); prizegame_RUS[1].set_colorkey((0,0,0))
+prizegame_RUS[2] = pygame.image.load(dir_path+'/data/texture/prizegame_3.png').convert(); prizegame_RUS[2].set_colorkey((0,0,0))
+prizegame_RUS[3] = pygame.image.load(dir_path+'/data/texture/prizegame_4.png').convert(); prizegame_RUS[3].set_colorkey((0,0,0))
+prizegame_ENG = [0]*4
+prizegame_ENG[0] = pygame.image.load(dir_path+'/data/texture/prizegame_1_ENG.png').convert(); prizegame_ENG[0].set_colorkey((0,0,0))
+prizegame_ENG[1] = pygame.image.load(dir_path+'/data/texture/prizegame_2_ENG.png').convert(); prizegame_ENG[1].set_colorkey((0,0,0))
+prizegame_ENG[2] = pygame.image.load(dir_path+'/data/texture/prizegame_3_ENG.png').convert(); prizegame_ENG[2].set_colorkey((0,0,0))
+prizegame_ENG[3] = pygame.image.load(dir_path+'/data/texture/prizegame_4_ENG.png').convert(); prizegame_ENG[3].set_colorkey((0,0,0))
 
 morskaya_ohota_torpedo_way = [0]*60
 for i in range(60):
@@ -284,6 +420,11 @@ goldcoin_get = pygame.image.load(dir_path+'/data/texture/goldcoin_get.png').conv
 
 wins_player1 = pygame.image.load(dir_path+'/data/texture/wins_player1.png').convert(); wins_player1.set_colorkey((0,0,0))
 wins_player2 = pygame.image.load(dir_path+'/data/texture/wins_player2.png').convert(); wins_player2.set_colorkey((0,0,0))
+
+p2p_button_1_RUS = pygame.image.load(dir_path+'/data/texture/2p_button_1.png').convert();
+p2p_button_2_RUS = pygame.image.load(dir_path+'/data/texture/2p_button_2.png').convert();
+p2p_button_1_ENG = pygame.image.load(dir_path+'/data/texture/2p_button_1_ENG.png').convert();
+p2p_button_2_ENG = pygame.image.load(dir_path+'/data/texture/2p_button_2_ENG.png').convert();
 
 gonky_roadsegment = pygame.image.load(dir_path+'/data/texture/gonky_roadsegment.png').convert()
 gonky_info_finish = pygame.image.load(dir_path+'/data/texture/gonky_info_finish.png').convert()
@@ -314,8 +455,10 @@ for i in range(10): number_x2_white[i] = pygame.image.load(dir_path+'/data/textu
 goldcoin_have = pygame.image.load(dir_path+'/data/texture/goldcoin_have.png').convert(); goldcoin_have.set_colorkey((0,0,0))
 
 pamat_banner = pygame.image.load(dir_path+'/data/texture/pamat_banner.png').convert(); pamat_banner.set_colorkey((0,0,0))
-pamat_gamename_1 = pygame.image.load(dir_path+'/data/texture/pamat_gamename_1.png').convert()
-pamat_gamename_2 = pygame.image.load(dir_path+'/data/texture/pamat_gamename_2.png').convert()
+pamat_gamename_1_RUS = pygame.image.load(dir_path+'/data/texture/pamat_gamename_1.png').convert()
+pamat_gamename_2_RUS = pygame.image.load(dir_path+'/data/texture/pamat_gamename_2.png').convert()
+pamat_gamename_1_ENG = pygame.image.load(dir_path+'/data/texture/pamat_gamename_1_ENG.png').convert()
+pamat_gamename_2_ENG = pygame.image.load(dir_path+'/data/texture/pamat_gamename_2_ENG.png').convert()
 pamat_base = pygame.image.load(dir_path+'/data/texture/pamat_base.png').convert()
 pamat_ans_b_d = [0]*4
 pamat_ans_f_d = [0]*4
@@ -364,8 +507,41 @@ for i in range(3): safari_oblako[i] = pygame.image.load(dir_path+'/data/texture/
 
 ralli_map = pygame.image.load(dir_path+'/data/texture/ralli_map.png').convert();
 ralli_car = pygame.image.load(dir_path+'/data/texture/ralli_car.png').convert();
+ralli_car_2 = pygame.image.load(dir_path+'/data/texture/ralli_car_2.png').convert();
 ralli_segm_road = [0]*7
 for i in range(7): ralli_segm_road[i] = pygame.image.load(dir_path+'/data/texture/ralli_segm_road_'+str(i+1)+'.png').convert();
+ralli_segm_stantion_1 = pygame.image.load(dir_path+'/data/texture/ralli_segm_stantion_1.png').convert();
+ralli_segm_stantion_2 = pygame.image.load(dir_path+'/data/texture/ralli_segm_stantion_2.png').convert();
+
+ralli_segm_house = []
+for i in range(4):
+    ralli_segm_house.append([0]*4)
+
+for i in range(4):
+    for j in range(4):
+        ralli_segm_house[i][j] = pygame.image.load(dir_path+'/data/texture/ralli_segm_house_'+str(i+1)+'_'+str(j+1)+'.png').convert(); ralli_segm_house[i][j].set_colorkey((0,0,0))
+
+
+ralli_segm_flag_R = []
+for i in range(3):
+    ralli_segm_flag_R.append([0]*4)
+
+ralli_segm_flag_G = []
+for i in range(3):
+    ralli_segm_flag_G.append([0]*4)
+
+for i in range(3):
+    for j in range(4):
+        ralli_segm_flag_R[i][j] = pygame.image.load(dir_path+'/data/texture/ralli_flag_R_'+str(i+1)+'_'+str(j+1)+'.png').convert(); ralli_segm_flag_R[i][j].set_colorkey((0,0,0))
+        ralli_segm_flag_G[i][j] = pygame.image.load(dir_path+'/data/texture/ralli_flag_G_'+str(i+1)+'_'+str(j+1)+'.png').convert(); ralli_segm_flag_G[i][j].set_colorkey((0,0,0))
+
+ralli_segm_flag_base = pygame.image.load(dir_path+'/data/texture/ralli_segm_flag_base.png').convert(); ralli_segm_flag_base.set_colorkey((0,0,0))
+ralli_board_time = pygame.image.load(dir_path+'/data/texture/ralli_board_time.png').convert();
+ralli_board_points = pygame.image.load(dir_path+'/data/texture/ralli_board_points.png').convert();
+ralli_green_num = [0]*10
+for i in range(10): ralli_green_num[i] = pygame.image.load(dir_path+'/data/texture/ralli_green_num_'+str(i+1)+'.png').convert(); ralli_green_num[i].set_colorkey((0,0,0))
+ralli_blue_num = [0]*10
+for i in range(10): ralli_blue_num[i] = pygame.image.load(dir_path+'/data/texture/ralli_blue_num_'+str(i+1)+'.png').convert(); ralli_blue_num[i].set_colorkey((0,0,0))
 
 text=[]
 for i in range(77):
@@ -381,8 +557,169 @@ menu_button_click = pygame.mixer.Sound(dir_path+'/data/audio/menu_button_click.m
 intro_sound = pygame.mixer.Sound(dir_path+'/data/audio/intro_sound.mp3')
 game_start = pygame.mixer.Sound(dir_path+'/data/audio/game_start.mp3')
 white_noise = pygame.mixer.Sound(dir_path+'/data/audio/white_noise.mp3')
+expl = pygame.mixer.Sound(dir_path+'/data/audio/expl.mp3')
+missed = pygame.mixer.Sound(dir_path+'/data/audio/missed.mp3')
+prizegame_sound = pygame.mixer.Sound(dir_path+'/data/audio/prizegame.mp3')
+hit = pygame.mixer.Sound(dir_path+'/data/audio/hit.mp3')
+win = pygame.mixer.Sound(dir_path+'/data/audio/win.mp3')
+crash = pygame.mixer.Sound(dir_path+'/data/audio/crash.mp3')
+jump = pygame.mixer.Sound(dir_path+'/data/audio/jump.mp3')
+wrong = pygame.mixer.Sound(dir_path+'/data/audio/wrong.mp3')
+
+def languare_choise(lang):
+    global intro_screen_1, play_button_1, play_button_2, settings_button_1, settings_button_2, quit_button_1, quit_button_2, back_button_1, back_button_2, p2p_button_1, p2p_button_2
+    global version_text, comingsoon_banner, morskaya_ohota_gamename_1, morskaya_ohota_gamename_2, pamat_gamename_1, pamat_gamename_2, comingsoon_gamename_1, comingsoon_gamename_2
+    global gonky_gamename_1, gonky_gamename_2, safary_gamename_1, safary_gamename_2, ralli_gamename_1, ralli_gamename_2, settmenu_fullscreen_1, settmenu_fullscreen_2, prizegame
+    global settmenu_fullscreen_cheak_1, settmenu_fullscreen_cheak_2, settmenu_grahigs_1, settmenu_grahigs_2, settmenu_audio_1, settmenu_audio_2, grafmenu_lostpixel_str, grafmenu_lostpixel
+    global settmenu_languare_1, settmenu_languare_2, settmenu_resetprogress_1, settmenu_resetprogress_2, grafmenu_defects_str, grafmenu_defects, grafmenu_linza_str, volumenu_effects_1
+    global grafmenu_retropixel_str, grafmenu_retropixel, grafmenu_merzanie_str, grafmenu_merzanie, grafmenu_setdefents, volumenu_effects_2, volumenu_general_1, volumenu_general_2
+    global volumenu_music_1, volumenu_music_2, volumenu_white_noise_1, volumenu_white_noise_2, resetprogress_1, resetprogress_2
     
+    if (lang == "RUS"):
+        intro_screen_1 = intro_screen_1_RUS
+        play_button_1 = play_button_1_RUS
+        play_button_2 = play_button_2_RUS
+        settings_button_1 = settings_button_1_RUS
+        settings_button_2 = settings_button_2_RUS
+        quit_button_1 = quit_button_1_RUS
+        quit_button_2 = quit_button_2_RUS
+        back_button_1 = back_button_1_RUS
+        back_button_2 = back_button_2_RUS
+        p2p_button_1 = p2p_button_1_RUS
+        p2p_button_2 = p2p_button_2_RUS
+        version_text = version_text_RUS
+        comingsoon_banner = comingsoon_banner_RUS
+        morskaya_ohota_gamename_1 = morskaya_ohota_gamename_1_RUS
+        morskaya_ohota_gamename_2 = morskaya_ohota_gamename_2_RUS
+        pamat_gamename_1 = pamat_gamename_1_RUS
+        pamat_gamename_2 = pamat_gamename_2_RUS
+        comingsoon_gamename_1 = comingsoon_gamename_1_RUS
+        comingsoon_gamename_2 = comingsoon_gamename_2_RUS
+        gonky_gamename_1 = gonky_gamename_1_RUS
+        gonky_gamename_2 = gonky_gamename_2_RUS
+        safary_gamename_1 = safary_gamename_1_RUS
+        safary_gamename_2 = safary_gamename_2_RUS
+        ralli_gamename_1 = ralli_gamename_1_RUS
+        ralli_gamename_2 = ralli_gamename_2_RUS
+        settmenu_fullscreen_1 = settmenu_fullscreen_1_RUS
+        settmenu_fullscreen_2 = settmenu_fullscreen_2_RUS
+        settmenu_fullscreen_cheak_1 = settmenu_fullscreen_cheak_1_RUS
+        settmenu_fullscreen_cheak_2 = settmenu_fullscreen_cheak_2_RUS
+        settmenu_grahigs_1 = settmenu_grahigs_1_RUS
+        settmenu_grahigs_2 = settmenu_grahigs_2_RUS
+        settmenu_audio_1 = settmenu_audio_1_RUS
+        settmenu_audio_2 = settmenu_audio_2_RUS
+        settmenu_languare_1 = settmenu_languare_1_RUS
+        settmenu_languare_2 = settmenu_languare_2_RUS
+        settmenu_resetprogress_1 = settmenu_resetprogress_1_RUS
+        settmenu_resetprogress_2 = settmenu_resetprogress_2_RUS
+        prizegame = prizegame_RUS
+        grafmenu_lostpixel_str = grafmenu_lostpixel_str_RUS
+        grafmenu_lostpixel = grafmenu_lostpixel_RUS
+        grafmenu_defects_str = grafmenu_defects_str_RUS
+        grafmenu_defects = grafmenu_defects_RUS
+        grafmenu_linza_str = grafmenu_linza_str_RUS
+        grafmenu_retropixel_str = grafmenu_retropixel_str_RUS
+        grafmenu_retropixel = grafmenu_retropixel_RUS
+        grafmenu_merzanie_str = grafmenu_merzanie_str_RUS
+        grafmenu_merzanie = grafmenu_merzanie_RUS
+        grafmenu_setdefents = grafmenu_setdefents_RUS
+        volumenu_effects_1 = volumenu_effects_1_RUS
+        volumenu_effects_2 = volumenu_effects_2_RUS
+        volumenu_general_1 = volumenu_general_1_RUS
+        volumenu_general_2 = volumenu_general_2_RUS
+        volumenu_music_1 = volumenu_music_1_RUS
+        volumenu_music_2 = volumenu_music_2_RUS
+        volumenu_white_noise_1 = volumenu_white_noise_1_RUS
+        volumenu_white_noise_2 = volumenu_white_noise_2_RUS
+        resetprogress_1 = resetprogress_1_RUS
+        resetprogress_2 = resetprogress_2_RUS
+        
+    if (lang == "ENG"):
+        intro_screen_1 = intro_screen_1_ENG
+        play_button_1 = play_button_1_ENG
+        play_button_2 = play_button_2_ENG
+        settings_button_1 = settings_button_1_ENG
+        settings_button_2 = settings_button_2_ENG
+        quit_button_1 = quit_button_1_ENG
+        quit_button_2 = quit_button_2_ENG
+        back_button_1 = back_button_1_ENG
+        back_button_2 = back_button_2_ENG  
+        p2p_button_1 = p2p_button_1_ENG
+        p2p_button_2 = p2p_button_2_ENG
+        version_text = version_text_ENG
+        comingsoon_banner = comingsoon_banner_ENG
+        morskaya_ohota_gamename_1 = morskaya_ohota_gamename_1_ENG
+        morskaya_ohota_gamename_2 = morskaya_ohota_gamename_2_ENG
+        pamat_gamename_1 = pamat_gamename_1_ENG
+        pamat_gamename_2 = pamat_gamename_2_ENG
+        comingsoon_gamename_1 = comingsoon_gamename_1_ENG
+        comingsoon_gamename_2 = comingsoon_gamename_2_ENG
+        gonky_gamename_1 = gonky_gamename_1_ENG
+        gonky_gamename_2 = gonky_gamename_2_ENG
+        safary_gamename_1 = safary_gamename_1_ENG
+        safary_gamename_2 = safary_gamename_2_ENG
+        ralli_gamename_1 = ralli_gamename_1_ENG
+        ralli_gamename_2 = ralli_gamename_2_ENG
+        settmenu_fullscreen_1 = settmenu_fullscreen_1_ENG
+        settmenu_fullscreen_2 = settmenu_fullscreen_2_ENG
+        settmenu_fullscreen_cheak_1 = settmenu_fullscreen_cheak_1_ENG
+        settmenu_fullscreen_cheak_2 = settmenu_fullscreen_cheak_2_ENG
+        settmenu_grahigs_1 = settmenu_grahigs_1_ENG
+        settmenu_grahigs_2 = settmenu_grahigs_2_ENG
+        settmenu_audio_1 = settmenu_audio_1_ENG
+        settmenu_audio_2 = settmenu_audio_2_ENG
+        settmenu_languare_1 = settmenu_languare_1_ENG
+        settmenu_languare_2 = settmenu_languare_2_ENG
+        settmenu_resetprogress_1 = settmenu_resetprogress_1_ENG
+        settmenu_resetprogress_2 = settmenu_resetprogress_2_ENG
+        prizegame = prizegame_ENG
+        grafmenu_lostpixel_str = grafmenu_lostpixel_str_ENG
+        grafmenu_lostpixel = grafmenu_lostpixel_ENG
+        grafmenu_defects_str = grafmenu_defects_str_ENG
+        grafmenu_defects = grafmenu_defects_ENG
+        grafmenu_linza_str = grafmenu_linza_str_ENG
+        grafmenu_retropixel_str = grafmenu_retropixel_str_ENG
+        grafmenu_retropixel = grafmenu_retropixel_ENG
+        grafmenu_merzanie_str = grafmenu_merzanie_str_ENG
+        grafmenu_merzanie = grafmenu_merzanie_ENG
+        grafmenu_setdefents = grafmenu_setdefents_ENG
+        volumenu_effects_1 = volumenu_effects_1_ENG
+        volumenu_effects_2 = volumenu_effects_2_ENG
+        volumenu_general_1 = volumenu_general_1_ENG
+        volumenu_general_2 = volumenu_general_2_ENG
+        volumenu_music_1 = volumenu_music_1_ENG
+        volumenu_music_2 = volumenu_music_2_ENG
+        volumenu_white_noise_1 = volumenu_white_noise_1_ENG
+        volumenu_white_noise_2 = volumenu_white_noise_2_ENG
+        resetprogress_1 = resetprogress_1_ENG
+        resetprogress_2 = resetprogress_2_ENG
+        
+def volume_choise(GN,WN,EF,MS):
+    global white_noise, intro_sound, game_start, menu_button_click, expl, missed, prizegame_sound, hit, win, crash, jump, wrong
+
+    GN = GN/100.0
+    WN = WN/100.0 * GN
+    EF = EF/100.0 * GN
+    MS = MS/100.0 * GN
     
+    white_noise.set_volume(WN)
+    
+    intro_sound.set_volume(EF)
+    game_start.set_volume(EF)
+    menu_button_click.set_volume(EF)
+    expl.set_volume(EF)
+    missed.set_volume(EF)
+    prizegame_sound.set_volume(EF)
+    hit.set_volume(EF)
+    win.set_volume(EF)
+    crash.set_volume(EF)
+    jump.set_volume(EF)
+    wrong.set_volume(EF)
+        
+languare_choise(languare)
+volume_choise(volume_GN,volume_WN,volume_EF,volume_MS)
+
 loadtick = 0
 mainmenu_tick = 0
 mainmenu_subtick = 0
@@ -475,12 +812,33 @@ pamat_incorrect = 0
 pamat_prizegame_bool = False
 pamat_fake_roll = 0
 ralli_game_bool = False
+ralli_prizegame_bool = False
 ralli_f = False
 ralli_b = False
 ralli_l = False
 ralli_r = False
-
-
+ralli_nontex = pygame.Surface((22,22)); ralli_nontex.set_colorkey((0,0,0))
+ralli_subtimer = 0
+ralli_timer = 0
+ralli_target_x, ralli_target_y = -1, -1
+ralli_flags_pos = [0]*9
+ralli_points = 0
+ralli_points2 = 0
+ralli_start_pos = (0,0)
+ralli_II_game_bool = False
+ralli_p1_start_pos, ralli_p2_start_pos = (0,0),(0,0)
+ralli_II_1_f = False
+ralli_II_1_b = False
+ralli_II_1_l = False
+ralli_II_1_r = False
+ralli_II_2_f = False
+ralli_II_2_b = False
+ralli_II_2_l = False
+ralli_II_2_r = False
+ralli_is_crash = False
+ralli_is_crash_II = False
+resetprogress_bool = False
+resetprogress_select = 0
 
 def take_screen(topleft, bottomright):
     size = bottomright[0] - topleft[0], bottomright[1] - topleft[1]
@@ -582,6 +940,7 @@ class RL_segm():
         self.type = "empty"
         self.can_generate = True
         self.texture = None
+        self.uptex = ralli_nontex
         self.hitbox = CollisionBox()
 
 ralli_segm = []
@@ -601,24 +960,367 @@ ralli_map_hitbox[2].define(0,20,12,440)
 ralli_map_hitbox[3].define(628,20,12,440)
 
 def ralli_map_generate():
+    global ralli_segm, ralli_flags_pos, ralli_start_pos, ralli_segm
+
+    ralli_segm = []
+    for i in range(26):
+        ralli_segm.append([0]*22)
+
+    for i in range(26):
+        for j in range(22):
+            ralli_segm[i][j] = RL_segm()
+            ralli_segm[i][j].hitbox.define(12+22*i,20+22*j,22,22)
     
     R1 = randint(7,18)
-    R2 = randint(3,18)
+    R2 = randint(3,16)
 
-    for i in range(3):
-        for j in range(3):
-            ralli_segm[R1+i-1][R2+j-1].type = "road"
-            ralli_segm[R1+i-1][R2+j-1].can_generate = False
-            ralli_segm[R1+i-1][R2+j-1].texture = ralli_segm_road[0]
+    ralli_player.pos_x = R1*22+13+6
+    ralli_player.pos_y = R2*22+13+10
 
-    if (1):
-        ralli_segm[R1-2][R2].type = "road"
-        ralli_segm[R1-2][R2].can_generate = True
-        ralli_segm[R1-2][R2].texture = ralli_segm_road[1]
-        ralli_segm[R1+2][R2].type = "road"
-        ralli_segm[R1+2][R2].can_generate = True
-        ralli_segm[R1+2][R2].texture = ralli_segm_road[1]
+    ralli_start_pos = (R1*22+13+6,R2*22+13+10)
 
+    ralli_segm[R1][R2].type = "start"
+    ralli_segm[R1][R2].texture = ralli_nontex
+
+    if (0):
+
+        for i in range(3):
+            for j in range(3):
+                ralli_segm[R1+i-1][R2+j-1].type = "road"
+                ralli_segm[R1+i-1][R2+j-1].can_generate = False
+                ralli_segm[R1+i-1][R2+j-1].texture = ralli_segm_road[0]
+
+        if (randint(0,1)):
+            ralli_segm[R1-2][R2].type = "road"
+            ralli_segm[R1-2][R2].can_generate = True
+            ralli_segm[R1-2][R2].texture = ralli_segm_road[0]
+            ralli_segm[R1+2][R2].type = "road"
+            ralli_segm[R1+2][R2].can_generate = True
+            ralli_segm[R1+2][R2].texture = ralli_segm_road[0]
+
+            if (randint(0,1)):
+                ralli_segm[R1-1][R2-1].type = "block"
+                ralli_segm[R1-1][R2-1].can_generate = False
+                ralli_segm[R1-1][R2-1].texture = ralli_segm_stantion_1
+                ralli_segm[R1][R2-1].type = "block"
+                ralli_segm[R1][R2-1].can_generate = False
+                ralli_segm[R1][R2-1].texture = ralli_nontex
+                ralli_segm[R1+1][R2-1].type = "block"
+                ralli_segm[R1+1][R2-1].can_generate = False
+                ralli_segm[R1+1][R2-1].texture = ralli_nontex
+            else:
+                ralli_segm[R1-1][R2+1].type = "block"
+                ralli_segm[R1-1][R2+1].can_generate = False
+                ralli_segm[R1-1][R2+1].texture = ralli_segm_stantion_1
+                ralli_segm[R1][R2+1].type = "block"
+                ralli_segm[R1][R2+1].can_generate = False
+                ralli_segm[R1][R2+1].texture = ralli_nontex
+                ralli_segm[R1+1][R2+1].type = "block"
+                ralli_segm[R1+1][R2+1].can_generate = False
+                ralli_segm[R1+1][R2+1].texture = ralli_nontex
+                
+        else:
+            ralli_segm[R1][R2-2].type = "road"
+            ralli_segm[R1][R2-2].can_generate = True
+            ralli_segm[R1][R2-2].texture = ralli_segm_road[0]
+            ralli_segm[R1][R2+2].type = "road"
+            ralli_segm[R1][R2+2].can_generate = True
+            ralli_segm[R1][R2+2].texture = ralli_segm_road[0]
+
+            if (randint(0,1)):
+                ralli_segm[R1-1][R2-1].type = "block"
+                ralli_segm[R1-1][R2-1].can_generate = False
+                ralli_segm[R1-1][R2-1].texture = ralli_segm_stantion_2
+                ralli_segm[R1-1][R2].type = "block"
+                ralli_segm[R1-1][R2].can_generate = False
+                ralli_segm[R1-1][R2].texture = ralli_nontex
+                ralli_segm[R1-1][R2+1].type = "block"
+                ralli_segm[R1-1][R2+1].can_generate = False
+                ralli_segm[R1-1][R2+1].texture = ralli_nontex
+            else:
+                ralli_segm[R1+1][R2-1].type = "block"
+                ralli_segm[R1+1][R2-1].can_generate = False
+                ralli_segm[R1+1][R2-1].texture = ralli_segm_stantion_2
+                ralli_segm[R1+1][R2].type = "block"
+                ralli_segm[R1+1][R2].can_generate = False
+                ralli_segm[R1+1][R2].texture = ralli_nontex
+                ralli_segm[R1+1][R2+1].type = "block"
+                ralli_segm[R1+1][R2+1].can_generate = False
+                ralli_segm[R1+1][R2+1].texture = ralli_nontex
+
+
+        buffermap = ralli_segm
+        for i in range(22+randint(-4,4)):
+            for x in range(1,25,1):
+                for y in range(1,19,1):
+                    if (ralli_segm[x][y].type == "empty"):
+
+                        F1 = (ralli_segm[x+1][y].type == "road" or
+                            ralli_segm[x-1][y].type == "road" or
+                            ralli_segm[x][y+1].type == "road" or
+                            ralli_segm[x][y-1].type == "road")
+
+                        F2 = (ralli_segm[x+1][y+1].type == "road" or
+                            ralli_segm[x+1][y-1].type == "road" or
+                            ralli_segm[x-1][y+1].type == "road" or
+                            ralli_segm[x-1][y-1].type == "road")
+
+                        F3 = (((ralli_segm[x-1][y-1].type == "road" and ralli_segm[x-1][y].type == "road" and ralli_segm[x][y-1].type == "road") or
+                            (ralli_segm[x+1][y-1].type == "road" and ralli_segm[x+1][y].type == "road" and ralli_segm[x][y-1].type == "road") or
+                            (ralli_segm[x+1][y+1].type == "road" and ralli_segm[x+1][y].type == "road" and ralli_segm[x][y+1].type == "road") or
+                            (ralli_segm[x-1][y+1].type == "road" and ralli_segm[x-1][y].type == "road" and ralli_segm[x][y+1].type == "road")) or
+                            ((ralli_segm[x-1][y-1].type == "road" and ralli_segm[x-1][y].type != "road" and ralli_segm[x][y-1].type != "road") or
+                            (ralli_segm[x+1][y-1].type == "road" and ralli_segm[x+1][y].type != "road" and ralli_segm[x][y-1].type != "road") or
+                            (ralli_segm[x+1][y+1].type == "road" and ralli_segm[x+1][y].type != "road" and ralli_segm[x][y+1].type != "road") or
+                            (ralli_segm[x-1][y+1].type == "road" and ralli_segm[x-1][y].type != "road" and ralli_segm[x][y+1].type != "road")))
+
+                        F4 = (ralli_segm[x][y-1].can_generate and
+                              ralli_segm[x+1][y-1].can_generate and
+                              ralli_segm[x+1][y].can_generate and
+                              ralli_segm[x+1][y+1].can_generate and
+                              ralli_segm[x][y+1].can_generate and
+                              ralli_segm[x-1][y+1].can_generate and
+                              ralli_segm[x-1][y].can_generate and
+                              ralli_segm[x-1][y-1].can_generate)
+
+                        if (F1 and F2): F5 = chascecount(0.0175)
+                        else: F5 = True
+
+                        if (F1 and not(F3) and F4 and F5 and randint(0,1) == 0):
+
+                            buffermap[x][y].type = "road"
+                            buffermap[x][y].texture = ralli_segm_road[0]
+
+            ralli_segm = buffermap
+                    
+        for x in range(1,25,1):
+            for y in range(1,19,1):
+
+                if (ralli_segm[x][y].can_generate):
+                    
+                    summ = 0
+                    summ += int(ralli_segm[x+1][y].type == "road")
+                    summ += int(ralli_segm[x-1][y].type == "road")
+                    summ += int(ralli_segm[x][y+1].type == "road")
+                    summ += int(ralli_segm[x][y-1].type == "road")
+
+                    if (summ == 1):
+
+                        if   (ralli_segm[x+1][y].type == "road" or ralli_segm[x-1][y].type == "road"): ralli_segm[x][y].texture = ralli_segm_road[1]
+                        else: ralli_segm[x][y].texture = ralli_segm_road[2]
+
+                    if (summ == 2):
+
+                        if (ralli_segm[x+1][y].type == "road" and ralli_segm[x-1][y].type == "road"): ralli_segm[x][y].texture = ralli_segm_road[1]
+                        if (ralli_segm[x][y+1].type == "road" and ralli_segm[x][y-1].type == "road"): ralli_segm[x][y].texture = ralli_segm_road[2]
+
+                        if (ralli_segm[x][y-1].type == "road" and ralli_segm[x+1][y].type == "road"): ralli_segm[x][y].texture = ralli_segm_road[3]
+                        if (ralli_segm[x+1][y].type == "road" and ralli_segm[x][y+1].type == "road"): ralli_segm[x][y].texture = ralli_segm_road[4]
+                        if (ralli_segm[x-1][y].type == "road" and ralli_segm[x][y+1].type == "road"): ralli_segm[x][y].texture = ralli_segm_road[5]
+                        if (ralli_segm[x-1][y].type == "road" and ralli_segm[x][y-1].type == "road"): ralli_segm[x][y].texture = ralli_segm_road[6]
+
+        for x in range(25):
+            for y in range(21):
+                if (ralli_segm[x][y].type == "empty"):
+                    summ = 0
+                    summ += int(ralli_segm[x+1][y].type == "road")
+                    summ += int(ralli_segm[x-1][y].type == "road")
+                    summ += int(ralli_segm[x][y+1].type == "road")
+                    summ += int(ralli_segm[x][y-1].type == "road")
+                    summ += int(ralli_segm[x-1][y-1].type == "road")
+                    summ += int(ralli_segm[x-1][y+1].type == "road")
+                    summ += int(ralli_segm[x+1][y-1].type == "road")
+                    summ += int(ralli_segm[x+1][y+1].type == "road")
+
+                    if (chascecount((summ)/12)):
+                        ralli_segm[x][y].type = "house_buliding"
+                        ralli_segm[x][y].can_generate = True
+                            
+        for x in range(25):
+            for y in range(21):
+                    if (ralli_segm[x][y].type == "house_buliding"):
+                        if (ralli_segm[x+1][y].type == "house_buliding" or ralli_segm[x][y+1].type == "house_buliding"):
+                                if (ralli_segm[x+1][y].type == "house_buliding"):
+                                    ralli_segm[x][y].texture = ralli_segm_house[0][1]
+                                    ralli_segm[x+1][y].texture = ralli_nontex
+                                    ralli_segm[x][y].type = "house"
+                                    ralli_segm[x+1][y].type = "house"
+                                else:
+                                    ralli_segm[x][y].texture = ralli_segm_house[0][2]
+                                    ralli_segm[x][y+1].texture = ralli_nontex
+                                    ralli_segm[x][y].type = "house"
+                                    ralli_segm[x][y+1].type = "house"
+                        else:
+                            ralli_segm[x][y].texture = ralli_segm_house[0][0]
+                            ralli_segm[x][y].type = "house"
+
+    else:
+
+        for i in range(9):
+            while True:
+                RX = randint(0,25)
+                RY = randint(0,19)
+                can_plase = True
+                for x in range(-4,5,1):
+                    for y in range(-4,5,1):
+                        TRX = RX + x
+                        TRY = RY + y
+                        if (TRX >= 0 and TRX <= 25 and TRY >= 0 and TRY <= 21):
+                            if (ralli_segm[TRX][TRY].type != "empty" and TRX != R1 and TRY != R2):
+                                can_plase = False
+                if (can_plase):
+                    ralli_flags_pos[i] = (RX,RY)
+                    ralli_segm[RX][RY].type = "flag_"+str(i%3+1)
+                    ralli_segm[RX][RY].texture = ralli_segm_flag_base
+                    ralli_segm[RX][RY].uptex = ralli_segm_flag_R
+                    break
+
+        for i in range(22+randint(-4,4)):
+            RX = randint(0,25)
+            RY = randint(0,19)
+            acs = False
+            for j in range(9):
+                acs = acs or (ralli_flags_pos[j][0] == RX and ralli_flags_pos[j][1] == RY)
+            if (RX != R1 and RY != R2 and not(acs)):
+                ralli_segm[RX][RY].texture = ralli_segm_house[3][0]
+                ralli_segm[RX][RY].type = "house_buliding"
+
+        for x in range(25):
+            for y in range(21):
+                    if (ralli_segm[x][y].type == "house_buliding"):
+                        if (ralli_segm[x+1][y].type == "house_buliding" or ralli_segm[x][y+1].type == "house_buliding"):
+                                if (ralli_segm[x+1][y].type == "house_buliding"):
+                                    ralli_segm[x][y].texture = ralli_segm_house[3][1]
+                                    ralli_segm[x+1][y].texture = ralli_nontex
+                                    ralli_segm[x][y].type = "house"
+                                    ralli_segm[x+1][y].type = "house"
+                                else:
+                                    ralli_segm[x][y].texture = ralli_segm_house[3][2]
+                                    ralli_segm[x][y+1].texture = ralli_nontex
+                                    ralli_segm[x][y].type = "house"
+                                    ralli_segm[x][y+1].type = "house"
+                        else:
+                            ralli_segm[x][y].texture = ralli_segm_house[3][0]
+                            ralli_segm[x][y].type = "house"
+
+def ralli_prizegame_map_gen():
+    for i in range(8 + randint(-3,3)):
+        while True:
+            RX = randint(0,24)
+            RY = randint(0,18)
+            if (ralli_segm[RX][RY].type == "empty" and
+                ralli_segm[RX+1][RY].type == "empty" and
+                ralli_segm[RX][RY+1].type == "empty" and
+                ralli_segm[RX+1][RY+1].type == "empty"):
+                    ralli_segm[RX][RY].texture = ralli_segm_house[3][3]
+                    ralli_segm[RX+1][RY].texture = ralli_nontex
+                    ralli_segm[RX][RY+1].texture = ralli_nontex
+                    ralli_segm[RX+1][RY+1].texture = ralli_nontex
+                    ralli_segm[RX][RY].type = "house"
+                    ralli_segm[RX+1][RY].type = "house"
+                    ralli_segm[RX][RY+1].type = "house"
+                    ralli_segm[RX+1][RY+1].type = "house"
+                    break
+
+def ralli_II_map_gen():
+    global ralli_segm, ralli_flags_pos, ralli_p1_start_pos, ralli_p2_start_pos, ralli_segm
+
+    ralli_segm = []
+    for i in range(26):
+        ralli_segm.append([0]*22)
+
+    for i in range(26):
+        for j in range(22):
+            ralli_segm[i][j] = RL_segm()
+            ralli_segm[i][j].hitbox.define(12+22*i,20+22*j,22,22)
+    
+    R1 = randint(7,18)
+    R2 = randint(3,16)
+
+    ralli_player.pos_x = R1*22+13+6
+    ralli_player.pos_y = R2*22+13+10
+
+    ralli_p1_start_pos = (R1*22+13+6,R2*22+13+10)
+
+    ralli_segm[R1][R2].type = "start"
+    ralli_segm[R1][R2].texture = ralli_nontex    
+                
+    R1 = randint(7,18)
+    R2 = randint(3,16)
+
+    ralli_player2.pos_x = R1*22+13+6
+    ralli_player2.pos_y = R2*22+13+10
+
+    ralli_p2_start_pos = (R1*22+13+6,R2*22+13+10)
+
+    ralli_segm[R1][R2].type = "start"
+    ralli_segm[R1][R2].texture = ralli_nontex
+
+    for i in range(9):
+            while True:
+                RX = randint(0,25)
+                RY = randint(0,19)
+                can_plase = True
+                for x in range(-4,5,1):
+                    for y in range(-4,5,1):
+                        TRX = RX + x
+                        TRY = RY + y
+                        if (TRX >= 0 and TRX <= 25 and TRY >= 0 and TRY <= 21):
+                            if (ralli_segm[TRX][TRY].type != "empty" and TRX != R1 and TRY != R2):
+                                can_plase = False
+                if (can_plase):
+                    ralli_flags_pos[i] = (RX,RY)
+                    ralli_segm[RX][RY].type = "flag_"+str(i%3+1)
+                    ralli_segm[RX][RY].texture = ralli_segm_flag_base
+                    ralli_segm[RX][RY].uptex = ralli_segm_flag_R
+                    break
+
+    for i in range(16+randint(-4,4)):
+            RX = randint(0,25)
+            RY = randint(0,19)
+            acs = False
+            for j in range(9):
+                acs = acs or (ralli_flags_pos[j][0] == RX and ralli_flags_pos[j][1] == RY)
+            if (RX != R1 and RY != R2 and not(acs)):
+                ralli_segm[RX][RY].texture = ralli_segm_house[3][0]
+                ralli_segm[RX][RY].type = "house_buliding"
+
+    for x in range(25):
+            for y in range(21):
+                    if (ralli_segm[x][y].type == "house_buliding"):
+                        if (ralli_segm[x+1][y].type == "house_buliding" or ralli_segm[x][y+1].type == "house_buliding"):
+                                if (ralli_segm[x+1][y].type == "house_buliding"):
+                                    ralli_segm[x][y].texture = ralli_segm_house[3][1]
+                                    ralli_segm[x+1][y].texture = ralli_nontex
+                                    ralli_segm[x][y].type = "house"
+                                    ralli_segm[x+1][y].type = "house"
+                                else:
+                                    ralli_segm[x][y].texture = ralli_segm_house[3][2]
+                                    ralli_segm[x][y+1].texture = ralli_nontex
+                                    ralli_segm[x][y].type = "house"
+                                    ralli_segm[x][y+1].type = "house"
+                        else:
+                            ralli_segm[x][y].texture = ralli_segm_house[3][0]
+                            ralli_segm[x][y].type = "house"
+
+    for i in range(4 + randint(-2,2)):
+        while True:
+            RX = randint(0,24)
+            RY = randint(0,18)
+            if (ralli_segm[RX][RY].type == "empty" and
+                ralli_segm[RX+1][RY].type == "empty" and
+                ralli_segm[RX][RY+1].type == "empty" and
+                ralli_segm[RX+1][RY+1].type == "empty"):
+                    ralli_segm[RX][RY].texture = ralli_segm_house[3][3]
+                    ralli_segm[RX+1][RY].texture = ralli_nontex
+                    ralli_segm[RX][RY+1].texture = ralli_nontex
+                    ralli_segm[RX+1][RY+1].texture = ralli_nontex
+                    ralli_segm[RX][RY].type = "house"
+                    ralli_segm[RX+1][RY].type = "house"
+                    ralli_segm[RX][RY+1].type = "house"
+                    ralli_segm[RX+1][RY+1].type = "house"
+                    break
+            
 class RL_car():
     def __init__(self):
         self.pos_x = -1
@@ -639,6 +1341,9 @@ class RL_car():
 ralli_player = RL_car()
 ralli_player.hitbox.define(0,0,14,14)
 ralli_player.texture = ralli_car
+ralli_player2 = RL_car()
+ralli_player2.hitbox.define(0,0,14,14)
+ralli_player2.texture = ralli_car_2
 
 cartypes = ["brown","grey","red","vio","green","blue"]  
 class car():
@@ -1220,7 +1925,7 @@ class MO_TW():
     def spawn(self,x):
         self.active = True
         self.pos_x = x
-
+        missed.play()
     
     def update(self):
         if (self.active):
@@ -1668,109 +2373,441 @@ def select_game_getpos(x):
     elif (x == 20): return  (1,1)
     elif (x == 21): return  (2,1)
 
-def chascecount(x):
-    return x >= randint(0,100000)/100000
-
-
 def game_select_update(select):
     
-    if (game_select_button):
-        Window.blit(play_button_1,(468,80))
-        Window.blit(back_button_2,(480,32))        
-    else:
-        Window.blit(play_button_2,(468,80))
-        Window.blit(back_button_1,(480,32))
+    if (game_select_button == 0):
+        Window.blit(play_button_2,(456,80))
+        Window.blit(back_button_1,(468,32))
+        if (game_select == "gonky" or game_select == "ralli"): Window.blit(p2p_button_2,(420,128))  
+    if (game_select_button == 1):
+        Window.blit(play_button_1,(456,80))
+        Window.blit(back_button_2,(468,32))
+        if (game_select == "gonky" or game_select == "ralli"):Window.blit(p2p_button_2,(420,128))  
+    if (game_select_button == 2):
+        Window.blit(play_button_2,(456,80))
+        Window.blit(back_button_2,(468,32))
+        if (game_select == "gonky" or game_select == "ralli"): Window.blit(p2p_button_1,(420,128))  
+
+    if (languare == "RUS"): 
+        if (game_select == "morskaya_ohota"):
+            text_print("Морская охота",1,32,32)
+            text_print("- поразите как можно больше",1,32,84)
+            text_print("  кораблей торпедами.",1,32,110)
+            text_print("- цельтесь с упреждением,",1,32,136)
+            text_print("  чтобы поразить цель.",1,32,162)
+            text_print("- у вас будет только 10 торпед.",1,32,188)      
+            text_print("- время игры - 2 минуты.",1,32,214)
+            text_print("- поразите хотя бы 8 кораблей,",1,32,240)
+            text_print("  чтобы получить призовую игру.",1,32,266)        
+            text_print("- поразите хотя бы 8 кораблей",1,32,292)
+            text_print("  в призовой игре, чтобы",1,32,318)
+            text_print("  получить золотую монету.",1,32,344)
+
+        if (game_select == "gonky"):
+            text_print("Гонки",1,32,32)
+            text_print("- Доберитесь до финиша как",1,32,84)
+            text_print("  можно быстрее.",1,32,110)
+            text_print("- Столкновения с другими",1,32,136)
+            text_print("  машинами замедляют вас.",1,32,162)
+            text_print("- время игры - 2 минуты.",1,32,188)      
+            text_print("- Доберитесь до финиша,",1,32,214)
+            text_print("  чтобы получить призовую игру.",1,32,240)
+            text_print("- Доберитесь до финиша в",1,32,266)        
+            text_print("  призовой игре, чтобы",1,32,292)
+            text_print("  получить золотую монету.",1,32,318)
+
+        if (game_select == "gonky_II"):
+            text_print("Гонки II",1,32,32)
+            text_print("- Игра для двоих игроков,",1,32,84)
+            text_print("  используйте WASD + Q и",1,32,110)
+            text_print("  стрелочки + правый CTRL.",1,32,136)
+            text_print("- Доберитесь до финиша как",1,32,162)
+            text_print("  можно быстрее.",1,32,188)
+            text_print("- Столкновения с другими",1,32,214)
+            text_print("  машинами замедляют вас.",1,32,240)
+            text_print("- время игры - 2 минуты.",1,32,266)      
+            text_print("- По истечении времени",1,32,292)
+            text_print("  игрок с большей дистанцией",1,32,318)
+            text_print("  побеждает.",1,32,344)        
+            text_print("- В этой игре нельзя",1,32,370)
+            text_print("  получить золотую монету.",1,32,396)
+
+        if (game_select == "safari"):
+            text_print("Сафари",1,32,32)
+            text_print("- Поразите как можно,",1,32,84)
+            text_print("  больше животных.",1,32,110)
+            text_print("- Цельтись с упреждением,",1,32,136)
+            text_print("  чтобы поразить цель.",1,32,162)
+            text_print("- Пальмы останавливают пули.",1,32,188)
+            text_print("- Иногда вы будете подпрыгивать.",1,32,214)
+            text_print("  Учитывайте это при стрельбе.",1,32,240)
+            text_print("- у вас будет только 16 выстрелов.",1,32,266)      
+            text_print("- время игры - 2 минуты.",1,32,292)
+            text_print("- поразите хотя бы 13 животных,",1,32,318)
+            text_print("  чтобы получить призовую игру.",1,32,344)        
+            text_print("- поразите хотя бы 13 животных в",1,32,370)
+            text_print("  призовой игре, чтобы получить",1,32,396)
+            text_print("  золотую монету.",1,32,422)
+
+        if (game_select == "pamat"):
+            text_print("Память",1,32,32)
+            text_print("- Вам будет показана неполная",1,32,84)
+            text_print("  фигура и несколько вариантов",1,32,110)
+            text_print("  ответов. укажите, какую фигуру",1,32,136)
+            text_print("  нужно добавить, чтобы",1,32,162)
+            text_print("  получилась полная фигура.",1,32,188)
+            text_print("- Вам будет задано 20 вопросов.",1,32,214)
+            text_print("- время игры - 3 минуты.",1,32,240)
+            text_print("- Ответье хотя бы на 16 вопросов,",1,32,266)      
+            text_print("  чтобы получить призовую игру.",1,32,292)
+            text_print("- Ответье хотя бы на 16 вопросов",1,32,318)        
+            text_print("  в призовой игре, чтобы получить",1,32,344)
+            text_print("  золотую монету",1,32,370)
+
+        if (game_select == "ralli"):
+            text_print("Ралл-и",1,32,32)
+            text_print("- Приедте на указанный флажок,",1,32,84)
+            text_print("  чтобы получить очки, указанные",1,32,110)
+            text_print("  на нём.",1,32,136)
+            text_print("- время игры - 2 минуты.",1,32,162)            
+            text_print("- Столкновения замедляют вас.",1,32,188)        
+            text_print("- Наберите 50 очков до",1,32,214)
+            text_print("  конца игры, чтобы",1,32,240)
+            text_print("  получить призовую игру.",1,32,266)
+            text_print("- Наберите 50 очков до",1,32,292)
+            text_print("  конца призовой игры, чтобы",1,32,318)
+            text_print("  получить золотую монету.",1,32,344)
+
+        if (game_select == "ralli_II"):
+            text_print("Ралл-и II",1,32,32)
+            text_print("- Игра для двоих игроков,",1,32,84)
+            text_print("  используйте WASD + Q и",1,32,110)
+            text_print("  стрелочки + правый CTRL.",1,32,136)
+            text_print("- Первый игрок, приехавший",1,32,162)
+            text_print("  на указаный флаг, получит",1,32,188)
+            text_print("  очки, указаные на флаге.",1,32,214)
+            text_print("- Столкновения замедляют вас.",1,32,240)
+            text_print("- время игры - 2 минуты.",1,32,266)      
+            text_print("- Наберите 50 очков для победы.",1,32,292)
+            text_print("- По истечении времени",1,32,318)
+            text_print("  игрок с большим количеством",1,32,344)
+            text_print("  очков поюеждает.",1,32,370)
+            text_print("- В этой игре нельзя",1,32,396)
+            text_print("  получить золотую монету.",1,32,422)
+
+    if (languare == "ENG"): 
+        if (game_select == "morskaya_ohota"):
+            text_print("Sea hunt",1,32,32)
+            text_print("- hit as many as possible",1,32,84)
+            text_print("  ships with torpedoes.",1,32,110)
+            text_print("- aim ahead to",1,32,136)
+            text_print("  hit the target.",1,32,162)
+            text_print("- you will only have 10 torpedoes.",1,32,188)      
+            text_print("- game time is 2 minutes.",1,32,214)
+            text_print("- hit at least 8 ships",1,32,240)
+            text_print("  to get a bonus game.",1,32,266)        
+            text_print("- Hit at least 8 ships",1,32,292)
+            text_print("  in the bonus game to",1,32,318)
+            text_print("  get a gold coin.",1,32,344)
+
+        if (game_select == "gonky"):
+            text_print("Races",1,32,32)
+            text_print("- Get to the finish",1,32,84)
+            text_print("  as fast as possible.",1,32,110)
+            text_print("- Collisions with other",1,32,136)
+            text_print("  cars slow you down.",1,32,162)
+            text_print("- game time is 2 minutes.",1,32,188)      
+            text_print("- Get to the finish",1,32,214)
+            text_print("  to get the prize game.",1,32,240)
+            text_print("- Get to the finish",1,32,266)        
+            text_print("  in the bonus game",1,32,292)
+            text_print("  to get a gold coin.",1,32,318)
+
+        if (game_select == "gonky_II"):
+            text_print("Races II",1,32,32)
+            text_print("- A game for two players,",1,32,84)
+            text_print("  use WASD + Q and",1,32,110)
+            text_print("  arrows + right CTRL.",1,32,136)
+            text_print("- Get to the finish",1,32,162)
+            text_print("  as fast as possible.",1,32,188)
+            text_print("- Collisions with other",1,32,214)
+            text_print("  cars slow you down.",1,32,240)
+            text_print("- game time is 2 minutes.",1,32,266)      
+            text_print("- After the time has elapsed,",1,32,292)
+            text_print("  the player with the greater",1,32,318)
+            text_print("  distance wins.",1,32,344)        
+            text_print("- You can't get a",1,32,370)
+            text_print("  gold coin in this game.",1,32,396)
+
+        if (game_select == "safari"):
+            text_print("Safari",1,32,32)
+            text_print("- Hit as many",1,32,84)
+            text_print("  animals as possible.",1,32,110)
+            text_print("- Aim ahead to",1,32,136)
+            text_print("  hit the target.",1,32,162)
+            text_print("- Palm trees stop bullets.",1,32,188)
+            text_print("- Sometimes you will jump.",1,32,214)
+            text_print("  Keep this in mind when shooting.",1,32,240)
+            text_print("- you will only have 16 shots.",1,32,266)      
+            text_print("- game time is 2 minutes.",1,32,292)
+            text_print("- hit at least 13 animals",1,32,318)
+            text_print("  to get the bonus game.",1,32,344)        
+            text_print("- Hit at least 13 animals ",1,32,370)
+            text_print("  in the bonus game",1,32,396)
+            text_print("  to get a gold coin.",1,32,422)
+
+        if (game_select == "pamat"):
+            text_print("Memory",1,32,32)
+            text_print("- You will be shown an incomplete",1,32,84)
+            text_print("  figure and several possible",1,32,110)
+            text_print("  answers. specify which figure",1,32,136)
+            text_print("  you need to add to",1,32,162)
+            text_print("  get a complete figure.",1,32,188)
+            text_print("- You will be asked 20 questions.",1,32,214)
+            text_print("- game time is 3 minutes.",1,32,240)
+            text_print("- Answer at least 16 questions",1,32,266)      
+            text_print("  to get a bonus game.",1,32,292)
+            text_print("- Answer at least 16 questions",1,32,318)        
+            text_print("  in the bonus game",1,32,344)
+            text_print("  to get a gold coin",1,32,370)
+
+        if (game_select == "ralli"):
+            text_print("Rally",1,32,32)
+            text_print("- Drive on the specified flag",1,32,84)
+            text_print("  to get the points indicated",1,32,110)
+            text_print("  on it.",1,32,136)
+            text_print("- game time is 2 minutes.",1,32,162)            
+            text_print("- Collisions slow you down.",1,32,188)        
+            text_print("- Score 50 points before",1,32,214)
+            text_print("  the end of the game",1,32,240)
+            text_print("  to get a bonus game.",1,32,266)
+            text_print("- Score 50 points before",1,32,292)
+            text_print("  the end of the bonus game",1,32,318)
+            text_print("  to get a gold coin.",1,32,344)
+
+        if (game_select == "ralli_II"):
+            text_print("Rally II",1,32,32)
+            text_print("- A game for two players,",1,32,84)
+            text_print("  use WASD + Q and",1,32,110)
+            text_print("  arrows + right CTRL.",1,32,136)
+            text_print("- The first player to drive",1,32,162)
+            text_print("  to the specified flag will",1,32,188)
+            text_print("  receive the points indicated on it.",1,32,214)
+            text_print("- Collisions slow you down.",1,32,240)
+            text_print("- game time is 2 minutes.",1,32,266)      
+            text_print("- Score 50 points to win.",1,32,292)
+            text_print("- After the time has elapsed,",1,32,318)
+            text_print("  the player with the most",1,32,344)
+            text_print("  points wins.",1,32,370)
+            text_print("- You can't get a",1,32,396)
+            text_print("  gold coin in this game.",1,32,422)    
+
+def ralli_II_game_update():
+    global ralli_subtimer, ralli_timer, ralli_target_x, ralli_target_y, ralli_points, ralli_points2, ralli_II_game_bool, gamemenu_bool, blackscreen_timer, wins_player1_tick , wins_player2_tick, ralli_is_crash, ralli_is_crash_II
+
+    if (ralli_points >= 50):
+        ralli_II_game_bool = False
+        gamemenu_bool = True
+        wins_player1_tick = 240
+
+    elif (ralli_points2 >= 50):
+        ralli_II_game_bool = False
+        gamemenu_bool = True
+        wins_player2_tick = 240
         
+    elif (ralli_timer <= 0):
+        if (ralli_points == ralli_points2):
+            ralli_II_game_bool = False
+            gamemenu_bool = True
+            blackscreen_timer = 120
+        else:
+            if (ralli_points > ralli_points2):
+                ralli_II_game_bool = False
+                gamemenu_bool = True
+                wins_player1_tick = 240
+            else:
+                ralli_II_game_bool = False
+                gamemenu_bool = True
+                wins_player2_tick = 240
         
-    if (game_select == "morskaya_ohota"):
-        text_print("Морская охота",1,32,32)
-        text_print("- поразите как можно больше",1,32,84)
-        text_print("  кораблей торпедами.",1,32,110)
-        text_print("- цельтесь с упреждением,",1,32,136)
-        text_print("  чтобы поразить цель.",1,32,162)
-        text_print("- у вас будет только 10 торпед.",1,32,188)      
-        text_print("- время игры - 2 минуты.",1,32,214)
-        text_print("- поразите хотя бы 8 кораблей,",1,32,240)
-        text_print("  чтобы получить призовую игру.",1,32,266)        
-        text_print("- поразите хотя бы 8 кораблей",1,32,292)
-        text_print("  в призовой игре, чтобы",1,32,318)
-        text_print("  получить золотую монету.",1,32,344)
+    Window.blit(ralli_map,(0,0))
 
-    if (game_select == "gonky"):
-        text_print("Гонки",1,32,32)
-        text_print("- Доберитесь до финиша как",1,32,84)
-        text_print("  можно быстрее.",1,32,110)
-        text_print("- Столкновения с другими",1,32,136)
-        text_print("  машинами замедляют вас.",1,32,162)
-        text_print("- время игры - 2 минуты.",1,32,188)      
-        text_print("- Доберитесь до финиша,",1,32,214)
-        text_print("  чтобы получить призовую игру.",1,32,240)
-        text_print("- Доберитесь до финиша в",1,32,266)        
-        text_print("  призовой игре, чтобы",1,32,292)
-        text_print("  получить золотую монету.",1,32,318)
 
-    if (game_select == "gonky_II"):
-        text_print("Гонки II",1,32,32)
-        text_print("- Игра для двоих игроков,",1,32,84)
-        text_print("  используйте WASD + Q и",1,32,110)
-        text_print("  стрелочки + правый CTRL.",1,32,136)
-        text_print("- Доберитесь до финиша как",1,32,162)
-        text_print("  можно быстрее.",1,32,188)
-        text_print("- Столкновения с другими",1,32,214)
-        text_print("  машинами замедляют вас.",1,32,240)
-        text_print("- время игры - 2 минуты.",1,32,266)      
-        text_print("- По истечении времени",1,32,292)
-        text_print("  игрок с большей дистанцией",1,32,318)
-        text_print("  побеждает.",1,32,344)        
-        text_print("- В этой игре нельзя",1,32,370)
-        text_print("  получить золотую монету.",1,32,396)
+    for x in range(26):
+        for y in range(22):
+            if (ralli_segm[x][y].type != "empty"):
+                Window.blit(ralli_segm[x][y].texture,(12+x*22,20+y*22))
 
-    if (game_select == "safari"):
-        text_print("Сафари",1,32,32)
-        text_print("- Поразите как можно,",1,32,84)
-        text_print("  больше животных.",1,32,110)
-        text_print("- Цельтись с упреждением,",1,32,136)
-        text_print("  чтобы поразить цель.",1,32,162)
-        text_print("- Пальмы останавливают пули.",1,32,188)
-        text_print("- Иногда вы будете подпрыгивать.",1,32,214)
-        text_print("  Учитывайте это при стрельбе.",1,32,240)
-        text_print("- у вас будет только 16 выстрелов.",1,32,266)      
-        text_print("- время игры - 2 минуты.",1,32,292)
-        text_print("- поразите хотя бы 13 животных,",1,32,318)
-        text_print("  чтобы получить призовую игру.",1,32,344)        
-        text_print("- поразите хотя бы 13 животных в",1,32,370)
-        text_print("  призовой игре, чтобы получить",1,32,396)
-        text_print("  золотую монету.",1,32,422)
+    for x in range(26):
+        for y in range(22):
+            if (ralli_segm[x][y].type[:4] == "flag"):
+                if (ralli_target_x == x and ralli_target_y == y): ralli_segm[x][y].uptex = ralli_segm_flag_G
+                else: ralli_segm[x][y].uptex = ralli_segm_flag_R
 
-    if (game_select == "pamat"):
-        text_print("Память",1,32,32)
-        text_print("- Вам будет показана неполная",1,32,84)
-        text_print("  фигура и несколько вариантов",1,32,110)
-        text_print("  ответов. укажите, какую фигуру",1,32,136)
-        text_print("  нужно добавить, чтобы",1,32,162)
-        text_print("  получилась полная фигура.",1,32,188)
-        text_print("- Вам будет задано 20 вопросов.",1,32,214)
-        text_print("- время игры - 3 минуты.",1,32,240)
-        text_print("- Ответье хотя бы на 16 вопросов,",1,32,266)      
-        text_print("  чтобы получить призовую игру.",1,32,292)
-        text_print("- Ответье хотя бы на 16 вопросов",1,32,318)        
-        text_print("  в призовой игре, чтобы получить",1,32,344)
-        text_print("  золотую монету",1,32,370)
+                Window.blit(ralli_segm[x][y].uptex[int(ralli_segm[x][y].type[5])-1][(ralli_subtimer//15+x%4)%4],(12+x*22+10,20+y*22-14))
 
-    if (game_select == "ralli"):
-        text_print("Ралл-и",1,32,32)
-        text_print("- Приедте на указаный флажок,",1,32,84)
-        text_print("  чтобы получить очки, указанные",1,32,110)
-        text_print("  на нём.",1,32,136)
-        text_print("- время игры - 2 минуты.",1,32,162)        
-        text_print("- Наберите 50 очков до",1,32,188)
-        text_print("  конца игры, чтобы",1,32,214)
-        text_print("  получить призовую игру.",1,32,240)
-        text_print("- Наберите 50 очков до",1,32,266)
-        text_print("  конца призовой игры, чтобы",1,32,292)
-        text_print("  получить золотую монету.",1,32,318)
+    if (ralli_II_1_f): ralli_player.speed += 0.0625
+    if (ralli_II_1_b): ralli_player.speed -= 0.125
 
-def ralli_update():
+    if   (ralli_II_1_l): RT = ralli_player.turn + 0.5 * (ralli_player.speed)**2
+    elif (ralli_II_1_r): RT = ralli_player.turn - 0.5 * (ralli_player.speed)**2
+    else: RT = ralli_player.turn
+    
+    hbx = (ralli_player.pos_x - ralli_player.speed * math.sin(math.radians(RT)))
+    hby = (ralli_player.pos_y - ralli_player.speed * math.cos(math.radians(RT)))
+    ralli_player.hitbox.define(hbx-0,hby-0,14,14)
+    map_cheak = False
+    on_road = False
+    
+    for i in range(4): map_cheak = map_cheak or cheak_BoxC(ralli_player.hitbox,ralli_map_hitbox[i])
+    
+    for x in range(26):
+        for y in range(22):
+            if   (ralli_segm[x][y].type == "block"):
+                ralli_segm[x][y].hitbox.define(12+x*22,20+y*22,22,22)
+                map_cheak = map_cheak or cheak_BoxC(ralli_player.hitbox,ralli_segm[x][y].hitbox)
+            elif (ralli_segm[x][y].type == "house" or ralli_segm[x][y].type == "house_buliding"):
+                ralli_segm[x][y].hitbox.define(12+x*22+2,20+y*22+2,18,18)
+                map_cheak = map_cheak or cheak_BoxC(ralli_player.hitbox,ralli_segm[x][y].hitbox)
+            elif (ralli_segm[x][y].type == "road"):
+                ralli_segm[x][y].hitbox.define(12+x*22,20+y*22,22,22)
+                on_road = on_road or cheak_BoxC(ralli_player.hitbox,ralli_segm[x][y].hitbox)
+            elif (ralli_segm[x][y].type[:4] == "flag"):
+                ralli_segm[x][y].hitbox.define(12+x*22+4,20+y*22+4,14,14)
+                if (cheak_BoxC(ralli_player.hitbox,ralli_segm[x][y].hitbox)):
+                    if (ralli_target_x == x and ralli_target_y == y):
+                        ralli_points += int(ralli_segm[x][y].type[5])
+                        hit.play()
+                        while True:
+                            r = randint(0,8)
+                            if (not(ralli_target_x == ralli_flags_pos[r][0] and ralli_target_y == ralli_flags_pos[r][1])):
+                                ralli_target_x = ralli_flags_pos[r][0]
+                                ralli_target_y = ralli_flags_pos[r][1]
+                                break
+    
+    if (ralli_II_1_f): ralli_player.speed += 0.125
+    if (ralli_II_1_b): ralli_player.speed -= 0.125
+    if (map_cheak):
+        ralli_player.speed = 0
+        if (not(ralli_is_crash)): crash.play()
+        ralli_is_crash = True
+    else: ralli_is_crash = False
+    if (ralli_II_1_l): ralli_player.turn += 0.5 * (ralli_player.speed)**2
+    if (ralli_II_1_r): ralli_player.turn -= 0.5 * (ralli_player.speed)**2
+
+    if (ralli_player.speed > 3.5): ralli_player.speed = 3.5
+    if (ralli_player.speed < -1): ralli_player.speed = -1
+
+    if (on_road): add_speed = 1.0
+    else: add_speed = 1.0
+
+    ralli_player.pos_x -= ralli_player.speed * math.sin(math.radians(ralli_player.turn)) * add_speed
+    ralli_player.pos_y -= ralli_player.speed * math.cos(math.radians(ralli_player.turn)) * add_speed
+
+    ralli_player.draw()
+
+    
+
+    if (ralli_II_2_f): ralli_player2.speed += 0.0625
+    if (ralli_II_2_b): ralli_player2.speed -= 0.125
+    
+    if   (ralli_II_2_l): RT = ralli_player2.turn + 0.5 * (ralli_player2.speed)**2
+    elif (ralli_II_2_r): RT = ralli_player2.turn - 0.5 * (ralli_player2.speed)**2
+    else: RT = ralli_player2.turn
+
+    hbx = (ralli_player2.pos_x - ralli_player2.speed * math.sin(math.radians(RT)))
+    hby = (ralli_player2.pos_y - ralli_player2.speed * math.cos(math.radians(RT)))
+    ralli_player2.hitbox.define(hbx-0,hby-0,14,14)
+    map_cheak = False
+    on_road = False
+    
+    for i in range(4): map_cheak = map_cheak or cheak_BoxC(ralli_player2.hitbox,ralli_map_hitbox[i])
+    
+    for x in range(26):
+        for y in range(22):
+            if   (ralli_segm[x][y].type == "block"):
+                ralli_segm[x][y].hitbox.define(12+x*22,20+y*22,22,22)
+                map_cheak = map_cheak or cheak_BoxC(ralli_player2.hitbox,ralli_segm[x][y].hitbox)
+            elif (ralli_segm[x][y].type == "house" or ralli_segm[x][y].type == "house_buliding"):
+                ralli_segm[x][y].hitbox.define(12+x*22+2,20+y*22+2,18,18)
+                map_cheak = map_cheak or cheak_BoxC(ralli_player2.hitbox,ralli_segm[x][y].hitbox)
+            elif (ralli_segm[x][y].type == "road"):
+                ralli_segm[x][y].hitbox.define(12+x*22,20+y*22,22,22)
+                on_road = on_road or cheak_BoxC(ralli_player2.hitbox,ralli_segm[x][y].hitbox)
+            elif (ralli_segm[x][y].type[:4] == "flag"):
+                ralli_segm[x][y].hitbox.define(12+x*22+4,20+y*22+4,14,14)
+                if (cheak_BoxC(ralli_player2.hitbox,ralli_segm[x][y].hitbox)):
+                    if (ralli_target_x == x and ralli_target_y == y):
+                        ralli_points2 += int(ralli_segm[x][y].type[5])
+                        hit.play()
+                        while True:
+                            r = randint(0,8)
+                            if (not(ralli_target_x == ralli_flags_pos[r][0] and ralli_target_y == ralli_flags_pos[r][1])):
+                                ralli_target_x = ralli_flags_pos[r][0]
+                                ralli_target_y = ralli_flags_pos[r][1]
+                                break
+    
+    if (ralli_II_2_f): ralli_player2.speed += 0.125
+    if (ralli_II_2_b): ralli_player2.speed -= 0.125
+    if (map_cheak):
+        ralli_player2.speed = 0
+        if (not(ralli_is_crash_II)): crash.play()
+        ralli_is_crash_II = True
+    else: ralli_is_crash_II = False
+    if (ralli_II_2_l): ralli_player2.turn += 0.5 * (ralli_player2.speed)**2
+    if (ralli_II_2_r): ralli_player2.turn -= 0.5 * (ralli_player2.speed)**2
+
+    if (ralli_player2.speed > 3.5): ralli_player2.speed = 3.5
+    if (ralli_player2.speed < -1): ralli_player2.speed = -1
+
+    if (on_road): add_speed = 1.0
+    else: add_speed = 1.0
+
+    ralli_player2.pos_x -= ralli_player2.speed * math.sin(math.radians(ralli_player2.turn)) * add_speed
+    ralli_player2.pos_y -= ralli_player2.speed * math.cos(math.radians(ralli_player2.turn)) * add_speed
+
+    ralli_player2.draw()
+
+    Window.blit(ralli_board_time,(298,452))
+    Window.blit(ralli_board_points,(134,452))
+    Window.blit(ralli_board_points,(480,452))
+
+    ralli_subtimer += 1
+    if (ralli_subtimer >= 59):
+        ralli_subtimer = 0
+        ralli_timer -= 1
+
+    Window.blit(ralli_green_num[ralli_points//10],(138,456))
+    Window.blit(ralli_green_num[ralli_points%10],(150,456))
+
+    Window.blit(ralli_blue_num[ralli_points2//10],(484,456))
+    Window.blit(ralli_blue_num[ralli_points2%10],(496,456))
+
+    text_print(str(ralli_timer//60),1,302,452)
+    ss = str(ralli_timer%60)
+    if (len(ss)==1): ss = "0" + ss
+    text_print(ss,1,302+16,452)
+    Window.blit(morskaya_ohota_dd,(302+14,452+6))
+    
+def ralli_prizegame_update():
+    global ralli_subtimer, ralli_timer, ralli_target_x, ralli_target_y, ralli_points, ralli_prizegame_bool, gamemenu_bool, goldcoin_get_timer, goldencoins, blackscreen_timer, ralli_is_crash
+
+    if (ralli_points >= 50):
+        ralli_prizegame_bool = False
+        gamemenu_bool = True
+        goldencoins += 1
+        progress_output()
+        goldcoin_get_timer = 240
+
+        r = randint(0,8)
+        ralli_target_x = (ralli_flags_pos[r])[0]
+        ralli_target_y = (ralli_flags_pos[r])[1]
+
+    elif (ralli_timer <= 0):
+        ralli_game_bool = False
+        gamemenu_bool = True
+        blackscreen_timer = 120
+    
     Window.blit(ralli_map,(0,0))
 
     for x in range(26):
@@ -1781,25 +2818,203 @@ def ralli_update():
     if (ralli_f): ralli_player.speed += 0.0625
     if (ralli_b): ralli_player.speed -= 0.125
     
-    hbx = (ralli_player.pos_x - ralli_player.speed * math.sin(math.radians(ralli_player.turn)))
-    hby = (ralli_player.pos_y - ralli_player.speed * math.cos(math.radians(ralli_player.turn)))
+    if   (ralli_l): RT = ralli_player.turn + 0.5 * (ralli_player.speed)**2
+    elif (ralli_r): RT = ralli_player.turn - 0.5 * (ralli_player.speed)**2
+    else: RT = ralli_player.turn
+    
+    hbx = (ralli_player.pos_x - ralli_player.speed * math.sin(math.radians(RT)))
+    hby = (ralli_player.pos_y - ralli_player.speed * math.cos(math.radians(RT)))
     ralli_player.hitbox.define(hbx-0,hby-0,14,14)
     map_cheak = False
+    on_road = False
+    
     for i in range(4): map_cheak = map_cheak or cheak_BoxC(ralli_player.hitbox,ralli_map_hitbox[i])
-
+    
+    for x in range(26):
+        for y in range(22):
+            if   (ralli_segm[x][y].type == "block"):
+                ralli_segm[x][y].hitbox.define(12+x*22,20+y*22,22,22)
+                map_cheak = map_cheak or cheak_BoxC(ralli_player.hitbox,ralli_segm[x][y].hitbox)
+            elif (ralli_segm[x][y].type == "house" or ralli_segm[x][y].type == "house_buliding"):
+                ralli_segm[x][y].hitbox.define(12+x*22+2,20+y*22+2,18,18)
+                map_cheak = map_cheak or cheak_BoxC(ralli_player.hitbox,ralli_segm[x][y].hitbox)
+            elif (ralli_segm[x][y].type == "road"):
+                ralli_segm[x][y].hitbox.define(12+x*22,20+y*22,22,22)
+                on_road = on_road or cheak_BoxC(ralli_player.hitbox,ralli_segm[x][y].hitbox)
+            elif (ralli_segm[x][y].type[:4] == "flag"):
+                ralli_segm[x][y].hitbox.define(12+x*22+4,20+y*22+4,14,14)
+                if (cheak_BoxC(ralli_player.hitbox,ralli_segm[x][y].hitbox)):
+                    if (ralli_target_x == x and ralli_target_y == y):
+                        ralli_points += int(ralli_segm[x][y].type[5])
+                        hit.play()
+                        while True:
+                            r = randint(0,8)
+                            if (not(ralli_target_x == ralli_flags_pos[r][0] and ralli_target_y == ralli_flags_pos[r][1])):
+                                ralli_target_x = ralli_flags_pos[r][0]
+                                ralli_target_y = ralli_flags_pos[r][1]
+                                break
+    
     if (ralli_f): ralli_player.speed += 0.125
     if (ralli_b): ralli_player.speed -= 0.125
-    if (map_cheak): ralli_player.speed = 0
-    if (ralli_l): ralli_player.turn += 0.5 * (ralli_player.speed)
-    if (ralli_r): ralli_player.turn -= 0.5 * (ralli_player.speed)
+    if (map_cheak):
+        ralli_player.speed = 0
+        if (not(ralli_is_crash)): crash.play()
+        ralli_is_crash = True
+    else: ralli_is_crash = False
+    if (ralli_l): ralli_player.turn += 0.5 * (ralli_player.speed)**2
+    if (ralli_r): ralli_player.turn -= 0.5 * (ralli_player.speed)**2
 
     if (ralli_player.speed > 3.5): ralli_player.speed = 3.5
     if (ralli_player.speed < -1): ralli_player.speed = -1
 
-    ralli_player.pos_x -= ralli_player.speed * math.sin(math.radians(ralli_player.turn))
-    ralli_player.pos_y -= ralli_player.speed * math.cos(math.radians(ralli_player.turn))
+    if (on_road): add_speed = 1.0
+    else: add_speed = 1.0
+
+    ralli_player.pos_x -= ralli_player.speed * math.sin(math.radians(ralli_player.turn)) * add_speed
+    ralli_player.pos_y -= ralli_player.speed * math.cos(math.radians(ralli_player.turn)) * add_speed
 
     ralli_player.draw()
+
+    for x in range(26):
+        for y in range(22):
+            if (ralli_segm[x][y].type[:4] == "flag"):
+                if (ralli_target_x == x and ralli_target_y == y): ralli_segm[x][y].uptex = ralli_segm_flag_G
+                else: ralli_segm[x][y].uptex = ralli_segm_flag_R
+
+                Window.blit(ralli_segm[x][y].uptex[int(ralli_segm[x][y].type[5])-1][(ralli_subtimer//15+x%4)%4],(12+x*22+10,20+y*22-14))
+
+    Window.blit(ralli_board_time,(298,452))
+    Window.blit(ralli_board_points,(134,452))
+
+    ralli_subtimer += 1
+    if (ralli_subtimer >= 59):
+        ralli_subtimer = 0
+        ralli_timer -= 1
+
+    Window.blit(ralli_green_num[ralli_points//10],(138,456))
+    Window.blit(ralli_green_num[ralli_points%10],(150,456))
+
+    text_print(str(ralli_timer//60),1,302,452)
+    ss = str(ralli_timer%60)
+    if (len(ss)==1): ss = "0" + ss
+    text_print(ss,1,302+16,452)
+    Window.blit(morskaya_ohota_dd,(302+14,452+6))
+    
+def ralli_game_update():
+    global ralli_subtimer, ralli_timer, ralli_target_x, ralli_target_y, ralli_points, ralli_game_bool, ralli_prizegame_bool, gamemenu_bool, blackscreen_timer, prizegame_timer, ralli_is_crash
+
+    if (ralli_points >= 50):
+        ralli_game_bool = False
+        ralli_prizegame_bool = True
+        ralli_player.pos_x = ralli_start_pos[0]
+        ralli_player.pos_y = ralli_start_pos[0]
+        ralli_player.turn = 0
+        ralli_player.speed = 0
+        prizegame_timer = 240
+        ralli_timer = 120
+        ralli_points = 0
+        ralli_prizegame_map_gen()
+
+        r = randint(0,8)
+        ralli_target_x = (ralli_flags_pos[r])[0]
+        ralli_target_y = (ralli_flags_pos[r])[1]
+
+    elif (ralli_timer <= 0):
+        ralli_game_bool = False
+        gamemenu_bool = True
+        blackscreen_timer = 120
+    
+    Window.blit(ralli_map,(0,0))
+
+    for x in range(26):
+        for y in range(22):
+            if (ralli_segm[x][y].type != "empty"):
+                Window.blit(ralli_segm[x][y].texture,(12+x*22,20+y*22))
+
+    if (ralli_f): ralli_player.speed += 0.0625
+    if (ralli_b): ralli_player.speed -= 0.125
+    
+    if   (ralli_l): RT = ralli_player.turn + 0.5 * (ralli_player.speed)**2
+    elif (ralli_r): RT = ralli_player.turn - 0.5 * (ralli_player.speed)**2
+    else: RT = ralli_player.turn
+    
+    hbx = (ralli_player.pos_x - ralli_player.speed * math.sin(math.radians(RT)))
+    hby = (ralli_player.pos_y - ralli_player.speed * math.cos(math.radians(RT)))
+    ralli_player.hitbox.define(hbx-0,hby-0,14,14)
+    map_cheak = False
+    on_road = False
+    
+    for i in range(4): map_cheak = map_cheak or cheak_BoxC(ralli_player.hitbox,ralli_map_hitbox[i])
+    
+    for x in range(26):
+        for y in range(22):
+            if   (ralli_segm[x][y].type == "block"):
+                ralli_segm[x][y].hitbox.define(12+x*22,20+y*22,22,22)
+                map_cheak = map_cheak or cheak_BoxC(ralli_player.hitbox,ralli_segm[x][y].hitbox)
+            elif (ralli_segm[x][y].type == "house" or ralli_segm[x][y].type == "house_buliding"):
+                ralli_segm[x][y].hitbox.define(12+x*22+2,20+y*22+2,18,18)
+                map_cheak = map_cheak or cheak_BoxC(ralli_player.hitbox,ralli_segm[x][y].hitbox)
+            elif (ralli_segm[x][y].type == "road"):
+                ralli_segm[x][y].hitbox.define(12+x*22,20+y*22,22,22)
+                on_road = on_road or cheak_BoxC(ralli_player.hitbox,ralli_segm[x][y].hitbox)
+            elif (ralli_segm[x][y].type[:4] == "flag"):
+                ralli_segm[x][y].hitbox.define(12+x*22+4,20+y*22+4,14,14)
+                if (cheak_BoxC(ralli_player.hitbox,ralli_segm[x][y].hitbox)):
+                    if (ralli_target_x == x and ralli_target_y == y):
+                        ralli_points += int(ralli_segm[x][y].type[5])
+                        hit.play()
+                        while True:
+                            r = randint(0,8)
+                            if (not(ralli_target_x == ralli_flags_pos[r][0] and ralli_target_y == ralli_flags_pos[r][1])):
+                                ralli_target_x = ralli_flags_pos[r][0]
+                                ralli_target_y = ralli_flags_pos[r][1]
+                                break
+    
+    if (ralli_f): ralli_player.speed += 0.125
+    if (ralli_b): ralli_player.speed -= 0.125
+    if (map_cheak):
+        ralli_player.speed = 0
+        if (not(ralli_is_crash)): crash.play()
+        ralli_is_crash = True
+    else: ralli_is_crash = False
+    if (ralli_l): ralli_player.turn += 0.5 * (ralli_player.speed)**2
+    if (ralli_r): ralli_player.turn -= 0.5 * (ralli_player.speed)**2
+
+    if (ralli_player.speed > 3.5): ralli_player.speed = 3.5
+    if (ralli_player.speed < -1): ralli_player.speed = -1
+
+    if (on_road): add_speed = 1.0
+    else: add_speed = 1.0
+
+    ralli_player.pos_x -= ralli_player.speed * math.sin(math.radians(ralli_player.turn)) * add_speed
+    ralli_player.pos_y -= ralli_player.speed * math.cos(math.radians(ralli_player.turn)) * add_speed
+
+    ralli_player.draw()
+
+    for x in range(26):
+        for y in range(22):
+            if (ralli_segm[x][y].type[:4] == "flag"):
+                if (ralli_target_x == x and ralli_target_y == y): ralli_segm[x][y].uptex = ralli_segm_flag_G
+                else: ralli_segm[x][y].uptex = ralli_segm_flag_R
+
+                Window.blit(ralli_segm[x][y].uptex[int(ralli_segm[x][y].type[5])-1][(ralli_subtimer//15+x%4)%4],(12+x*22+10,20+y*22-14))
+
+    Window.blit(ralli_board_time,(298,452))
+    Window.blit(ralli_board_points,(134,452))
+
+    ralli_subtimer += 1
+    if (ralli_subtimer >= 59):
+        ralli_subtimer = 0
+        ralli_timer -= 1
+
+    Window.blit(ralli_green_num[ralli_points//10],(138,456))
+    Window.blit(ralli_green_num[ralli_points%10],(150,456))
+
+    text_print(str(ralli_timer//60),1,302,452)
+    ss = str(ralli_timer%60)
+    if (len(ss)==1): ss = "0" + ss
+    text_print(ss,1,302+16,452)
+    Window.blit(morskaya_ohota_dd,(302+14,452+6))
 
 def pamat_prizegame_update():
     global pamat_ask, pamat_right_ans, pamat_pos, pamat_wrong_tick, pamat_right_tick, pamat_vrema_timer, pamat_timer, pamat_subtimer, pamat_correct, pamat_incorrect, pamat_game_bool, gamemenu_bool, blackscreen_timer
@@ -1932,6 +3147,7 @@ def pamat_game_update():
         pamat_right_ans = (-1,-1)
 
     if (pamat_right_tick > 0):
+        if (pamat_right_tick == 120): hit.play()
         pamat_right_tick -= 1
         Window.blit(pamat_right, (262,64))
         if (pamat_right_tick == 0):
@@ -1940,6 +3156,7 @@ def pamat_game_update():
             pamat_vrema_timer = 420
             pamat_correct += 1
     elif (pamat_wrong_tick > 0):
+        if (pamat_wrong_tick == 120): wrong.play()
         pamat_wrong_tick -= 1
         Window.blit(pamat_wrong, (262,64))
         if (pamat_wrong_tick == 0):
@@ -2051,15 +3268,21 @@ def safari_prizegame_update():
         if (safari_Cbullets[i].active):
             safari_Cbullets[i].update()
             safari_Cbullets[i].hitbox.define(safari_Cbullets[i].pos_x,safari_Cbullets[i].pos_y,6,6)
-            if (safari_Cbullets[i].pos_y < -6): safari_Cbullets[i].active = False
+            if (safari_Cbullets[i].pos_y < -6):
+                safari_Cbullets[i].active = False
+                missed.play()
             for j in range(16):
-                if (cheak_BoxC(safari_Cbullets[i].hitbox,safari_Cpalmas[j].hitbox)): safari_Cbullets[i].active = False
+                if (cheak_BoxC(safari_Cbullets[i].hitbox,safari_Cpalmas[j].hitbox)):
+                    safari_Cbullets[i].active = False
+                    missed.play()
             else: Window.blit(safari_Cbullets[i].texture,(round(safari_Cbullets[i].pos_x) + int(round(safari_Cbullets[i].pos_x)%2 == 1),round(safari_Cbullets[i].pos_y) + int(round(safari_Cbullets[i].pos_y)%2 == 1)))
 
     for i in range(16):
         safari_Cpalmas[i].hitbox.define(safari_Cpalmas[i].pos_x + 4,safari_Cpalmas[i].pos_y + 4,14,22)
         if (i < 4):
-            if (safari_jump_tick_pos == 0.0 and safari_Cpalmas[i].pos_x >= 121.5 and safari_Cpalmas[i].pos_x <= 123): safari_jump_tick = 2.3
+            if (safari_jump_tick_pos == 0.0 and safari_Cpalmas[i].pos_x >= 121.5 and safari_Cpalmas[i].pos_x <= 123):
+                safari_jump_tick = 2.3
+                jump.play()
         safari_Cpalmas[i].update()
         Window.blit(safari_Cpalmas[i].texture,(round(safari_Cpalmas[i].pos_x) + round(round(safari_Cpalmas[i].pos_x)%2 == 1),safari_Cpalmas[i].pos_y))
 
@@ -2076,6 +3299,7 @@ def safari_prizegame_update():
                 if (cheak_BoxC(safari_Canimals[i].hitbox,safari_Cbullets[j].hitbox)):
                     safari_Canimals[i].active = False
                     safari_Cbullets[j].active = False
+                    hit.play()
                     if (safari_Canimals[i].pos_y ==  120): safari_nosorog_ct_count += 1
                     if (safari_Canimals[i].pos_y ==  210): safari_zebra_ct_count += 1
                     if (safari_Canimals[i].pos_y ==  300): safari_kaban_ct_count += 1
@@ -2181,15 +3405,21 @@ def safari_game_update():
         if (safari_Cbullets[i].active):
             safari_Cbullets[i].update()
             safari_Cbullets[i].hitbox.define(safari_Cbullets[i].pos_x,safari_Cbullets[i].pos_y,6,6)
-            if (safari_Cbullets[i].pos_y < -6): safari_Cbullets[i].active = False
+            if (safari_Cbullets[i].pos_y < -6):
+                safari_Cbullets[i].active = False
+                missed.play()
             for j in range(16):
-                if (cheak_BoxC(safari_Cbullets[i].hitbox,safari_Cpalmas[j].hitbox)): safari_Cbullets[i].active = False
+                if (cheak_BoxC(safari_Cbullets[i].hitbox,safari_Cpalmas[j].hitbox)):
+                    safari_Cbullets[i].active = False
+                    missed.play()
             else: Window.blit(safari_Cbullets[i].texture,(round(safari_Cbullets[i].pos_x) + int(round(safari_Cbullets[i].pos_x)%2 == 1),round(safari_Cbullets[i].pos_y) + int(round(safari_Cbullets[i].pos_y)%2 == 1)))
 
     for i in range(16):
         safari_Cpalmas[i].hitbox.define(safari_Cpalmas[i].pos_x + 4,safari_Cpalmas[i].pos_y + 4,14,22)
         if (i < 4):
-            if (safari_jump_tick_pos == 0.0 and safari_Cpalmas[i].pos_x >= 121.5 and safari_Cpalmas[i].pos_x <= 123): safari_jump_tick = 2.3
+            if (safari_jump_tick_pos == 0.0 and safari_Cpalmas[i].pos_x >= 121.5 and safari_Cpalmas[i].pos_x <= 123):
+                safari_jump_tick = 2.3
+                jump.play()
         safari_Cpalmas[i].update()
         Window.blit(safari_Cpalmas[i].texture,(round(safari_Cpalmas[i].pos_x) + round(round(safari_Cpalmas[i].pos_x)%2 == 1),safari_Cpalmas[i].pos_y))
 
@@ -2206,6 +3436,7 @@ def safari_game_update():
                 if (cheak_BoxC(safari_Canimals[i].hitbox,safari_Cbullets[j].hitbox)):
                     safari_Canimals[i].active = False
                     safari_Cbullets[j].active = False
+                    hit.play()
                     if (safari_Canimals[i].pos_y ==  120): safari_nosorog_ct_count += 1
                     if (safari_Canimals[i].pos_y ==  210): safari_zebra_ct_count += 1
                     if (safari_Canimals[i].pos_y ==  300): safari_kaban_ct_count += 1
@@ -2296,6 +3527,7 @@ def gonky_II_game_update():
         Boxt.define(gonky_II_car[i+2].pos_x,gonky_II_car[i+2].pos_y+S,gonky_II_car[i+2].hitbox.size_x,gonky_II_car[i+2].hitbox.size_y)
         if (gonky_II_car[0].distract == 0 and cheak_BoxC(Boxs,Boxt)):
             gonky_II_car[0].distract = 60
+            crash.play()
             gonky_II_car[0].speed = round((gonky_II_car[0].speed*0.25)*16)/16
             
         gonky_II_car[i+2].update()
@@ -2328,6 +3560,7 @@ def gonky_II_game_update():
         Boxt.define(gonky_II_car[i+6].pos_x,gonky_II_car[i+6].pos_y+S,gonky_II_car[i+6].hitbox.size_x,gonky_II_car[i+6].hitbox.size_y)
         if (gonky_II_car[1].distract == 0 and cheak_BoxC(Boxs,Boxt)):
             gonky_II_car[1].distract = 60
+            crash.play()
             gonky_II_car[1].speed = round((gonky_II_car[1].speed*0.25)*16)/16
             
         gonky_II_car[i+6].update()
@@ -2408,6 +3641,7 @@ def gonky_game_update():
         Boxt.define(gonky_car[i].pos_x,gonky_car[i].pos_y+S,gonky_car[i].hitbox.size_x,gonky_car[i].hitbox.size_y)
         if (gonky_car[0].distract == 0 and cheak_BoxC(Boxs,Boxt)):
             gonky_car[0].distract = 60
+            crash.play()
             gonky_car[0].speed = round((gonky_car[0].speed*0.25)*16)/16
             
         gonky_car[i].update()
@@ -2479,6 +3713,7 @@ def gonky_prizegame_update():
         Boxt.define(gonky_car[i].pos_x,gonky_car[i].pos_y+S,gonky_car[i].hitbox.size_x,gonky_car[i].hitbox.size_y)
         if (gonky_car[0].distract == 0 and cheak_BoxC(Boxs,Boxt)):
             gonky_car[0].distract = 90
+            crash.play()
             gonky_car[0].speed = round((gonky_car[0].speed*0.20)*16)/16
             
         gonky_car[i].update()
@@ -2565,6 +3800,7 @@ def morskaya_ohota_game_update():
                     if (MO_TWs[i].subtick == 0 and MO_TWs[i].tick == 59 and MO_ships[9-j].active and MO_ships[9-j].hit(MO_TWs[i].pos_x+309)):
                         morskaya_ohota_hit_tick = 0
                         morskaya_ohota_hit_bool = True
+                        expl.play()
                         morskaya_ohota_hit_ship = 9-j
                         morskaya_ohota_hit_pos = MO_TWs[i].pos_x+309
                         MO_ships[9-j].active = False
@@ -2676,6 +3912,7 @@ def morskaya_ohota_prizegame_update():
                     if (MO_TWs[i].subtick == 0 and MO_TWs[i].tick == 59 and MO_PG_ships[9-j].active and MO_PG_ships[9-j].hit(MO_TWs[i].pos_x+309)):
                         morskaya_ohota_hit_tick = 0
                         morskaya_ohota_hit_bool = True
+                        expl.play()
                         morskaya_ohota_hit_ship = 9-j
                         morskaya_ohota_hit_pos = MO_TWs[i].pos_x+309
                         MO_PG_ships[9-j].active = False
@@ -2731,21 +3968,25 @@ def update():
         prizegame_timer -= 1
         if (prizegame_timer >= 60 and prizegame_timer <= 180):
             Window.blit(prizegame[3-prizegame_timer//10%4],(164,168))
+        if (prizegame_timer == 210): prizegame_sound.play()
 
     elif (goldcoin_get_timer > 0):
         goldcoin_get_timer -= 1
         if (goldcoin_get_timer >= 60 and goldcoin_get_timer <= 180):
             Window.blit(goldcoin_get,(270,190))
+        if (goldcoin_get_timer == 210): win.play()
 
     elif (wins_player1_tick > 0):
         wins_player1_tick -= 1
         if (wins_player1_tick >= 60 and wins_player1_tick <= 180):
             Window.blit(wins_player1,(0,0))
+        if (wins_player1_tick == 210): win.play()
 
     elif (wins_player2_tick > 0):
         wins_player2_tick -= 1
         if (wins_player2_tick >= 60 and wins_player2_tick <= 180):
-            Window.blit(wins_player2,(0,0))    
+            Window.blit(wins_player2,(0,0))
+        if (wins_player2_tick == 210): win.play()
         
     else:
         if (loadtick < 420):
@@ -2772,7 +4013,7 @@ def update():
                      Window.blit(settings_button_2,(214,270-12))
                      Window.blit(quit_button_1,(262,318))
 
-                Window.blit(version_text,(258,458))
+                Window.blit(version_text,(250,458))
 
             if (settmenu_bool):
                 if (settmenu_select == 0): Window.blit(back_button_1,(32,32))
@@ -2822,10 +4063,57 @@ def update():
                 if (audimenu_select == 0): Window.blit(back_button_1,(32,32))
                 else: Window.blit(back_button_2,(32,32))
 
+                if (audimenu_select == 1):  Window.blit(volumenu_general_1,(56,100))
+                else: Window.blit(volumenu_general_2,(56,100))
+
+                if (audimenu_select == 2):  Window.blit(volumenu_white_noise_1,(56,160))
+                else: Window.blit(volumenu_white_noise_2,(56,160))
+
+                if (audimenu_select == 3):  Window.blit(volumenu_effects_1,(56,220))
+                else: Window.blit(volumenu_effects_2,(56,220))
+
+                if (audimenu_select == 4):  Window.blit(volumenu_music_1,(56,280))
+                else: Window.blit(volumenu_music_2,(56,280))
+
+                if (languare == "RUS"):
+                    if (audimenu_select == 1): Window.blit(volume_pr_S[int(volume_GN/5)],(468,108))
+                    else: Window.blit(volume_pr_U[int(volume_GN/5)],(468,108))
+
+                    if (audimenu_select == 2): Window.blit(volume_pr_S[int(volume_WN/5)],(394,168))
+                    else: Window.blit(volume_pr_U[int(volume_WN/5)],(394,168))
+
+                    if (audimenu_select == 3): Window.blit(volume_pr_S[int(volume_EF/5)],(370,228))
+                    else: Window.blit(volume_pr_U[int(volume_EF/5)],(370,228))
+
+                    if (audimenu_select == 4): Window.blit(volume_pr_S[int(volume_MS/5)],(358,288))
+                    else: Window.blit(volume_pr_U[int(volume_MS/5)],(358,288))
+
+                if (languare == "ENG"):
+                    if (audimenu_select == 1): Window.blit(volume_pr_S[int(volume_GN/5)],(454,108))
+                    else: Window.blit(volume_pr_U[int(volume_GN/5)],(454,108))
+
+                    if (audimenu_select == 2): Window.blit(volume_pr_S[int(volume_WN/5)],(418,168))
+                    else: Window.blit(volume_pr_U[int(volume_WN/5)],(418,168))
+
+                    if (audimenu_select == 3): Window.blit(volume_pr_S[int(volume_EF/5)],(370,228))
+                    else: Window.blit(volume_pr_U[int(volume_EF/5)],(370,228))
+
+                    if (audimenu_select == 4): Window.blit(volume_pr_S[int(volume_MS/5)],(346,288))
+                    else: Window.blit(volume_pr_U[int(volume_MS/5)],(346,288))
+
             if (langmenu_bool):
                 if (langmenu_select == 0): Window.blit(back_button_1,(32,32))
                 else: Window.blit(back_button_2,(32,32))
 
+                if (langmenu_select == 1): Window.blit(settmenu_languare_rus_1,(62,100))
+                else: Window.blit(settmenu_languare_rus_2,(62,100))
+                
+                if (langmenu_select == 2): Window.blit(settmenu_languare_eng_1,(62,160))
+                else: Window.blit(settmenu_languare_eng_2,(62,160))
+
+            if (resetprogress_bool):
+                if(resetprogress_select == 0): Window.blit(resetprogress_1,(0,0))
+                else: Window.blit(resetprogress_2,(0,0))
 
             if (gamemenu_bool):
                     if (gamemenu_razdel == 0):
@@ -2844,19 +4132,19 @@ def update():
                         Window.blit(gonky_banner,(240,208))
                         if (gamemenu_select == 2): Window.blit(gonky_gamename_1,(236,178))
                         else: Window.blit(gonky_gamename_2,(236,178))
-                        Window.blit(gonky_II_banner,(448,208))
-                        if (gamemenu_select == 3): Window.blit(gonky_II_gamename_1,(444,178))
-                        else: Window.blit(gonky_II_gamename_2,(444,178))
+                        Window.blit(safary_banner,(448,208))
+                        if (gamemenu_select == 3): Window.blit(safary_gamename_1,(444,178))
+                        else: Window.blit(safary_gamename_2,(444,178))
 
-                        Window.blit(safary_banner,( 32,368))
-                        if (gamemenu_select == 4): Window.blit(safary_gamename_1,(28,338))
-                        else: Window.blit(safary_gamename_2,(28,338))
-                        Window.blit(pamat_banner,(240,368))
-                        if (gamemenu_select == 5): Window.blit(pamat_gamename_1,(236,338))
-                        else: Window.blit(pamat_gamename_2,(236,338))
-                        Window.blit(ralli_banner,(448,368))
-                        if (gamemenu_select == 6): Window.blit(ralli_gamename_1,(444,338))
-                        else: Window.blit(ralli_gamename_2,(444,338))                
+                        Window.blit(pamat_banner,( 32,368))
+                        if (gamemenu_select == 4): Window.blit(pamat_gamename_1,(28,338))
+                        else: Window.blit(pamat_gamename_2,(28,338))
+                        Window.blit(ralli_banner,(240,368))
+                        if (gamemenu_select == 5): Window.blit(ralli_gamename_1,(236,338))
+                        else: Window.blit(ralli_gamename_2,(236,338))
+                        Window.blit(comingsoon_banner,(448,368))
+                        if (gamemenu_select == 6): Window.blit(comingsoon_gamename_1,(444,338))
+                        else: Window.blit(comingsoon_gamename_2,(444,338))                
 
                     if (gamemenu_razdel == 1):
 
@@ -2937,7 +4225,10 @@ def update():
                     if (pamat_game_bool): pamat_game_update()
                     elif (pamat_prizegame_bool): pamat_prizegame_update()
 
-                    if (ralli_game_bool): ralli_update()
+                    if (ralli_game_bool): ralli_game_update()
+                    elif (ralli_prizegame_bool): ralli_prizegame_update()
+
+                    if (ralli_II_game_bool): ralli_II_game_update()
                         
 
                     
@@ -3044,6 +4335,10 @@ while Run:
                                     settmenu_bool = False
                                     langmenu_bool = True
                                     menu_button_click.play()
+                                if (settmenu_select == 5):
+                                    settmenu_bool = False
+                                    resetprogress_bool = True
+                                    menu_button_click.play()
 
                     elif (grafmenu_bool):
                         if (event.key == pygame.K_UP or event.key == pygame.K_w):
@@ -3113,7 +4408,7 @@ while Run:
                         if (event.key == pygame.K_UP or event.key == pygame.K_w):
                             if (audimenu_select > 0): audimenu_select -= 1
                         if (event.key == pygame.K_DOWN or event.key == pygame.K_s):
-                            if (audimenu_select < 0): audimenu_select += 1
+                            if (audimenu_select < 4): audimenu_select += 1
 
                         if (audimenu_select == 0 and event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
                             audimenu_bool = False
@@ -3121,19 +4416,98 @@ while Run:
                             settmenu_select = 3
                             menu_button_click.play()
 
+                        if (audimenu_select == 1 and ((event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL) or (event.key == pygame.K_RIGHT or event.key == pygame.K_d))):
+                            volume_GN += 5
+                            if (volume_GN > 100): volume_GN = 0
+                            settings_output()
+                            volume_choise(volume_GN,volume_WN,volume_EF,volume_MS)
+                            menu_button_click.play()
+                        if (audimenu_select == 1 and ((event.key == pygame.K_LEFT or event.key == pygame.K_a))):
+                            volume_GN -= 5
+                            if (volume_GN < 0): volume_GN = 100
+                            settings_output()
+                            volume_choise(volume_GN,volume_WN,volume_EF,volume_MS)
+                            menu_button_click.play()
+
+                        if (audimenu_select == 2 and ((event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL) or (event.key == pygame.K_RIGHT or event.key == pygame.K_d))):
+                            volume_WN += 5
+                            if (volume_WN > 100): volume_WN = 0
+                            settings_output()
+                            volume_choise(volume_GN,volume_WN,volume_EF,volume_MS)
+                            menu_button_click.play()
+                        if (audimenu_select == 2 and ((event.key == pygame.K_LEFT or event.key == pygame.K_a))):
+                            volume_WN -= 5
+                            if (volume_WN < 0): volume_WN = 100
+                            settings_output()
+                            volume_choise(volume_GN,volume_WN,volume_EF,volume_MS)
+                            menu_button_click.play()
+
+                        if (audimenu_select == 3 and ((event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL) or (event.key == pygame.K_RIGHT or event.key == pygame.K_d))):
+                            volume_EF += 5
+                            if (volume_EF > 100): volume_EF = 0
+                            settings_output()
+                            volume_choise(volume_GN,volume_WN,volume_EF,volume_MS)
+                            menu_button_click.play()
+                        if (audimenu_select == 3 and ((event.key == pygame.K_LEFT or event.key == pygame.K_a))):
+                            volume_EF -= 5
+                            if (volume_EF < 0): volume_EF = 100
+                            settings_output()
+                            volume_choise(volume_GN,volume_WN,volume_EF,volume_MS)
+                            menu_button_click.play()
+
+                        if (audimenu_select == 4 and ((event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL) or (event.key == pygame.K_RIGHT or event.key == pygame.K_d))):
+                            volume_MS += 5
+                            if (volume_MS > 100): volume_MS = 0
+                            settings_output()
+                            volume_choise(volume_GN,volume_WN,volume_EF,volume_MS)
+                            menu_button_click.play()
+                        if (audimenu_select == 4 and ((event.key == pygame.K_LEFT or event.key == pygame.K_a))):
+                            volume_MS -= 5
+                            if (volume_MS < 0): volume_MS = 100
+                            settings_output()
+                            volume_choise(volume_GN,volume_WN,volume_EF,volume_MS)
+                            menu_button_click.play()
+
                     elif (langmenu_bool):
                         if (event.key == pygame.K_UP or event.key == pygame.K_w):
                             if (langmenu_select > 0): langmenu_select -= 1
                         if (event.key == pygame.K_DOWN or event.key == pygame.K_s):
-                            if (langmenu_select < 0): langmenu_select += 1
+                            if (langmenu_select < 2): langmenu_select += 1
 
                         if (langmenu_select == 0 and event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
                             langmenu_bool = False
                             settmenu_bool = True
                             settmenu_select = 4
                             menu_button_click.play()
+
+                        if (langmenu_select == 1 and event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
+                            languare = "RUS"
+                            languare_choise(languare)
+                            menu_button_click.play()
+
+                        if (langmenu_select == 2 and event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
+                            languare = "ENG"
+                            languare_choise(languare)
+                            menu_button_click.play()
+
+                    elif (resetprogress_bool): 
+                        if (event.key == pygame.K_LEFT or event.key == pygame.K_d or event.key == pygame.K_RIGHT or event.key == pygame.K_a):
+                            resetprogress_select = int(not(bool(resetprogress_select)))
+
+                        if (resetprogress_select == 0 and (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL)):
+                                resetprogress_bool = False
+                                settmenu_bool = True
+                                menu_button_click.play()
+
+                        if (resetprogress_select == 1 and (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL)):
+                                resetprogress_bool = False
+                                mainmenu_bool = True
+                                resetprogress_select = 0
+                                goldencoins = 0
+                                progress_output()
+                                menu_button_click.play()                            
                                 
-                                    
+                            
                     elif (gamemenu_bool):
                         if (event.key == pygame.K_UP or event.key == pygame.K_w): gamemenu_select = gamemenu_map(gamemenu_select,1)
                         if (event.key == pygame.K_DOWN or event.key == pygame.K_s): gamemenu_select = gamemenu_map(gamemenu_select,3)
@@ -3164,20 +4538,15 @@ while Run:
                                     menu_button_click.play()
                                 if (gamemenu_select == 3):
                                     gamemenu_bool = False
-                                    game_select = "gonky_II"
+                                    game_select = "safari"
                                     mainmenu_select = 0
                                     menu_button_click.play()
                                 if (gamemenu_select == 4):
                                     gamemenu_bool = False
-                                    game_select = "safari"
-                                    mainmenu_select = 0
-                                    menu_button_click.play()
-                                if (gamemenu_select == 5):
-                                    gamemenu_bool = False
                                     game_select = "pamat"
                                     mainmenu_select = 0
                                     menu_button_click.play()
-                                if (gamemenu_select == 6):
+                                if (gamemenu_select == 5):
                                     gamemenu_bool = False
                                     game_select = "ralli"
                                     mainmenu_select = 0
@@ -3187,11 +4556,14 @@ while Run:
                         if (event.key == pygame.K_UP or event.key == pygame.K_w):
                             if (game_select_button > 0): game_select_button -= 1
                         if (event.key == pygame.K_DOWN or event.key == pygame.K_s):
-                            if (game_select_button < 1): game_select_button += 1
+                            if (game_select_button < 1 + int(game_select == "gonky" or game_select == "ralli")): game_select_button += 1
                         if (event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
                             if (game_select_button == 0):
-                                game_select = "none"
-                                gamemenu_bool = True
+                                if   (game_select == "gonky_II"): game_select = "gonky"
+                                elif (game_select == "ralli_II"): game_select = "ralli"
+                                else:
+                                    game_select = "none"
+                                    gamemenu_bool = True
                                 menu_button_click.play()
                             if (game_select_button == 1):
 
@@ -3301,10 +4673,25 @@ while Run:
                                     ralli_game_bool = True
 
                                     ralli_map_generate()
+                                    ralli_timer = 120
+                                    ralli_points = 0
+                                    ralli_player.turn = 0
+                                    ralli_player.speed = 0
 
-                                    ralli_player.pos_x = 300
-                                    ralli_player.pos_y = 300
-                        
+                                    r = randint(0,8)
+                                    ralli_target_x = (ralli_flags_pos[r])[0]
+                                    ralli_target_y = (ralli_flags_pos[r])[1]
+
+                                if (game_select == "ralli_II"):
+                                    ralli_II_game_bool = True
+
+                                    ralli_II_map_gen()
+                                    ralli_timer = 120
+                                    ralli_points = 0
+                                    ralli_points2 = 0
+                                    r = randint(0,8)
+                                    ralli_target_x = (ralli_flags_pos[r])[0]
+                                    ralli_target_y = (ralli_flags_pos[r])[1]
                                     
 
                                 game_start.play()
@@ -3312,6 +4699,15 @@ while Run:
                                 gamemenu_bool = False
                                 coinfalls_tick = 120
                                 game_select_button = 0
+
+                            if (game_select_button == 2):
+                                if (game_select == "gonky"):
+                                    game_select = "gonky_II"
+                                if (game_select == "ralli"):
+                                    game_select = "ralli_II"
+                                game_select_button = 0
+
+                                menu_button_click.play()
                                 
 
                     elif (morskaya_ohota_game_bool or morskaya_ohota_prizegame_bool):
@@ -3354,11 +4750,21 @@ while Run:
                             else: pamat_wrong_tick = 120
                             pamat_right_ans = (-1,-1)
 
-                    elif (ralli_game_bool):
+                    elif (ralli_game_bool or ralli_prizegame_bool):
                         if (event.key == pygame.K_UP or event.key == pygame.K_w): ralli_f = True
                         if (event.key == pygame.K_DOWN or event.key == pygame.K_s): ralli_b = True
                         if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): ralli_r = True
                         if (event.key == pygame.K_LEFT or event.key == pygame.K_a): ralli_l = True
+
+                    elif (ralli_II_game_bool):
+                        if (event.key == pygame.K_w): ralli_II_1_f = True
+                        if (event.key == pygame.K_s): ralli_II_1_b = True
+                        if (event.key == pygame.K_d): ralli_II_1_r = True
+                        if (event.key == pygame.K_a): ralli_II_1_l = True
+                        if (event.key == pygame.K_UP): ralli_II_2_f = True
+                        if (event.key == pygame.K_DOWN): ralli_II_2_b = True
+                        if (event.key == pygame.K_RIGHT): ralli_II_2_r = True
+                        if (event.key == pygame.K_LEFT): ralli_II_2_l = True
                             
                     
                     
@@ -3381,11 +4787,20 @@ while Run:
                         if (event.key == pygame.K_LEFT):   gonky_II_L2_bool = False
                         if (event.key == pygame.K_UP):     gonky_II_F2_bool = False
                         if (event.key == pygame.K_DOWN):   gonky_II_B2_bool = False
-                elif (ralli_game_bool):
+                elif (ralli_game_bool or ralli_prizegame_bool):
                     if (event.key == pygame.K_UP or event.key == pygame.K_w): ralli_f = False
                     if (event.key == pygame.K_DOWN or event.key == pygame.K_s): ralli_b = False
                     if (event.key == pygame.K_RIGHT or event.key == pygame.K_d): ralli_r = False
-                    if (event.key == pygame.K_LEFT or event.key == pygame.K_a): ralli_l = False                 
+                    if (event.key == pygame.K_LEFT or event.key == pygame.K_a): ralli_l = False
+                elif (ralli_II_game_bool):
+                    if (event.key == pygame.K_w): ralli_II_1_f = False
+                    if (event.key == pygame.K_s): ralli_II_1_b = False
+                    if (event.key == pygame.K_d): ralli_II_1_r = False
+                    if (event.key == pygame.K_a): ralli_II_1_l = False
+                    if (event.key == pygame.K_UP): ralli_II_2_f = False
+                    if (event.key == pygame.K_DOWN): ralli_II_2_b = False
+                    if (event.key == pygame.K_RIGHT): ralli_II_2_r = False
+                    if (event.key == pygame.K_LEFT): ralli_II_2_l = False   
                     
     if (defects_bool and chascecount(0.0025) and effect_4_tick == 0):
         effect_4_tick = 20
