@@ -4483,11 +4483,13 @@ while Run:
                         if (langmenu_select == 1 and event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
                             languare = "RUS"
                             languare_choise(languare)
+                            settings_output()
                             menu_button_click.play()
 
                         if (langmenu_select == 2 and event.key == pygame.K_SPACE or event.key == pygame.K_RETURN or event.key == pygame.K_q or event.key == pygame.K_RCTRL):
                             languare = "ENG"
                             languare_choise(languare)
+                            settings_output()
                             menu_button_click.play()
 
                     elif (resetprogress_bool): 
