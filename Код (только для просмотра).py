@@ -12,7 +12,7 @@ pygame.init()
 directiry = pathlib.Path.cwd()
 dir_path = str(directiry)
 
-FPS = 60 
+
 
 clock = pygame.time.Clock()
 
